@@ -43,7 +43,7 @@ void Engine::Scene::render(Window& window, Camera& camera)
 
 
 			ray initRay = ray(nearPointWorld, glm::normalize(farPointWorld - nearPointWorld));
-			glm::vec3 rayColor = castRay(initRay,farPointWorld.z, yNdc);
+			glm::vec3 rayColor = castRay(initRay,glm::length(farPointWorld - nearPointWorld), yNdc);
 
 			auto r = rayColor.r * 255 * 1;
 			auto g = rayColor.g * 255 * 1;
@@ -83,6 +83,7 @@ glm::vec3 Engine::Scene::castRay(ray& ray, float farPlane, float bgColorCoef)
 	{
 		return glm::vec3(1, 1, 1);
 	}*/
+
 
 	if (sphere.hit(ray, farPlane, closest_t))
 	{
