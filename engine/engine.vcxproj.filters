@@ -18,28 +18,40 @@
     <ClInclude Include="source\math\ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\vec3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="source\math\sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="render\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\FPSTimer.h">
+    <ClInclude Include="utils\timer\FPSTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="windows\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\light.h">
+    <ClInclude Include="source\math\directionalLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="render\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="source\math\plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\material\coloredSphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\material\coloredPlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\material\material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\math\intersection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\material\coloredDirectionLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -53,7 +65,7 @@
     <ClCompile Include="source\math\sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils\FPSTimer.cpp">
+    <ClCompile Include="utils\timer\FPSTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\math\plane.cpp">

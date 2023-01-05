@@ -148,21 +148,25 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="source\material\coloredDirectionLight.h" />
+    <ClInclude Include="source\material\coloredPlane.h" />
+    <ClInclude Include="source\material\coloredSphere.h" />
     <ClInclude Include="render\Camera.h" />
     <ClInclude Include="render\Scene.h" />
-    <ClInclude Include="source\math\light.h" />
+    <ClInclude Include="source\material\material.h" />
+    <ClInclude Include="source\math\intersection.h" />
+    <ClInclude Include="source\math\directionalLight.h" />
     <ClInclude Include="source\math\plane.h" />
     <ClInclude Include="source\math\ray.h" />
     <ClInclude Include="source\math\sphere.h" />
-    <ClInclude Include="source\math\vec3.h" />
-    <ClInclude Include="utils\FPSTimer.h" />
+    <ClInclude Include="utils\timer\FPSTimer.h" />
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="render\Scene.cpp" />
     <ClCompile Include="source\math\plane.cpp" />
     <ClCompile Include="source\math\sphere.cpp" />
-    <ClCompile Include="utils\FPSTimer.cpp" />
+    <ClCompile Include="utils\timer\FPSTimer.cpp" />
     <ClCompile Include="windows\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

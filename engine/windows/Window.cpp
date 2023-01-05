@@ -1,4 +1,6 @@
 #include "Window.h"
+#include <iostream>
+#include "../dependencies/glm-0.9.9.9/glm/ext/vector_float2.hpp"
 
 
 void Window::initConsole()
@@ -9,7 +11,7 @@ void Window::initConsole()
 														
 }
 
-void Window::initWindow(const LPCWSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams, const WNDPROC& WindowProc)
+void Window::initWindow(const LPCWSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 {
 
 	
@@ -25,21 +27,20 @@ void Window::initWindow(const LPCWSTR& title, int yStart, int xStart, int width,
 	wc.lpszClassName = L"Window";
 
 
-
-
-	RegisterClassExW(&wc);
-	hWnd = CreateWindowExW(NULL,
+	RegisterClassEx(&wc);
+	hWnd = CreateWindowEx(NULL,
 		L"Window",
 		title,
 		WS_OVERLAPPEDWINDOW,
-		300,
-		300,
-		500,
-		400,
+		xStart,
+		yStart,
+		width,
+		height,
 		NULL,
 		NULL,
 		appHandle,
-		NULL);
+		this
+	);
 	ShowWindow(hWnd, windowShowParams);
 }
 
@@ -53,27 +54,28 @@ void Window::initColorBuffer()
 	ClientWidth = ClientsRect.right - ClientsRect.left;
 	ClientHeight = ClientsRect.bottom - ClientsRect.top;
 
-	BitmapBufferWidth = ClientWidth ;
-	BitmapBufferHeight = ClientHeight ;
+	BitmapBufferWidth = ClientWidth / bufferWindowRatio;
+	BitmapBufferHeight = ClientHeight / bufferWindowRatio;
 
 	DeviceContext = GetDC(hWnd);
 
-	int bytePerPixel = 4;
+	
 
 	BitmapMemory = VirtualAlloc(0, static_cast<SIZE_T>(BitmapBufferWidth * BitmapBufferHeight * bytePerPixel), MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
 
 	
-	bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
-	bitmapInfo.bmiHeader.biWidth = BitmapBufferWidth;
-	bitmapInfo.bmiHeader.biHeight = -BitmapBufferHeight; // top left instead of bottom left
-	bitmapInfo.bmiHeader.biPlanes = 1;
-	bitmapInfo.bmiHeader.biBitCount = 32; // 4 bytes 
-	bitmapInfo.bmiHeader.biCompression = BI_RGB;
+	flush();
+
 }
 
 void Window::flush()
 {
-
+	bitmapInfo.bmiHeader.biSize = sizeof(bitmapInfo.bmiHeader);
+	bitmapInfo.bmiHeader.biWidth = BitmapBufferWidth;
+	bitmapInfo.bmiHeader.biHeight = -BitmapBufferHeight; // top left instead of bottom left
+	bitmapInfo.bmiHeader.biPlanes = 1;
+	bitmapInfo.bmiHeader.biBitCount = bytePerPixel * 8; // 4 bytes to bits
+	bitmapInfo.bmiHeader.biCompression = BI_RGB;
 	
 	StretchDIBits(DeviceContext,
 		0, 0,
@@ -84,5 +86,98 @@ void Window::flush()
 		&bitmapInfo,
 		DIB_RGB_COLORS, SRCCOPY);
 }
+
+void Window::terminate()
+{
+	ExitProcess(0);
+}
+
+void Window::drawPixel(int x, int y, uint32_t color)
+{
+	uint32_t* pixel = reinterpret_cast<uint32_t*>(BitmapMemory);
+	pixel += y * BitmapBufferWidth + x;
+	*pixel = color;
+}
+
+inline void Window::clearScreen(uint32_t color)
+{
+	uint32_t* pixel = reinterpret_cast<uint32_t*>(BitmapMemory);
+	for (int y = 0; y < BitmapBufferWidth; ++y)
+	{
+		for (int x = 0; x < BitmapBufferHeight; ++x)
+		{
+			*pixel++ = color;
+		}
+	}
+
+}
+
+LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	
+	LONG_PTR voidPtr = GetWindowLongPtr(hWnd, GWLP_USERDATA);
+	Window* window = reinterpret_cast<Window*>(voidPtr);
+	static glm::vec2 windowSize;
+
+	switch (message)
+	{
+
+	case WM_CREATE:
+	{
+		CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
+		SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)pCreate->lpCreateParams);
+		break;
+	}
+
+	case WM_SIZE:
+		windowSize = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+		if (wParam == SIZE_MAXIMIZED || wParam == SIZE_RESTORED)
+		{
+			SendMessage(hWnd, WM_EXITSIZEMOVE, wParam, lParam);
+		}
+#ifdef _DEBUG
+		std::cout << GET_X_LPARAM(lParam) << '\t' << GET_Y_LPARAM(lParam) << std::endl;
+		std::cout << GET_X_LPARAM(lParam) / window->GetBufferRatio() << '\t' << GET_Y_LPARAM(lParam) / window->GetBufferRatio() << std::endl;
+#endif
+		break;
+
+	case WM_EXITSIZEMOVE:
+		if (windowSize.x <= 1 || windowSize.y <= 1) // minimize the window
+		{
+			break;
+		}
+		window->SetWindowSize(windowSize.x, windowSize.y);
+
+		window->SetBufferSize(windowSize.x / window->GetBufferRatio(),
+			windowSize.y / window->GetBufferRatio());
+
+		window->SetBitmapMemory(VirtualAlloc(0
+			, static_cast<SIZE_T>(window->GetBufferWidth() * window->GetBufferHeight() * window->bytePerPixel)
+			, MEM_RESERVE | MEM_COMMIT
+			, PAGE_READWRITE));
+		break;
+	case WM_CHAR:
+		switch (wParam)
+		{
+		case VK_ESCAPE:
+			PostQuitMessage(0);
+			return 1;
+		}
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 1;
+		break;
+	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		return 1;
+	}
+
+	// Handle any messages the switch statement didn't
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+
+
 
 

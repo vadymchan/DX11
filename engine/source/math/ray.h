@@ -4,7 +4,7 @@
 #ifndef RAY_H
 #define RAY_H
 
-#include "vec3.h"
+
 
 #include "../../dependencies/glm-0.9.9.9/glm/vec3.hpp"
 #include "../../dependencies/glm-0.9.9.9/glm/gtc/matrix_transform.hpp"
@@ -16,7 +16,7 @@ namespace Engine
 class ray
 {
 public:
-	ray() {}
+
 	ray(const glm::vec3& origin, const glm::vec3& direction)
 		: orig(origin), dir(glm::normalize(direction))
 	{}
