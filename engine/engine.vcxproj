@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -118,7 +118,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_LIB;GLM_FORCE_LEFT_HANDED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLM_FORCE_LEFT_HANDED;_DEBUG;_LIB;GLM_FORCE_LEFT_HANDED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>dependencies;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -135,7 +135,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLM_FORCE_LEFT_HANDED;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
@@ -148,21 +148,47 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="utils\parallel\parallel_executor.h" />
+    <ClInclude Include="source\material\coloredDirectionLight.h" />
+    <ClInclude Include="source\material\coloredMesh.h" />
+    <ClInclude Include="source\material\coloredSpotLight.h" />
+    <ClInclude Include="source\material\coloredPlane.h" />
+    <ClInclude Include="source\material\coloredPointLight.h" />
+    <ClInclude Include="source\material\coloredSphere.h" />
     <ClInclude Include="render\Camera.h" />
     <ClInclude Include="render\Scene.h" />
-    <ClInclude Include="source\math\light.h" />
+    <ClInclude Include="source\material\coloredTriangle.h" />
+    <ClInclude Include="source\material\material.h" />
+    <ClInclude Include="source\math\box.h" />
+    <ClInclude Include="source\math\mesh.h" />
+    <ClInclude Include="source\math\spotLight.h" />
+    <ClInclude Include="source\math\intersection.h" />
+    <ClInclude Include="source\math\directionalLight.h" />
     <ClInclude Include="source\math\plane.h" />
+    <ClInclude Include="source\math\pointLight.h" />
     <ClInclude Include="source\math\ray.h" />
     <ClInclude Include="source\math\sphere.h" />
-    <ClInclude Include="source\math\vec3.h" />
-    <ClInclude Include="utils\FPSTimer.h" />
+    <ClInclude Include="source\math\triangle.h" />
+    <ClInclude Include="utils\BVH\TriangleOctree.h" />
+    <ClInclude Include="utils\Dragger\IObjectMover.h" />
+    <ClInclude Include="utils\Dragger\PlaneMover.h" />
+    <ClInclude Include="utils\Dragger\SphereMover.h" />
+    <ClInclude Include="utils\Dragger\TriangleMover.h" />
+    <ClInclude Include="utils\timer\FPSTimer.h" />
+    <ClInclude Include="utils\Dragger\MeshMover.h" />
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\math\box.cpp" />
+    <ClCompile Include="source\math\ray.cpp" />
+    <ClCompile Include="utils\parallel\parallel_executor.cpp" />
     <ClCompile Include="render\Scene.cpp" />
+    <ClCompile Include="source\math\mesh.cpp" />
     <ClCompile Include="source\math\plane.cpp" />
     <ClCompile Include="source\math\sphere.cpp" />
-    <ClCompile Include="utils\FPSTimer.cpp" />
+    <ClCompile Include="source\math\triangle.cpp" />
+    <ClCompile Include="utils\BVH\TriangleOctree.cpp" />
+    <ClCompile Include="utils\timer\FPSTimer.cpp" />
     <ClCompile Include="windows\Window.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
