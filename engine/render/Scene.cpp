@@ -2,7 +2,6 @@
 
 void Engine::Scene::render(const Window& window, std::shared_ptr <Camera> camera, const glm::vec2& mousePoint)
 {
-	//std::cout << matSpheres.at(0).getCenter().x << '\t' << matSpheres.at(0).getCenter().y << '\t' << matSpheres.at(0).getCenter().z << '\n';
 	uint32_t numThreads = std::max(1u,
 		std::max(Engine::ParallelExecutor::MAX_THREADS > 4u ? Engine::ParallelExecutor::MAX_THREADS - 4u : 1u,
 			Engine::ParallelExecutor::HALF_THREADS));
@@ -15,11 +14,16 @@ void Engine::Scene::render(const Window& window, std::shared_ptr <Camera> camera
 	int bufferPointY = mousePoint.y == -1 ? -1 : mousePoint.y / window.windowBufferRatio;
 
 
+	int windowHeight = window.GetBufferHeight();
+	int windowWidth = window.GetBufferWidth();
+	float verticalOffset{ 1 / (2.0f * windowHeight) };
+	float horizontalOffset{ 1 / (2.0f * windowWidth) };
+	float xNdcCoefficient{ 2.0f / windowWidth }; // x * 2 / windowWidth - 1 - to get NDC coordinates
 	
-	auto func = [this, &window, &camera, &IPV, bufferPointX, bufferPointY](uint32_t threadIndex, uint32_t taskIndex)
+	auto func = [this, &window, windowHeight, windowWidth, verticalOffset, horizontalOffset, xNdcCoefficient, &camera, &IPV, bufferPointX, bufferPointY](uint32_t threadIndex, uint32_t taskIndex)
 	{
 
-		computeColor(window, IPV, bufferPointX, bufferPointY, taskIndex % window.GetBufferWidth(), taskIndex / window.GetBufferWidth(), camera->position());
+		computeColor(window, windowHeight, windowWidth, verticalOffset, horizontalOffset, xNdcCoefficient, IPV, bufferPointX, bufferPointY, taskIndex % window.GetBufferWidth(), taskIndex / window.GetBufferWidth(), camera->position());
 	};
 
 	executor.execute(func, window.GetBufferHeight() * window.GetBufferWidth(), 100);
@@ -27,7 +31,7 @@ void Engine::Scene::render(const Window& window, std::shared_ptr <Camera> camera
 	return;
 }
 
-void Engine::Scene::computeColor(const Window& window, const glm::mat4& IPV, int xCapture, int yCapture, int x, int y, const glm::vec3& cameraPosition)
+void Engine::Scene::computeColor(const Window& window, float windowHeight, float windowWidth, float verticalOffset, float horizontalOffset, float xNdcCoefficient, const glm::mat4& IPV, int xCapture, int yCapture, int x, int y, const glm::vec3& cameraPosition)
 {
 	bool captureObjRay{ xCapture == x && yCapture == y };
 
@@ -35,8 +39,9 @@ void Engine::Scene::computeColor(const Window& window, const glm::mat4& IPV, int
 	// change to NDC
 	// [0;480] -> [-1;1]
 	// ([-1;1] + 1) / 2 * 480 = [0;480]
-	float yNdc = ((window.GetBufferHeight() - y) * 2.0f / window.GetBufferHeight() - 1) - 1 / (2.0f * window.GetBufferHeight());
-	float xNdc = (x * 2.0f / window.GetBufferWidth() - 1) + 1 / (2.0f * window.GetBufferWidth());
+	float yNdc = ((windowHeight - y) * 2.0f / windowHeight - 1) - verticalOffset;
+	float xNdc = (x * xNdcCoefficient - 1) + horizontalOffset;
+
 
 	// screen to ndc
 	glm::vec4 nearPointNDC(xNdc, yNdc, -1.0f, 1.0f);
@@ -55,9 +60,15 @@ void Engine::Scene::computeColor(const Window& window, const glm::mat4& IPV, int
 		lenToNearPlane = glm::length(glm::vec3(nearPointWorld) - cameraPosition);
 	}
 
-
 	glm::vec3 rayColor = castRay(initRay, glm::length(farPointWorld - nearPointWorld), yNdc, captureObjRay);
+	uint32_t pixel = castRayColorToUint(rayColor);
+	window.drawPixel(x, y, pixel);
 
+}
+
+
+uint32_t Engine::Scene::castRayColorToUint(const glm::vec3& rayColor)
+{
 	auto r = rayColor.r * 255;
 	auto g = rayColor.g * 255;
 	auto b = rayColor.b * 255;
@@ -66,12 +77,8 @@ void Engine::Scene::computeColor(const Window& window, const glm::mat4& IPV, int
 	uint32_t green = static_cast<uint32_t>(g) << 8;
 	uint32_t blue = static_cast<uint32_t>(b);
 
-	uint32_t pixel = red + green + blue;
-
-	window.drawPixel(x, y, pixel);
-
+	return red | green | blue;
 }
-
 
 
 glm::vec3 Engine::Scene::castRay(ray& ray, float farPlane, float bgColorCoef, bool captureObjRay)
@@ -142,19 +149,19 @@ void Engine::Scene::getObjectColor(const Intersection& intersection, const ObjRe
 	switch (objRef.type)
 	{
 	case IntersectedType::Sphere:
-		mat = reinterpret_cast<ColoredSphere*>(objRef.object)->material;
+		mat = static_cast<ColoredSphere*>(objRef.object)->material;
 		break;
 	case IntersectedType::Plane:
-		mat = reinterpret_cast<ColoredPlane*>(objRef.object)->material;
+		mat = static_cast<ColoredPlane*>(objRef.object)->material;
 		break;
 	case IntersectedType::Triangle:
-		mat = reinterpret_cast<ColoredTriangle*>(objRef.object)->material;
+		mat = static_cast<ColoredTriangle*>(objRef.object)->material;
 		break;
 	case IntersectedType::Mesh:
-		mat = reinterpret_cast<const ColorMesh*>(objRef.object)->material;
+		mat = static_cast<const ColorMesh*>(objRef.object)->material;
 		break;
 	case IntersectedType::PointLight:
-		color = reinterpret_cast<ColorPointLight*>(objRef.object)->getColor();
+		color = static_cast<ColorPointLight*>(objRef.object)->getColor();
 		return;
 		break;
 	case IntersectedType::Num:
@@ -290,8 +297,8 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	{
 		if (sphere.hit(r, intersection.t))
 		{
-			intersection.normal = glm::normalize(r.at(intersection.t) - sphere.getCenter());
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
+			intersection.normal = glm::normalize(r.getPointAt(intersection.t) - sphere.getCenter());
+			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.type = IntersectedType::Sphere;
 			obj.object = &sphere;
@@ -306,8 +313,8 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 		if (plane.hit(r, intersection.t))
 		{
 
-			intersection.normal = plane.getN();
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
+			intersection.normal = plane.getNormal();
+			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.type = IntersectedType::Plane;
 			obj.object = &plane;
@@ -322,7 +329,7 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 		if (triangle.hit(r, intersection.t))
 		{
 			intersection.normal = triangle.getN();
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
+			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.type = IntersectedType::Triangle;
 			obj.object = &triangle;
@@ -330,7 +337,7 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 		}
 	}
 
-	//mesh hit
+	//mesh hit - as example
 	//for (auto& mesh : matMeshes)
 	//{
 	//	glm::vec3 triangleN{};
@@ -352,7 +359,7 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 
 		if (tOctree.intersect(r, intersection))
 		{
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
+			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.object = tOctree.m_mesh;
 			obj.type = IntersectedType::Mesh;
@@ -360,19 +367,13 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 		}
 	}
 
-
-
-
-
-
-
 	//pointlight hit
 	for (auto& pointLight : pointLights)
 	{
 		if (pointLight.hit(r, intersection.t))
 		{
-			intersection.normal = glm::normalize(r.at(intersection.t) - pointLight.GetPosition());
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
+			intersection.normal = glm::normalize(r.getPointAt(intersection.t) - pointLight.GetPosition());
+			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.type = IntersectedType::PointLight;
 			obj.object = &pointLight;

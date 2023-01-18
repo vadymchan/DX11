@@ -2,7 +2,7 @@
 
 bool Engine::Plane::hit(const ray& r, float& near) 
 {
-	glm::vec3 currentN{ N };
+	glm::vec3 currentN{ normal };
 
 	float denom = glm::dot(r.direction(), currentN);
 
@@ -13,7 +13,7 @@ bool Engine::Plane::hit(const ray& r, float& near)
 
 	if (denom != 0) //if plane and ray is not parallel
 	{
-		float t = glm::dot(D - r.origin(), currentN) / denom;
+		float t = glm::dot(distance - r.origin(), currentN) / denom;
 
 		if (t < near && t > 0) // near <= or < ??
 		{

@@ -14,21 +14,21 @@ class Plane
 {
 public:
 
-	Plane(const glm::vec3& N, const glm::vec3& D)
-		: N(glm::normalize(N)) 
-		, D(D)
+	Plane(const glm::vec3& normal, const glm::vec3& distance)
+		: normal(glm::normalize(normal))
+		, distance(distance)
 	{}
 
-	glm::vec3 getN() const { return N; }
-	glm::vec3 getD() const { return D; }
+	glm::vec3 getNormal() const { return normal; }
+	glm::vec3 getDistance() const { return distance; }
 
-	void setD(const glm::vec3& value) { D = value; }
+	void setDistance(const glm::vec3& value) { distance = value; }
 
 	bool hit(const ray& r, float& near);
 
 private:
-	glm::vec3 N;
-	glm::vec3 D;
+	glm::vec3 normal;
+	glm::vec3 distance;
 };
 
 

@@ -27,7 +27,7 @@ namespace Engine
 		void changeOrigin(glm::vec3 newOrigin) { orig = newOrigin; }
 		void changeDirection(glm::vec3 newDirection) { dir = newDirection; }
 
-		glm::vec3 at(float t) const
+		glm::vec3 getPointAt(float t) const
 		{
 			return orig + t * dir; //A + t * b  
 		}

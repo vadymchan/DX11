@@ -71,7 +71,10 @@ namespace Engine
 
 
 		void render(const Window& window, std::shared_ptr<Camera> camera, const glm::vec2& mousePoint);
-		void computeColor(const Window& window, const glm::mat4& IPV, int xCapture, int yCapture, int x, int y, const glm::vec3& cameraPosition);
+		uint32_t castRayColorToUint(const glm::vec3& rayColor);
+		void computeColor(const Window& window,float windowHeight,float windowWidth,float verticalOffset,
+			float horizontalOffset,float xNdcCoefficient, const glm::mat4& IPV, int xCapture, int yCapture,
+			int x, int y, const glm::vec3& cameraPosition);
 		bool findIntersection(const ray& r, Intersection& intersection, ObjRef& obj);
 		void getObjectColor(const Intersection& intersection, const ObjRef& obj, glm::vec3& color);
 		void setCaptureObj(bool value) { captureObj = value; }

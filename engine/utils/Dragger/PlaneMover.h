@@ -20,7 +20,7 @@ namespace Engine
 		
 		virtual void move(const glm::vec3& offset) override
 		{
-			plane->setD(plane->getD() + offset);
+			plane->setDistance(plane->getDistance() + offset);
 
 		}
 
