@@ -4,30 +4,34 @@
 #include "../../dependencies/glm-0.9.9.9/glm/ext/vector_float3.hpp"
 #include "../../dependencies/glm-0.9.9.9/glm/geometric.hpp"
 #include "ray.h"
+#include "intersection.h"
 
 
-namespace Engine
+namespace engine
 {
+	namespace math
+	{
+		class Plane
+		{
+		public:
+
+			Plane(const glm::vec3& normal, const glm::vec3& distance)
+				: normal(glm::normalize(normal))
+				, distance(distance)
+			{}
+
+			const glm::vec3& getNormal() const { return normal; }
+			const glm::vec3& getDistance() const { return distance; }
+
+			bool hit(const ray& r, Intersection& near);
+
+		private:
+			glm::vec3 normal;
+			glm::vec3 distance;
+		};
+	}
 
 
-class Plane
-{
-public:
-
-	Plane(glm::vec3 N, glm::vec3 D) 
-		: N(glm::normalize(N)) 
-		, D(D)
-	{}
-
-	glm::vec3 getN() const { return N; }
-	glm::vec3 getD() const { return D;}
-
-	bool hit(const ray& r, float& near);
-
-private:
-	glm::vec3 N;
-	glm::vec3 D;
-};
 
 
 }

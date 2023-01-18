@@ -4,17 +4,17 @@
 
 
 
-namespace Engine
+namespace engine
 {
 
-	class ColoredSphere : public Sphere
+	class ColoredSphere : public math::Sphere
 	{
 
 	public:
 
 		Material material;
 
-		ColoredSphere(Material material, Sphere sphere)
+		ColoredSphere(const Material& material, const Sphere& sphere)
 			: material(material)
 			, Sphere(sphere)
 		{}

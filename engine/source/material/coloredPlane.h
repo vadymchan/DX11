@@ -3,19 +3,18 @@
 #include "../math/plane.h"
 #include "material.h"
 
-namespace Engine
+namespace engine
 {
 
-	class ColoredPlane : public Plane
+	class ColoredPlane : public math::Plane
 	{
 
 	public:
 		Material material;
-		ColoredPlane(Material material, Plane plane)
+		ColoredPlane(const Material& material, const Plane& plane)
 		: material (material)
 		, Plane (plane)
 		{
-
 		}
 
 	};

@@ -148,6 +148,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="render\SceneObject.h" />
+    <ClInclude Include="render\ScenePlane.h" />
+    <ClInclude Include="render\SceneSphere.h" />
     <ClInclude Include="source\material\coloredDirectionLight.h" />
     <ClInclude Include="source\material\coloredPlane.h" />
     <ClInclude Include="source\material\coloredSphere.h" />

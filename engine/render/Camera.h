@@ -4,13 +4,11 @@
 
 
 
-namespace Engine
+namespace engine
 {
 	class Camera
 	{
 	public:
-
-
 
 		Camera(glm::vec3 position, glm::vec3 cameraDirection, glm::vec3 up, float nearPlane, float farPlane, float fov, float aspectRatio)
 			: position(position)

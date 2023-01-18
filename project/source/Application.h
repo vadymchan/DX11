@@ -36,13 +36,13 @@ public:
 	float getCameraSpeed() { return cameraSpeed; }
 	bool isMousePressed() { return mousePressed; }
 
-	std::shared_ptr<Engine::Camera> camera;
+	std::shared_ptr<engine::Camera> camera;
 	FPSTimer fpsTimer;
 private:
 
 	MSG msg;
 	Window window;
-	std::shared_ptr<Engine::Scene> scene;
+	std::shared_ptr<engine::scene::Scene> scene;
 
 	glm::vec2 lastMousePosition;
 	glm::vec2 mouseOffsets;

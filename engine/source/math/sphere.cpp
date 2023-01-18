@@ -4,7 +4,7 @@
 
 
 
-bool Engine::Sphere::hit(const ray& r, float& near) 
+bool engine::math::Sphere::hit(const ray& r, Intersection& near)
 {
 	glm::vec3 oc = r.origin() - center;
 	auto a = glm::length(r.direction()) * glm::length(r.direction());
@@ -17,15 +17,19 @@ bool Engine::Sphere::hit(const ray& r, float& near)
 	auto sqrtd = sqrt(discriminant);
 
 	auto t = (-half_b - sqrtd) / a;
-	if (near < t || t < 0)
+	if (near.t < t || t < 0)
 	{
 		t = (-half_b + sqrtd) / a;
-		if (near < t || t < 0)
+		if (near.t < t || t < 0)
 		{
 			return false;
 		}
 	}
-	near = t;
+
+	near.t = t;
+	near.normal = glm::normalize(r.getPointAt(t) - center);
+	near.point = r.getPointAt(t) + near.normal * near.bias;
+	near.dir = r.direction();
 	return true;
 
 }

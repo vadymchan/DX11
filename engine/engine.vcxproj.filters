@@ -54,6 +54,15 @@
     <ClInclude Include="source\material\coloredDirectionLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="render\SceneObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\SceneSphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="render\ScenePlane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="windows\Window.cpp">

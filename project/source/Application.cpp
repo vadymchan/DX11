@@ -31,47 +31,47 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	//planes
 	//----------------------------------------------------------------------------------
-	Engine::Material planeMaterial = Engine::Material({ 0.0, 0.05, 0.0 }, { 0.4, 0.5, 0.4 }, { 0.04, 0.7, 0.04 }, .078125);
-	auto mathPlane = Engine::Plane(worldUp, glm::vec3(0, -2, 0));
-	std::vector<Engine::ColoredPlane> planes
+	engine::Material planeMaterial = engine::Material({ 0.0, 0.05, 0.0 }, { 0.4, 0.5, 0.4 }, { 0.04, 0.7, 0.04 }, .078125);
+	auto mathPlane = engine::math::Plane(worldUp, glm::vec3(0, -2, 0));
+	std::vector<engine::ColoredPlane> planes
 	{
-		Engine::ColoredPlane(planeMaterial, mathPlane)
+		engine::ColoredPlane(planeMaterial, mathPlane)
 	};
 	//----------------------------------------------------------------------------------
 
 
 	//spheres
 	//----------------------------------------------------------------------------------
-	Engine::Material sphereMaterial = Engine::Material({ 0.1745, 0.01175, 0.01175 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
-	auto matSphere = Engine::Sphere(glm::vec3(0, 10, 5), 10);
-	std::vector<Engine::ColoredSphere> spheres
-	{
-		Engine::ColoredSphere(sphereMaterial, matSphere)
-	};
+	engine::Material sphereMaterial = engine::Material({ 0.1745, 0.01175, 0.01175 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
+	auto mathSphere = engine::math::Sphere(glm::vec3(0, 10, 5), 10);
 	//----------------------------------------------------------------------------------
 
 
 	//lights
 	//----------------------------------------------------------------------------------
 	//direction light
-	std::vector<Engine::ColorDirectionLight> directionalLights
-	{
-		Engine::ColorDirectionLight(glm::vec3(1, -1, 0), glm::vec3(0.5, 0.5, 0.5)),
-		Engine::ColorDirectionLight(glm::vec3(-1, -1, 0), glm::vec3(0.5, 0.5, 0.5))
-	};
+	glm::vec3 lightDirection1{ glm::vec3(1, -1, 0), };
+	glm::vec3 lightDirection2{ glm::vec3(-1, -1, 0), };
+	glm::vec3 lightColor1{ glm::vec3(0.5, 0.5, 0.5) };
+	glm::vec3 lightColor2{ glm::vec3(0.5, 0.5, 0.5) };
 	//----------------------------------------------------------------------------------
 
 
 	//scene
 	//----------------------------------------------------------------------------------
-	scene = std::make_shared<Engine::Scene>(Engine::Scene(spheres, planes, directionalLights));
+	scene = std::make_shared<engine::scene::Scene>(engine::scene::Scene());
+	scene->addSphere(mathSphere, sphereMaterial);
+	scene->addPlane(mathPlane, planeMaterial);
+	scene->addDirectionalLight(lightDirection1, lightColor1);
+	scene->addDirectionalLight(lightDirection2, lightColor2);
+
 	//----------------------------------------------------------------------------------
 
 
 	//camera
 	//----------------------------------------------------------------------------------
-	camera = std::make_shared<Engine::Camera>(
-		Engine::Camera(cameraPosition, cameraForward, worldUp, 1.0f, 100.0f, 45, static_cast<float>(ScreenWidth) / ScreenHeight));
+	camera = std::make_shared<engine::Camera>(
+		engine::Camera(cameraPosition, cameraForward, worldUp, 1.0f, 100.0f, 45, static_cast<float>(ScreenWidth) / ScreenHeight));
 	//----------------------------------------------------------------------------------
 
 

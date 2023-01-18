@@ -2,7 +2,7 @@
 
 
 
-void Engine::Scene::render(Window& window, std::shared_ptr <Camera> camera)
+void engine::scene::Scene::render(Window& window, std::shared_ptr<Camera> camera)
 {
 	
 
@@ -11,62 +11,67 @@ void Engine::Scene::render(Window& window, std::shared_ptr <Camera> camera)
 		glm::lookAt(camera->getPosition(), camera->getPosition() - camera->getDirection(), camera->getCameraUp()));
 
 
-	for (int y = window.GetBufferHeight() - 1; y >= 0; --y)
+	glm::vec4 nearPointNDC(0, 0, -1.0f, 1.0f);
+	glm::vec4 farPointNDC(0, 0, 1.0f, 1.0f);
+
+	int windowHeight = window.GetBufferHeight();
+	int windowWidth = window.GetBufferWidth();
+	float verticalOffset{ 1 / (2.0f * windowHeight) };
+	float horizontalOffset{ 1 / (2.0f * windowWidth) };
+	float xNdcCoefficient{ 2.0f / windowWidth }; // x * 2 / windowWidth - 1 - to get NDC coordinates
+
+	for (int y = windowHeight - 1; y >= 0; --y)
 	{
-		for (int x = 0; x < window.GetBufferWidth(); x++)
+		float yNdc = ((windowHeight - y) * 2.0f / windowHeight - 1) - verticalOffset;
+		nearPointNDC.y = farPointNDC.y = yNdc;
+		for (int x = 0; x < windowWidth; x++)
 		{
 			// render image
 
 			// change to NDC
 			// [0;480] -> [-1;1]
-			// ([-1;1] + 1) / 2 * 480 = [0;480]
-			float yNdc = ((window.GetBufferHeight() - y) * 2.0f / window.GetBufferHeight() - 1) - 1 / (2.0f * window.GetBufferHeight());
-			float xNdc = (x * 2.0f / window.GetBufferWidth() - 1) + 1 / (2.0f * window.GetBufferWidth());
-
+			float xNdc = (x * xNdcCoefficient - 1) + horizontalOffset;
 			// screen to ndc
-			glm::vec4 nearPointNDC(xNdc, yNdc, -1.0f, 1.0f);
-			glm::vec4 farPointNDC(xNdc, yNdc, 1.0f, 1.0f);
-
+			nearPointNDC.x = farPointNDC.x = xNdc;
 			//ndc to perspective to view to world
 			glm::vec4 nearPointWorld = IPV * nearPointNDC;
 			glm::vec4 farPointWorld = IPV * farPointNDC;
 			nearPointWorld /= nearPointWorld.w;
 			farPointWorld /= farPointWorld.w;
 
-			ray initRay = ray(nearPointWorld, glm::normalize(farPointWorld - nearPointWorld));
+			math::ray initRay = math::ray(nearPointWorld, glm::normalize(farPointWorld - nearPointWorld));
 			glm::vec3 rayColor = castRay(initRay, glm::length(farPointWorld - nearPointWorld), yNdc);
 
-			auto r = rayColor.r * 255;
-			auto g = rayColor.g * 255;
-			auto b = rayColor.b * 255;
-
-			uint32_t red = static_cast<uint32_t>(r) << 16;
-			uint32_t green = static_cast<uint32_t>(g) << 8;
-			uint32_t blue = static_cast<uint32_t>(b);
-
-			uint32_t pixel = red + green + blue;
+			uint32_t pixel = castRayColorToUint(rayColor);
 
 			window.drawPixel(x, y, pixel);
 		}
 	}
 
-
-	return;
 }
 
 
+uint32_t engine::scene::Scene::castRayColorToUint(const glm::vec3& rayColor)
+{
+	auto r = rayColor.r * 255;
+	auto g = rayColor.g * 255;
+	auto b = rayColor.b * 255;
+
+	uint32_t red = static_cast<uint32_t>(r) << 16;
+	uint32_t green = static_cast<uint32_t>(g) << 8;
+	uint32_t blue = static_cast<uint32_t>(b);
+
+	return red | green | blue;
+}
 
 
-
-glm::vec3 Engine::Scene::castRay(ray& ray, float farPlane, float bgColorCoef)
+const glm::vec3& engine::scene::Scene::castRay(math::ray& ray, float farPlane, float bgColorCoef)
 {
 	glm::vec3 finalColor = glm::vec3(0);
-	Intersection intersection;
-	ObjRef obj;
-
-	if (findIntersection(ray, farPlane, intersection, obj))
+	objIntersection->reset();
+	if (findIntersection(ray, farPlane, objIntersection, intersectedObj))
 	{
-		getObjectColor(intersection, obj, finalColor);
+		getObjectColor(objIntersection, intersectedObj, finalColor);
 	}
 	else
 	{
@@ -78,56 +83,37 @@ glm::vec3 Engine::Scene::castRay(ray& ray, float farPlane, float bgColorCoef)
 }
 
 
-void Engine::Scene::getObjectColor(const Intersection& intersection, const ObjRef& obj, glm::vec3& color)
+void engine::scene::Scene::getObjectColor(const std::shared_ptr<math::Intersection>& intersection, const std::shared_ptr<SceneObject>& obj, glm::vec3& color)
 {
-	Intersection shadowIntersection{ intersection };
-	ObjRef shadowObjRef{ obj };
-	Material mat;
+	std::shared_ptr<math::Intersection> shadowIntersection = std::make_shared<math::Intersection>(math::Intersection());
+	shadowIntersection->t = intersection->t;
+	shadowIntersection->dir = intersection->dir;
+	std::shared_ptr<SceneObject> shadowObj ;
+	Material mat = obj->getMaterial();
 	const float shineCoef{ 128 };
 
-	switch (obj.type)
-	{
-	case IntersectedType::Sphere:
-		mat = reinterpret_cast<ColoredSphere*>(obj.object)->material;
+	
 
-		break;
-	case IntersectedType::Plane:
-		mat = reinterpret_cast<ColoredPlane*>(obj.object)->material;
-
-		break;
-	case IntersectedType::Num:
-
-		return;
-		break;
-
-	}
 	//lighting
 
 	//direction light
 
-		int c{};
 	for (const auto& directionLight : directionLights)
 	{
-		ray lDir{ Engine::ray(intersection.point, -directionLight.getDirection()) };
-		if (findIntersection(lDir, FLT_MAX, shadowIntersection, shadowObjRef))
+		math::ray lDir{ math::ray(intersection->point, -directionLight->getDirection()) };
+		if (findIntersection(lDir, FLT_MAX, shadowIntersection, shadowObj))
 		{
-			
-			color += mat.ambient * directionLight.getColor()  ;
-			c++;
-			if (c == 2)
-			{
-				c = 0;
-			}
+			color += mat.ambient * directionLight->getColor()  ;
 		}
 		else
 		{
-			glm::vec3 vDir{ intersection.dir };
+			glm::vec3 vDir{ intersection->dir };
 			glm::vec3 halfVec{ glm::normalize(lDir.direction() - vDir)};
-			float diffCoef{ max(glm::dot(intersection.normal, lDir.direction()), 0.0001f) };
+			float diffCoef{ max(glm::dot(intersection->normal, lDir.direction()), 0.0001f) };
 			glm::vec3 diffuse = diffCoef * mat.diffuse ;
-			float specCoef{ max(glm::dot(halfVec, intersection.normal), 0.0001f) };
+			float specCoef{ max(glm::dot(halfVec, intersection->normal), 0.0001f) };
 			glm::vec3 specular = mat.specular * std::pow(specCoef, mat.shininess * shineCoef);
-			color += mat.ambient * directionLight.getColor() + diffuse * directionLight.getColor() + specular * directionLight.getColor();
+			color += mat.ambient * directionLight->getColor() + diffuse * directionLight->getColor() + specular * directionLight->getColor();
 
 
 		}
@@ -136,44 +122,35 @@ void Engine::Scene::getObjectColor(const Intersection& intersection, const ObjRe
 }
 
 
-bool Engine::Scene::findIntersection(const ray& r, float closest_t, Intersection& intersection, ObjRef& obj)
+bool engine::scene::Scene::findIntersection(const math::ray& r, float closest_t,const std::shared_ptr<math::Intersection>& intersection, std::shared_ptr<SceneObject>& obj)
 {
 	bool hitObject{ false };
-	float bias{ 1e-4f };
 
-
-	//sphere hit
-	for (auto& sphere : matSpheres)
+	for (auto& object : objects)
 	{
-		if (sphere.hit(r, closest_t))
+		if(object->hit(r, intersection))
 		{
-
-			intersection.t = closest_t;
-			intersection.normal = glm::normalize(r.at(closest_t) - sphere.getCenter());
-			intersection.point = r.at(closest_t) + intersection.normal * bias;
-			intersection.dir = r.direction();
-			obj.type = IntersectedType::Sphere;
-			obj.object = &sphere;
-			hitObject = true;
-		}
-
-	}
-
-	//plane hit
-	for (auto& plane : matPlanes)
-	{
-		if (plane.hit(r, closest_t))
-		{
-
-			intersection.t = closest_t;
-			intersection.normal = plane.getN();
-			intersection.point = r.at(closest_t) + intersection.normal * bias;
-			intersection.dir = r.direction();
-			obj.type = IntersectedType::Plane;
-			obj.object = &plane;
+			obj = object;
 			hitObject = true;
 		}
 	}
+
+
 	return hitObject;
 }
 
+
+void engine::scene::Scene::addSphere(const math::Sphere& sphere, const Material& material)
+{
+	objects.push_back(std::make_shared<SceneSphere>(SceneSphere(sphere, material)));
+}
+
+void engine::scene::Scene::addPlane(const math::Plane& plane, const Material& material)
+{
+	objects.push_back(std::make_shared<ScenePlane>(ScenePlane(plane, material)));
+}
+
+void engine::scene::Scene::addDirectionalLight(const glm::vec3& lightDirection, const glm::vec3& lightColor)
+{
+	directionLights.push_back(std::make_shared<ColorDirectionLight>(ColorDirectionLight(lightDirection, lightColor)));
+}

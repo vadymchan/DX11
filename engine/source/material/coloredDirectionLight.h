@@ -2,17 +2,18 @@
 #include "../math/directionalLight.h"
 #include "material.h"
 
-namespace Engine
+namespace engine
 {
-	class ColorDirectionLight : public DirectionalLight
+	class ColorDirectionLight : public math::DirectionalLight
 	{
 	public:
-		ColorDirectionLight(glm::vec3 direction ,glm::vec3 lightColor) 
+		ColorDirectionLight(const glm::vec3& direction , const glm::vec3& lightColor)
 			: DirectionalLight(direction)
 			, lightColor(lightColor)
-		{};
+		{
+		};
 
-		glm::vec3 getColor() const
+		const glm::vec3& getColor() const
 		{
 			return lightColor;
 		}
