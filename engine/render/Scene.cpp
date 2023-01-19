@@ -103,7 +103,8 @@ void engine::scene::Scene::getObjectColor(const std::shared_ptr<math::Intersecti
 		math::ray lDir{ math::ray(intersection->point, -directionLight->getDirection()) };
 		if (findIntersection(lDir, FLT_MAX, shadowIntersection, shadowObj))
 		{
-			color += mat.ambient * directionLight->getColor()  ;
+			color += mat.ambient * directionLight->getColor();
+			shadowIntersection->t = intersection->t;
 		}
 		else
 		{
