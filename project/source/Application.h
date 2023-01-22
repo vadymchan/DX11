@@ -2,10 +2,10 @@
 
 
 
-#include <utils/timer/FPSTimer.h>
-#include <windows/Window.h>
-#include <render/Scene.h>
-#include <render/Camera.h>
+#include <Ray Casting/utils/timer/FPSTimerRC.h>
+#include <Ray Casting/windows/WindowRC.h>
+#include <Ray Casting/render/SceneRC.h>
+#include <Ray Casting/render/CameraRC.h>
 #include <string>
 #include <thread>
 #include <iostream>
@@ -43,13 +43,13 @@ public:
 	void OnShiftReleased();
 	void Close();
 
-	FPSTimer fpsTimer;
+	RC::engine::FPSTimer fpsTimer;
 private:
 
 	MSG msg;
-	Window window;
-	std::shared_ptr<Engine::Camera> camera;
-	std::shared_ptr<Engine::Scene> scene;
+	RC::engine::Window window;
+	std::shared_ptr<RC::engine::Camera> camera;
+	std::shared_ptr<RC::engine::Scene> scene;
 
 	glm::vec2 lastMousePosition{};
 	glm::vec2 initMousePosition{};

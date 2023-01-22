@@ -40,65 +40,65 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	//planes
 	//----------------------------------------------------------------------------------
-	Engine::Material planeMaterial = Engine::Material({ 0.135, 0.2225, 0.1575 }, { 0.54, 0.89, 0.63 }, { 0.316228, 0.316228,0.316228 }, 0.1);
-	auto mathPlane = Engine::Plane(worldUp, glm::vec3(0, -5, 0));
-	std::vector<Engine::ColoredPlane> planes
+	RC::engine::Material planeMaterial = RC::engine::Material({ 0.135, 0.2225, 0.1575 }, { 0.54, 0.89, 0.63 }, { 0.316228, 0.316228,0.316228 }, 0.1);
+	auto mathPlane = RC::engine::Plane(worldUp, glm::vec3(0, -5, 0));
+	std::vector<RC::engine::ColoredPlane> planes
 	{
-		Engine::ColoredPlane(planeMaterial, mathPlane)
+		RC::engine::ColoredPlane(planeMaterial, mathPlane)
 	};
 	//----------------------------------------------------------------------------------
 
 
 	//spheres
 	//----------------------------------------------------------------------------------
-	Engine::Material sphereMaterial = Engine::Material({ 0.1745, 0.01175, 0.01175 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
-	auto mathSphere = Engine::Sphere(glm::vec3(10, 0, 5), 2); // front
+	RC::engine::Material sphereMaterial = RC::engine::Material({ 0.1745, 0.01175, 0.01175 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
+	auto mathSphere = RC::engine::Sphere(glm::vec3(10, 0, 5), 2); // front
 
-	std::vector<Engine::ColoredSphere> spheres
+	std::vector<RC::engine::ColoredSphere> spheres
 	{
-		Engine::ColoredSphere(sphereMaterial, mathSphere),
+		RC::engine::ColoredSphere(sphereMaterial, mathSphere),
 	};
 	//----------------------------------------------------------------------------------
 
 
 	//triangles
 	//----------------------------------------------------------------------------------
-	Engine::Material triangleMaterial = Engine::Material({ 0,0,0 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
-	auto mathTriangle = Engine::Triangle(glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.0f, 1.0f, 0.0f));
-	std::vector<Engine::ColoredTriangle> triangles
+	RC::engine::Material triangleMaterial = RC::engine::Material({ 0,0,0 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
+	auto mathTriangle = RC::engine::Triangle(glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.0f, 1.0f, 0.0f));
+	std::vector<RC::engine::ColoredTriangle> triangles
 	{
 		// example
-		//Engine::ColoredTriangle(mathTriangle, triangleMaterial),
+		//RC::engine::ColoredTriangle(mathTriangle, triangleMaterial),
 	};
 	//----------------------------------------------------------------------------------
 
 	//meshes
 	//----------------------------------------------------------------------------------
-	Engine::Material meshMaterial = Engine::Material({ 0.1745, 0.01175, 0.01175 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
-	std::vector<Engine::Triangle> cubeTriangles
+	RC::engine::Material meshMaterial = RC::engine::Material({ 0.1745, 0.01175, 0.01175 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
+	std::vector<RC::engine::Triangle> cubeTriangles
 	{
 		//back
-		Engine::Triangle(glm::vec3(-1.f,-1.f,-1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(0.0f, 0.0f, -1.0f)),
-		Engine::Triangle(glm::vec3(1.f, 1.f, -1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(0.0f, 0.0f, -1.0f)),
+		RC::engine::Triangle(glm::vec3(-1.f,-1.f,-1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(0.0f, 0.0f, -1.0f)),
+		RC::engine::Triangle(glm::vec3(1.f, 1.f, -1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(0.0f, 0.0f, -1.0f)),
 		//front
-		Engine::Triangle(glm::vec3(-1.f, -1.f, 1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.0f, 0.0f, 1.0f)),
-		Engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(0.0f, 0.0f, 1.0f)),
+		RC::engine::Triangle(glm::vec3(-1.f, -1.f, 1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.0f, 0.0f, 1.0f)),
+		RC::engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(0.0f, 0.0f, 1.0f)),
 		//right
-		Engine::Triangle(glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(-1.0f, 0.0f, 0.0f)),
-		Engine::Triangle(glm::vec3(-1.f, -1.f, -1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.0f, 0.0f, 0.0f)),
+		RC::engine::Triangle(glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(-1.0f, 0.0f, 0.0f)),
+		RC::engine::Triangle(glm::vec3(-1.f, -1.f, -1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.0f, 0.0f, 0.0f)),
 		//left
-		Engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.0f, 0.0f, 0.0f)),
-		Engine::Triangle(glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.0f, 0.0f, 0.0f)),
+		RC::engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.0f, 0.0f, 0.0f)),
+		RC::engine::Triangle(glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.0f, 0.0f, 0.0f)),
 		//bottom
-		Engine::Triangle(glm::vec3(-1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(0.0f, -1.0f, 0.0f)),
-		Engine::Triangle(glm::vec3(1.f, -1.f, 1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(0.0f, -1.0f, 0.0f)),
+		RC::engine::Triangle(glm::vec3(-1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(0.0f, -1.0f, 0.0f)),
+		RC::engine::Triangle(glm::vec3(1.f, -1.f, 1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(0.0f, -1.0f, 0.0f)),
 		//up
-		Engine::Triangle(glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f) , glm::vec3(1.f, 1.f, -1.f), glm::vec3(0.0f, 1.0f, 0.0f)),
-		Engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(0.0f, 1.0f, 0.0f)),
+		RC::engine::Triangle(glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f) , glm::vec3(1.f, 1.f, -1.f), glm::vec3(0.0f, 1.0f, 0.0f)),
+		RC::engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(0.0f, 1.0f, 0.0f)),
 
 	};
 
-	std::shared_ptr<std::vector<Engine::Triangle>> ptrCubeTriangles = std::make_shared<std::vector<Engine::Triangle>>(cubeTriangles);
+	std::shared_ptr<std::vector<RC::engine::Triangle>> ptrCubeTriangles = std::make_shared<std::vector<RC::engine::Triangle>>(cubeTriangles);
 
 	glm::mat4 tMatCube1
 	{
@@ -118,14 +118,14 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	};
 
 	//mesh box
-	std::shared_ptr<Engine::Box> box = std::make_shared<Engine::Box>(Engine::Box()); // needs to make an shared_ptr
+	std::shared_ptr<RC::engine::Box> box = std::make_shared<RC::engine::Box>(RC::engine::Box()); // needs to make an shared_ptr
 	box->min = glm::vec3(-1, -1, -1);
 	box->max = glm::vec3(1, 1, 1);
 
-	std::vector<Engine::ColorMesh> meshes
+	std::vector<RC::engine::ColorMesh> meshes
 	{
-		Engine::ColorMesh(ptrCubeTriangles, tMatCube1, box, meshMaterial),
-		Engine::ColorMesh(ptrCubeTriangles, tMatCube2, box, meshMaterial),
+		RC::engine::ColorMesh(ptrCubeTriangles, tMatCube1, box, meshMaterial),
+		RC::engine::ColorMesh(ptrCubeTriangles, tMatCube2, box, meshMaterial),
 	};
 	//----------------------------------------------------------------------------------
 
@@ -136,21 +136,21 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//lights
 	//----------------------------------------------------------------------------------
 	//direction light
-	std::vector<Engine::ColorDirectionLight> directionalLights
+	std::vector<RC::engine::ColorDirectionLight> directionalLights
 	{
-		Engine::ColorDirectionLight(glm::vec3(-1, -1, -1), glm::vec3(0.1f, 0.1f, 0.1f)),
+		RC::engine::ColorDirectionLight(glm::vec3(-1, -1, -1), glm::vec3(0.1f, 0.1f, 0.1f)),
 
 	};
 	//pointLight
-	std::vector<Engine::ColorPointLight> pointLights
+	std::vector<RC::engine::ColorPointLight> pointLights
 	{
-		Engine::ColorPointLight(Engine::Sphere(glm::vec3(-20, 10, 10), 2), glm::vec3(0.5, 0.5 , 0)),
+		RC::engine::ColorPointLight(RC::engine::Sphere(glm::vec3(-20, 10, 10), 2), glm::vec3(0.5, 0.5 , 0)),
 
 	};
 	//flashLight
-	std::vector<Engine::ColorSpotLight> spotLight
+	std::vector<RC::engine::ColorSpotLight> spotLight
 	{
-		Engine::ColorSpotLight(glm::vec3(20,10,5), glm::vec3(0,-1,0), 40.0f, glm::vec3(0,0,0.5)),
+		RC::engine::ColorSpotLight(glm::vec3(20,10,5), glm::vec3(0,-1,0), 40.0f, glm::vec3(0,0,0.5)),
 
 	};
 	//----------------------------------------------------------------------------------
@@ -158,13 +158,13 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	//scene
 	//----------------------------------------------------------------------------------
-	scene = std::make_shared<Engine::Scene>(Engine::Scene(spheres, planes, triangles, meshes, directionalLights, pointLights, spotLight));
+	scene = std::make_shared<RC::engine::Scene>(RC::engine::Scene(spheres, planes, triangles, meshes, directionalLights, pointLights, spotLight));
 	//----------------------------------------------------------------------------------
 
 
 	//camera
 	//----------------------------------------------------------------------------------
-	camera = std::make_shared<Engine::Camera>(Engine::Camera());
+	camera = std::make_shared<RC::engine::Camera>(RC::engine::Camera());
 	glm::vec3 cameraRight{ glm::cross(worldUp, cameraForward) };
 	glm::vec3 cameraUp{ glm::cross(cameraForward, cameraRight) };
 	camera->setView(cameraPosition, glm::normalize(cameraForward), glm::normalize(cameraUp));
@@ -396,7 +396,7 @@ void Application::MoveCamera(float deltaTime)
 
 void Application::RotateCamera(float deltaTime)
 {
-		camera->setWorldAngles(Engine::Angles(cameraAngles.x * deltaTime, cameraAngles.y * deltaTime, cameraAngles.z * deltaTime));
+		camera->setWorldAngles(RC::engine::Angles(cameraAngles.x * deltaTime, cameraAngles.y * deltaTime, cameraAngles.z * deltaTime));
 }
 
 void Application::RollRotate(float roll)
