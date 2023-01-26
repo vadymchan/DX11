@@ -5,7 +5,7 @@
 
 
 #include "rayRC.h"
-#include "../../dependencies/glm-0.9.9.9/glm/vec3.hpp"
+#include "../../dependencies/glm/glm/vec3.hpp"
 
 namespace RC::engine
 {

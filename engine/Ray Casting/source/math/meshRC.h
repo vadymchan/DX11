@@ -1,5 +1,5 @@
 #pragma once
-#include "../../dependencies/glm-0.9.9.9/glm/glm.hpp"
+#include "../../dependencies/glm/glm/glm.hpp"
 #include <vector>
 #include <memory>
 #include "triangleRC.h"

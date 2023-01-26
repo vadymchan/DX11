@@ -6,8 +6,8 @@
 
 
 
-#include "../../dependencies/glm-0.9.9.9/glm/vec3.hpp"
-#include "../../dependencies/glm-0.9.9.9/glm/gtc/matrix_transform.hpp"
+#include "../../dependencies/glm/glm/vec3.hpp"
+#include "../../dependencies/glm/glm/gtc/matrix_transform.hpp"
 
 namespace RC::engine
 {

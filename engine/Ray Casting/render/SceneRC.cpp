@@ -1,6 +1,6 @@
 #include "SceneRC.h"
 
-void RC::engine::Scene::render(const Window& window, std::shared_ptr <Camera> camera, const glm::vec2& mousePoint)
+void RC::engine::Scene::render(const Window& window, std::shared_ptr <general::engine::Camera> camera, const glm::vec2& mousePoint)
 {
 	uint32_t numThreads = std::max(1u,
 		std::max(RC::engine::ParallelExecutor::MAX_THREADS > 4u ? RC::engine::ParallelExecutor::MAX_THREADS - 4u : 1u,

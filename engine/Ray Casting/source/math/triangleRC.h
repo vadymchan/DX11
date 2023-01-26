@@ -1,6 +1,6 @@
 #pragma once
-#include "../../dependencies/glm-0.9.9.9/glm/ext/vector_float3.hpp"
-#include "../../dependencies/glm-0.9.9.9/glm/geometric.hpp"
+#include "../../dependencies/glm/glm/ext/vector_float3.hpp"
+#include "../../dependencies/glm/glm/geometric.hpp"
 #include "rayRC.h"
 #include <array>
 #include <vector>

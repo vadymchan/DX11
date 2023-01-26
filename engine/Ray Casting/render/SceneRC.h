@@ -1,4 +1,7 @@
 #pragma once
+
+
+
 #include "../source/math/directionalLightRC.h"
 #include "../source/material/coloredSphereRC.h"
 #include "../source/material/coloredDirectionLightRC.h"
@@ -14,15 +17,12 @@
 #include "../utils/Dragger/PlaneMoverRC.h"
 #include "../utils/Dragger/TriangleMoverRC.h"
 #include "../utils/parallel/parallel_executorRC.h"
-#include "CameraRC.h"
 #include <limits>
 #include <algorithm>
 #include <vector>
 #include "../utils/BVH/TriangleOctreeRC.h"
-#define NOMINMAX
-#include "../windows/WindowRC.h"
-
-
+#include "../window/WindowRC.h"
+#include "../../general/Camera.h"
 
 
 namespace RC::engine
@@ -72,7 +72,7 @@ namespace RC::engine
 		}
 
 
-		void render(const Window& window, std::shared_ptr<Camera> camera, const glm::vec2& mousePoint);
+		void render(const Window& window, std::shared_ptr<general::engine::Camera> camera, const glm::vec2& mousePoint);
 		uint32_t castRayColorToUint(const glm::vec3& rayColor);
 		void computeColor(const Window& window, float windowHeight, float windowWidth, float verticalOffset,
 			float horizontalOffset, float xNdcCoefficient, const glm::mat4& IPV, int xCapture, int yCapture,

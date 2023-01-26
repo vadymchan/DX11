@@ -1,6 +1,11 @@
 #pragma once
-#include <windows.h>
-#include <windowsx.h>
+
+#include "../../general/include/win.h"
+
+
+
+//#include <windows.h>
+//#include <windowsx.h>
 
 #include <cstdio>
 #include <sstream>
@@ -17,7 +22,7 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 	public:
 		void initConsole();
 
-		void initWindow(const LPCWSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
+		void initWindow(const LPCWSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 
 		void initColorBuffer();
 

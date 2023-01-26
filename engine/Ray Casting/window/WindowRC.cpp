@@ -1,6 +1,6 @@
 #include "WindowRC.h"
 #include <iostream>
-#include "../dependencies/glm-0.9.9.9/glm/ext/vector_float2.hpp"
+#include "../dependencies/glm/glm/ext/vector_float2.hpp"
 
 namespace RC::engine
 {
@@ -11,11 +11,14 @@ namespace RC::engine
 	{
 		AllocConsole();
 		FILE* dummy;
-		auto s = freopen_s(&dummy, "CONOUT$", "w", stdout); // stdout will print to the newly created console
+
+		freopen_s(&dummy, "CONIN$", "r", stdin);
+		freopen_s(&dummy, "CONOUT$", "w", stdout);
+		freopen_s(&dummy, "CONOUT$", "w", stderr);
 
 	}
 
-	void Window::initWindow(const LPCWSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
+	void Window::initWindow(const LPCWSTR& title, int xStart, int yStart,  int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 	{
 
 
@@ -27,7 +30,6 @@ namespace RC::engine
 		wc.lpfnWndProc = WindowProc;
 		wc.hInstance = appHandle;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-		//wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
 		wc.hIconSm = LoadIcon(NULL, IDI_SHIELD);
 		wc.lpszClassName = L"Window";
 
@@ -119,9 +121,9 @@ namespace RC::engine
 
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
-
 		LONG_PTR voidPtr = GetWindowLongPtr(hWnd, GWLP_USERDATA);
 		Window* window = reinterpret_cast<Window*>(voidPtr);
+		
 		static glm::vec2 windowSize;
 
 		switch (message)
@@ -144,6 +146,7 @@ namespace RC::engine
 			break;
 
 		case WM_EXITSIZEMOVE:
+			
 			if (windowSize.x <= 1 || windowSize.y <= 1) // minimize the window
 			{
 				break;

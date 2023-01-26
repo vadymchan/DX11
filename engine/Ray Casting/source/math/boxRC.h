@@ -1,7 +1,8 @@
 #pragma once
-#include "../../dependencies/glm-0.9.9.9/glm/ext/vector_float3.hpp"
-#include "../../dependencies/glm-0.9.9.9/glm/common.hpp"
 #include "rayRC.h"
+#include "../../dependencies/glm/glm/ext/vector_float3.hpp"
+#include "../../dependencies/glm/glm/common.hpp"
+#include <limits>
 
 #pragma once
 
