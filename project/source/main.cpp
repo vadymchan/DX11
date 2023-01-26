@@ -1,16 +1,24 @@
-#include "Ray Casting/windows/WindowRC.h"
-#include "Application.h"
+#include "DirectX 11/window/WindowDX.h"
+#include "Ray Casting/window/WindowRC.h"
+#include "ApplicationRC.h"
+#include "ApplicationDX.h"
+
+#include "general/include/win_def.h"
 
 #include <d3d11.h>
+#include <d3d10.h>
 #include <d3dx11.h>
-//#include <d3d10.h>
+#include <directxmath.h>
 
 #define SCREEN_WIDTH  800
 #define SCREEN_HEIGHT 600
 
 #pragma comment (lib, "d3d11.lib")
+#pragma comment (lib, "d3d10.lib")
 #pragma comment (lib, "d3dx11.lib")
-//#pragma comment (lib, "d3d10.lib")
+
+
+#include "general/include/win_undef.h"
 
 struct Vertex
 {
@@ -26,69 +34,69 @@ ID3D11RenderTargetView* backBuffer;
 ID3D11VertexShader* pVS;
 ID3D11PixelShader* pPS;
 
+//resources
 ID3D11Buffer* pVBuffer;
-
 ID3D11InputLayout* pLayout;
 
 void InitD3D(const HWND& hWnd);
 void CleanD3D();
 
 
-Vertex vertices[] =
-{
-	{0.0f, 0.5f, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f}},
-	{0.45f, -0.5, 0.0f, {0.0f, 1.0f, 0.0f, 1.0f}},
-	{-0.45f, -0.5f, 0.0f, {0.0f, 0.0f, 1.0f, 1.0f}}
-};
 
 void renderFrame()
 {
-	float color[4] = { 0.0f, 0.6f, 0.4f, 1.f };
-	devcon->ClearRenderTargetView(backBuffer, color);
+	FLOAT color[4] = { 0.0f, 0.6f, 0.4f, 1.f };
+	devcon->ClearRenderTargetView(backBuffer, color); 
 
 	UINT stride = sizeof(Vertex);
 	UINT offset = 0;
 
 	devcon->IASetVertexBuffers(0, 1, &pVBuffer, &stride, &offset);
 	devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	devcon->Draw(3, 0);
+	devcon->Draw(3, 0); 
 
-	swapchain->Present(0,0);
+	swapchain->Present(0,0); 
 }
 
 int WINAPI WinMain(_In_ HINSTANCE appHandle, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR cmdLine, _In_ int windowShowParams)
 {
-	/*RC::engine::Window window;
-	window.initWindow(L"DX Triangle", 200, 200, SCREEN_WIDTH, SCREEN_HEIGHT, appHandle, windowShowParams);
+	//RC::engine::Window window;
+	//window.initWindow(L"DX Triangle", 200, 200, SCREEN_WIDTH, SCREEN_HEIGHT, appHandle, windowShowParams);
 
-	InitD3D(window.GetHWND());
+	//InitD3D(window.GetHWND());
 
-	MSG msg;
+	//MSG msg;
 
-	while (true)
-	{
+	//while (true)
+	//{
 
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
+	//	if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	//	{
 
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+	//		TranslateMessage(&msg);
+	//		DispatchMessage(&msg);
 
-			if (msg.message == WM_QUIT)
-			{
-				break;
-			}
+	//		if (msg.message == WM_QUIT)
+	//		{
+	//			break;
+	//		}
 
-		}
-		renderFrame();
+	//	}
+	//	renderFrame();
 
-	}
+	//}
+	//CleanD3D();
 
-	CleanD3D();*/
-
-	Application application;
+	ApplicationDX application;
+	//ApplicationRC application;
 	application.Init(appHandle, windowShowParams);
 	application.Run();
+
+	//DX::engine::g_device->Release();
+
+	HRESULT hr = DX::engine::g_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	
+
 
 	return EXIT_SUCCESS;
 }
@@ -125,10 +133,10 @@ void InitD3D(const HWND& hWnd)
 		NULL,
 		&devcon);
 
-	//render target
+	//render target (window)
 
 	ID3D11Texture2D* pBackBuffer;
-	swapchain->GetBuffer(0, _uuidof(ID3D11Texture2D), (LPVOID*) &pBackBuffer); // get address of back buffer
+	swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*) &pBackBuffer); // get address of back buffer
 
 	dev->CreateRenderTargetView(pBackBuffer, NULL, &backBuffer);
 	pBackBuffer->Release();
@@ -136,7 +144,7 @@ void InitD3D(const HWND& hWnd)
 	devcon->OMSetRenderTargets(1, &backBuffer, NULL);
 
 
-	//viewport
+	//viewport (window)
 
 	D3D11_VIEWPORT viewport;
 	ZeroMemory(&viewport, sizeof(viewport));
@@ -199,7 +207,7 @@ void InitD3D(const HWND& hWnd)
 //	}
 
 
-
+	// pipeline (shaders and input layout)
 	ID3D10Blob* VS, * PS;
 
 
@@ -212,7 +220,28 @@ void InitD3D(const HWND& hWnd)
 	devcon->VSSetShader(pVS, 0, 0);
 	devcon->PSSetShader(pPS, 0, 0);
 	
-	//buffer
+	//input layout
+
+	D3D11_INPUT_ELEMENT_DESC ied[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	dev->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
+	devcon->IASetInputLayout(pLayout);
+
+	//--------------------------------------
+
+	//buffer (engine / scene / application)  - resources (shape to render)
+
+
+	Vertex vertices[] =
+	{
+		{0.0f, 0.5f, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f}},
+		{0.45f, -0.5, 0.0f, {0.0f, 1.0f, 0.0f, 1.0f}},
+		{-0.45f, -0.5f, 0.0f, {0.0f, 0.0f, 1.0f, 1.0f}}
+	};
 
 	D3D11_BUFFER_DESC vdesc;
 	ZeroMemory(&vdesc, sizeof(vdesc));
@@ -230,16 +259,7 @@ void InitD3D(const HWND& hWnd)
 	memcpy(maps.pData, vertices, sizeof(vertices));
 	devcon->Unmap(pVBuffer, NULL);
 
-	//input layout
-
-	D3D11_INPUT_ELEMENT_DESC ied[] =
-	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
-	};
-
-	dev->CreateInputLayout(ied, 2, VS->GetBufferPointer(), VS->GetBufferSize(), &pLayout);
-	devcon->IASetInputLayout(pLayout);
+	
 
 
 	

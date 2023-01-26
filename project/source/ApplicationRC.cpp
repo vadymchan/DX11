@@ -1,11 +1,11 @@
-#include "Application.h"
+#include "ApplicationRC.h"
 
 
 
 
 
 
-void Application::WindowSetup(const LPCWSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
+void ApplicationRC::WindowSetup(const LPCWSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 {
 
 #ifdef _DEBUG
@@ -16,7 +16,7 @@ void Application::WindowSetup(const LPCWSTR& title, int yStart, int xStart, int 
 
 }
 
-void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
+void ApplicationRC::Init(const HINSTANCE& appHandle, int windowShowParams)
 {
 
 
@@ -34,8 +34,8 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	glm::vec3 cameraPosition{ glm::vec3(0,0, 10) };
 	glm::vec3 cameraForward{ glm::vec3(0, 0.f, -1.0f) };
 	glm::vec3 worldUp{ glm::vec3(0, 1, 0) };
-	nearPlaneHeight = cameraNearZ * glm::tan(glm::radians(cameraFov / 2)) * 2 ;
-	nearPlaneWidth = nearPlaneHeight * cameraAspectRatio ;
+	nearPlaneHeight = cameraNearZ * glm::tan(glm::radians(cameraFov / 2)) * 2;
+	nearPlaneWidth = nearPlaneHeight * cameraAspectRatio;
 
 
 	//planes
@@ -130,9 +130,6 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//----------------------------------------------------------------------------------
 
 
-
-
-
 	//lights
 	//----------------------------------------------------------------------------------
 	//direction light
@@ -164,7 +161,7 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	//camera
 	//----------------------------------------------------------------------------------
-	camera = std::make_shared<RC::engine::Camera>(RC::engine::Camera());
+	camera = std::make_shared<general::engine::Camera>(general::engine::Camera());
 	glm::vec3 cameraRight{ glm::cross(worldUp, cameraForward) };
 	glm::vec3 cameraUp{ glm::cross(cameraForward, cameraRight) };
 	camera->setView(cameraPosition, glm::normalize(cameraForward), glm::normalize(cameraUp));
@@ -181,7 +178,7 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 }
 
-void Application::Run()
+void ApplicationRC::Run()
 {
 
 	while (true)
@@ -202,13 +199,13 @@ void Application::Run()
 	}
 }
 
-bool Application::ProcessInputs()
+bool ApplicationRC::ProcessInputs()
 {
 	float xPos{ lastMousePosition.x };
 	float yPos{ lastMousePosition.y };
 	while (PeekMessageW(&msg, NULL, 0, 0, PM_REMOVE))
 	{
-		
+
 		switch (msg.message)
 		{
 		case WM_MOUSEMOVE:
@@ -345,26 +342,26 @@ bool Application::ProcessInputs()
 
 
 
-void Application::OnMove(const glm::vec3& dir)
+void ApplicationRC::OnMove(const glm::vec3& dir)
 {
 	cameraMove = true;
 	cameraDir = dir;
 }
 
-void Application::EndMove()
+void ApplicationRC::EndMove()
 {
 	cameraMove = false;
 	cameraDir = glm::vec3(0);
 }
 
-void Application::DragObject(float x, float y, float deltaTime)
+void ApplicationRC::DragObject(float x, float y, float deltaTime)
 {
-	float xOffset{ (x - lastMousePosition.x)  };
-	float yOffset{ (y - lastMousePosition.y)  };
+	float xOffset{ (x - lastMousePosition.x) };
+	float yOffset{ (y - lastMousePosition.y) };
 
 	// window offset to world offset 
-	float xWorldOffset{ xOffset * nearPlaneWidth  / window.GetClientWidth()};
-	float yWorldOffset{ yOffset * nearPlaneHeight / window.GetClientHeight()};
+	float xWorldOffset{ xOffset * nearPlaneWidth / window.GetClientWidth() };
+	float yWorldOffset{ yOffset * nearPlaneHeight / window.GetClientHeight() };
 
 
 	if (scene->mover != nullptr)
@@ -389,23 +386,23 @@ void Application::DragObject(float x, float y, float deltaTime)
 
 }
 
-void Application::MoveCamera(float deltaTime)
+void ApplicationRC::MoveCamera(float deltaTime)
 {
 	camera->addRelativeOffset(cameraDir * cameraSpeed * deltaTime);
 }
 
-void Application::RotateCamera(float deltaTime)
+void ApplicationRC::RotateCamera(float deltaTime)
 {
-		camera->setWorldAngles(RC::engine::Angles(cameraAngles.x * deltaTime, cameraAngles.y * deltaTime, cameraAngles.z * deltaTime));
+	camera->setWorldAngles(general::engine::Angles(cameraAngles.x * deltaTime, cameraAngles.y * deltaTime, cameraAngles.z * deltaTime));
 }
 
-void Application::RollRotate(float roll)
+void ApplicationRC::RollRotate(float roll)
 {
 	rollRotation = true;
 	cameraAngles.z = roll;
 }
 
-void Application::PitchYawRotate(float x, float y)
+void ApplicationRC::PitchYawRotate(float x, float y)
 {
 	if (!pitchYawRotation)
 	{
@@ -456,7 +453,7 @@ void Application::PitchYawRotate(float x, float y)
 	cameraAngles = glm::vec3(offsetPitch, offsetYaw, cameraAngles.z);
 }
 
-void Application::EndRotate()
+void ApplicationRC::EndRotate()
 {
 	lastMousePosition = initMousePosition = glm::vec2(-1.f);
 	rollRotation = false;
@@ -466,7 +463,7 @@ void Application::EndRotate()
 
 
 
-void Application::OnShiftPressed()
+void ApplicationRC::OnShiftPressed()
 {
 	if (!increasingSpeed)
 	{
@@ -476,7 +473,7 @@ void Application::OnShiftPressed()
 	}
 }
 
-void Application::OnShiftReleased()
+void ApplicationRC::OnShiftReleased()
 {
 	if (increasingSpeed)
 	{
@@ -489,7 +486,7 @@ void Application::OnShiftReleased()
 
 
 
-void Application::Close()
+void ApplicationRC::Close()
 {
 	ExitProcess(0);
 }

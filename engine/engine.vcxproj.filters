@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ray Casting\windows\WindowRC.h">
+    <ClInclude Include="Ray Casting\window\WindowRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ray Casting\source\material\coloredDirectionLightRC.h">
@@ -93,13 +93,37 @@
     <ClInclude Include="Ray Casting\utils\parallel\parallel_executorRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Ray Casting\utils\timer\FPSTimerRC.h">
+    <ClInclude Include="general\utils\timer\FPSTimerRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Ray Casting\render\CameraRC.h">
+    <ClInclude Include="general\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ray Casting\render\SceneRC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\window\WindowDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\render\SceneDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general\include\win_def.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general\include\win_undef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general\include\win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\render\D3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\ConstBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -128,14 +152,27 @@
     <ClCompile Include="Ray Casting\utils\parallel\parallel_executorRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ray Casting\utils\timer\FPSTimerRC.cpp">
+    <ClCompile Include="general\utils\timer\FPSTimerRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Ray Casting\windows\WindowRC.cpp">
+    <ClCompile Include="Ray Casting\window\WindowRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Ray Casting\render\SceneRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DirectX 11\window\WindowDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\render\SceneDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\render\D3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="DirectX 11\shaders\pixelShader.hlsl" />
+    <FxCompile Include="DirectX 11\shaders\vertexShader.hlsl" />
   </ItemGroup>
 </Project>

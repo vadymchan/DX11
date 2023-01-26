@@ -78,9 +78,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -128,6 +130,14 @@
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+    <FxCompile>
+      <ShaderModel>4.0</ShaderModel>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -146,9 +156,24 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Message>
+      </Message>
+    </PostBuildEvent>
+    <FxCompile>
+      <ShaderModel>4.0</ShaderModel>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Ray Casting\render\CameraRC.h" />
+    <ClInclude Include="DirectX 11\render\D3D.h" />
+    <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
+    <ClInclude Include="DirectX 11\source\Vertex.h" />
+    <ClInclude Include="DirectX 11\window\WindowDX.h" />
+    <ClInclude Include="general\Camera.h" />
+    <ClInclude Include="general\include\win.h" />
+    <ClInclude Include="general\include\win_def.h" />
+    <ClInclude Include="general\include\win_undef.h" />
     <ClInclude Include="Ray Casting\render\SceneRC.h" />
     <ClInclude Include="Ray Casting\source\material\coloredDirectionLightRC.h" />
     <ClInclude Include="Ray Casting\source\material\coloredMeshRC.h" />
@@ -175,10 +200,13 @@
     <ClInclude Include="Ray Casting\utils\Dragger\SphereMoverRC.h" />
     <ClInclude Include="Ray Casting\utils\Dragger\TriangleMoverRC.h" />
     <ClInclude Include="Ray Casting\utils\parallel\parallel_executorRC.h" />
-    <ClInclude Include="Ray Casting\utils\timer\FPSTimerRC.h" />
-    <ClInclude Include="Ray Casting\windows\WindowRC.h" />
+    <ClInclude Include="general\utils\timer\FPSTimerRC.h" />
+    <ClInclude Include="Ray Casting\window\WindowRC.h" />
+    <ClInclude Include="DirectX 11\render\SceneDX.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX 11\render\D3D.cpp" />
+    <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="Ray Casting\render\SceneRC.cpp" />
     <ClCompile Include="Ray Casting\source\math\boxRC.cpp" />
     <ClCompile Include="Ray Casting\source\math\meshRC.cpp" />
@@ -188,8 +216,13 @@
     <ClCompile Include="Ray Casting\source\math\triangleRC.cpp" />
     <ClCompile Include="Ray Casting\utils\BVH\TriangleOctreeRC.cpp" />
     <ClCompile Include="Ray Casting\utils\parallel\parallel_executorRC.cpp" />
-    <ClCompile Include="Ray Casting\utils\timer\FPSTimerRC.cpp" />
-    <ClCompile Include="Ray Casting\windows\WindowRC.cpp" />
+    <ClCompile Include="general\utils\timer\FPSTimerRC.cpp" />
+    <ClCompile Include="Ray Casting\window\WindowRC.cpp" />
+    <ClCompile Include="DirectX 11\render\SceneDX.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="DirectX 11\shaders\pixelShader.hlsl" />
+    <FxCompile Include="DirectX 11\shaders\vertexShader.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

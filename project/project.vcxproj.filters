@@ -21,7 +21,10 @@
     <ClInclude Include="source\Resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\Application.h">
+    <ClInclude Include="source\ApplicationRC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ApplicationDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,7 +32,10 @@
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\Application.cpp">
+    <ClCompile Include="source\ApplicationRC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ApplicationDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
