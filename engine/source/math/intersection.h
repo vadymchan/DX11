@@ -9,9 +9,8 @@ namespace Engine
 		glm::vec3 normal;
 		glm::vec3 dir;
 		float t;
-
-		bool isValid() { return std::isfinite(t); }
-
+		const float bias{1e-3};
+		bool isValid() const { return std::isfinite(t); }
 		void reset() { t = std::numeric_limits<float>::infinity(); }
 	};
 }

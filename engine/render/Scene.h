@@ -1,4 +1,5 @@
 #pragma once
+#define NOMINMAX
 #include "../source/math/directionalLight.h"
 #include "../source/material/coloredSphere.h"
 #include "../source/material/coloredDirectionLight.h"
@@ -6,7 +7,7 @@
 #include "../source/material/coloredSpotLight.h"
 #include "../source/material/coloredTriangle.h"
 #include "../source/material/coloredPlane.h"
-#include "../source/material/coloredMesh.h"
+#include "../source/material/coloredCube.h"
 #include "../source/math/intersection.h"
 #include "../utils/Dragger/IObjectMover.h"
 #include "../utils/Dragger/SphereMover.h"
@@ -19,7 +20,6 @@
 #include <algorithm>
 #include <vector>
 #include "../utils/BVH/TriangleOctree.h"
-#define NOMINMAX
 #include "../windows/Window.h"
 
 
@@ -30,7 +30,7 @@ namespace Engine
 	class Scene
 	{
 	protected:
-		enum class IntersectedType { Sphere, Plane, Triangle, Mesh, PointLight, Num };
+		enum class IntersectedType { Sphere, Plane, Triangle, Cube, PointLight, SpotLight, Num };
 		struct ObjRef
 		{
 			void* object{};
@@ -45,10 +45,10 @@ namespace Engine
 		Scene(const std::vector<ColoredSphere>& spheres,
 			const std::vector<ColoredPlane>& planes,
 			const std::vector<ColoredTriangle>& triangles,
-			const std::vector<ColorMesh>& meshes,
+			const std::vector<ColorCube>& meshes,
 			const std::vector<ColorDirectionLight>& directionLights,
 			const std::vector<ColorPointLight>& pointLights,
-			const std::vector<ColorSpotLight>& flashLights
+			const std::vector<ColorSpotLight>& spotLights
 		)
 			: matSpheres(spheres)
 			, matPlanes(planes)
@@ -56,7 +56,7 @@ namespace Engine
 			, matMeshes(meshes)
 			, directionLights(directionLights)
 			, pointLights(pointLights)
-			, spotLights(flashLights)
+			, spotLights(spotLights)
 		{
 			
 			for (auto& mesh : matMeshes)
@@ -88,7 +88,7 @@ namespace Engine
 		std::vector<ColoredSphere> matSpheres;
 		std::vector<ColoredPlane> matPlanes;
 		std::vector<ColoredTriangle> matTriangles;
-		std::vector<ColorMesh> matMeshes;
+		std::vector<ColorCube> matMeshes;
 		std::vector<TriangleOctree> triangleOctrees;
 		std::vector<ColorDirectionLight> directionLights;
 		std::vector<ColorPointLight> pointLights;

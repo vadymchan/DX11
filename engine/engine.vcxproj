@@ -148,9 +148,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="source\material\ColorLight.h" />
     <ClInclude Include="utils\parallel\parallel_executor.h" />
     <ClInclude Include="source\material\coloredDirectionLight.h" />
-    <ClInclude Include="source\material\coloredMesh.h" />
+    <ClInclude Include="source\material\coloredCube.h" />
     <ClInclude Include="source\material\coloredSpotLight.h" />
     <ClInclude Include="source\material\coloredPlane.h" />
     <ClInclude Include="source\material\coloredPointLight.h" />
@@ -160,7 +161,7 @@
     <ClInclude Include="source\material\coloredTriangle.h" />
     <ClInclude Include="source\material\material.h" />
     <ClInclude Include="source\math\box.h" />
-    <ClInclude Include="source\math\mesh.h" />
+    <ClInclude Include="source\math\cube.h" />
     <ClInclude Include="source\math\spotLight.h" />
     <ClInclude Include="source\math\intersection.h" />
     <ClInclude Include="source\math\directionalLight.h" />
@@ -183,7 +184,7 @@
     <ClCompile Include="source\math\ray.cpp" />
     <ClCompile Include="utils\parallel\parallel_executor.cpp" />
     <ClCompile Include="render\Scene.cpp" />
-    <ClCompile Include="source\math\mesh.cpp" />
+    <ClCompile Include="source\math\cube.cpp" />
     <ClCompile Include="source\math\plane.cpp" />
     <ClCompile Include="source\math\sphere.cpp" />
     <ClCompile Include="source\math\triangle.cpp" />

@@ -7,17 +7,17 @@ namespace Engine
 	const int TriangleOctree::PREFFERED_TRIANGLE_COUNT = 32;
 	const float TriangleOctree::MAX_STRETCHING_RATIO = 1.05f;
 
-	inline const glm::vec3& getPos(const ColorMesh& mesh, uint32_t triangleIndex, uint32_t vertexIndex)
+	inline const glm::vec3& getPos(const ColorCube& mesh, uint32_t triangleIndex, uint32_t vertexIndex)
 	{
 		return (*mesh.getMathMesh().triangles.get())[triangleIndex][vertexIndex];
 	}
 
-	inline const glm::vec3& getN(const ColorMesh& mesh, uint32_t triangleIndex)
+	inline const glm::vec3& getN(const ColorCube& mesh, uint32_t triangleIndex)
 	{
 		return (*mesh.getMathMesh().triangles.get())[triangleIndex].getN();
 	}
 
-	void TriangleOctree::initialize(ColorMesh& mesh)
+	void TriangleOctree::initialize(ColorCube& mesh)
 	{
 		m_triangles.clear();
 		m_triangles.shrink_to_fit();
@@ -39,7 +39,7 @@ namespace Engine
 		}
 	}
 	//for recursive call
-	void TriangleOctree::initialize(ColorMesh& mesh, const Box& parentBox, const glm::vec3& parentCenter, int octetIndex)
+	void TriangleOctree::initialize(ColorCube& mesh, const Box& parentBox, const glm::vec3& parentCenter, int octetIndex)
 	{
 		m_mesh = &mesh;
 		m_children = nullptr;
@@ -190,7 +190,7 @@ namespace Engine
 			const glm::vec3& V2 = getPos(*m_mesh, m_triangles[i], 1);
 			const glm::vec3& V3 = getPos(*m_mesh, m_triangles[i], 2);
 
-			if (hit(ray, nearest.t, V1, V2, V3)) // ray-triangle intersection in current box
+			if (hit(ray, nearest, V1, V2, V3)) // ray-triangle intersection in current box
 			{
 				nearest.normal = getN(*m_mesh, m_triangles[i]);
 				found = true;

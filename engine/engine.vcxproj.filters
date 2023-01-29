@@ -72,10 +72,10 @@
     <ClInclude Include="source\material\coloredTriangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\mesh.h">
+    <ClInclude Include="source\math\cube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\material\coloredMesh.h">
+    <ClInclude Include="source\material\coloredCube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\BVH\TriangleOctree.h">
@@ -102,6 +102,9 @@
     <ClInclude Include="utils\parallel\parallel_executor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="source\material\ColorLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="windows\Window.cpp">
@@ -122,7 +125,7 @@
     <ClCompile Include="source\math\triangle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\mesh.cpp">
+    <ClCompile Include="source\math\cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\BVH\TriangleOctree.cpp">

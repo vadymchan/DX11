@@ -1,6 +1,6 @@
 #pragma once
 #include "IObjectMover.h"
-#include "../../source/math/mesh.h"
+#include "../../source/math/cube.h"
 
 
 namespace Engine
@@ -8,10 +8,10 @@ namespace Engine
 	class MeshMover : public IObjectMover
 	{
 	public:
-		Mesh* mesh;
+		Cube* mesh;
 
 
-		MeshMover(Mesh* mesh, float aspectRatio)
+		MeshMover(Cube* mesh, float aspectRatio)
 		{
 			this->mesh = mesh;
 			rayNearPlaneRatio = aspectRatio;

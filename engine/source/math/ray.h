@@ -8,6 +8,7 @@
 
 #include "../../dependencies/glm-0.9.9.9/glm/vec3.hpp"
 #include "../../dependencies/glm-0.9.9.9/glm/gtc/matrix_transform.hpp"
+#include "intersection.h"
 
 namespace Engine
 {
@@ -44,7 +45,7 @@ namespace Engine
 	};
 
 	//check for intersection within 3 points (triangle)
-	bool hit(const ray& r, float& near_t, const glm::vec3& V1, const glm::vec3& V2, const glm::vec3& V3);
+	bool hit(const ray& r, Intersection& near, const glm::vec3& V1, const glm::vec3& V2, const glm::vec3& V3);
 
 #endif 
 

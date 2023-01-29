@@ -1,10 +1,5 @@
 #include "Application.h"
 
-
-
-
-
-
 void Application::WindowSetup(const LPCWSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 {
 
@@ -31,8 +26,8 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	rotationSpeed = 0.0005f;
 	rollRotationCoeff = 5;
 	dragCoef = 1.4;
-	glm::vec3 cameraPosition{ glm::vec3(0,0, 10) };
-	glm::vec3 cameraForward{ glm::vec3(0, 0.f, -1.0f) };
+	glm::vec3 cameraPosition{ glm::vec3(0,0,5) };
+	glm::vec3 cameraForward{ glm::vec3(0.0, 0.0f, -1.0f) };
 	glm::vec3 worldUp{ glm::vec3(0, 1, 0) };
 	nearPlaneHeight = cameraNearZ * glm::tan(glm::radians(cameraFov / 2)) * 2 ;
 	nearPlaneWidth = nearPlaneHeight * cameraAspectRatio ;
@@ -75,31 +70,7 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//meshes
 	//----------------------------------------------------------------------------------
 	Engine::Material meshMaterial = Engine::Material({ 0.1745, 0.01175, 0.01175 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
-	std::vector<Engine::Triangle> cubeTriangles
-	{
-		//back
-		Engine::Triangle(glm::vec3(-1.f,-1.f,-1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(0.0f, 0.0f, -1.0f)),
-		Engine::Triangle(glm::vec3(1.f, 1.f, -1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(0.0f, 0.0f, -1.0f)),
-		//front
-		Engine::Triangle(glm::vec3(-1.f, -1.f, 1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.0f, 0.0f, 1.0f)),
-		Engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(0.0f, 0.0f, 1.0f)),
-		//right
-		Engine::Triangle(glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(-1.0f, 0.0f, 0.0f)),
-		Engine::Triangle(glm::vec3(-1.f, -1.f, -1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.0f, 0.0f, 0.0f)),
-		//left
-		Engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.0f, 0.0f, 0.0f)),
-		Engine::Triangle(glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.0f, 0.0f, 0.0f)),
-		//bottom
-		Engine::Triangle(glm::vec3(-1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, -1.f), glm::vec3(1.f, -1.f, 1.f), glm::vec3(0.0f, -1.0f, 0.0f)),
-		Engine::Triangle(glm::vec3(1.f, -1.f, 1.f), glm::vec3(-1.f, -1.f, 1.f), glm::vec3(-1.f, -1.f, -1.f), glm::vec3(0.0f, -1.0f, 0.0f)),
-		//up
-		Engine::Triangle(glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f) , glm::vec3(1.f, 1.f, -1.f), glm::vec3(0.0f, 1.0f, 0.0f)),
-		Engine::Triangle(glm::vec3(1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, 1.f), glm::vec3(-1.f, 1.f, -1.f), glm::vec3(0.0f, 1.0f, 0.0f)),
-
-	};
-
-	std::shared_ptr<std::vector<Engine::Triangle>> ptrCubeTriangles = std::make_shared<std::vector<Engine::Triangle>>(cubeTriangles);
-
+	
 	glm::mat4 tMatCube1
 	{
 		{4,0,0,0},
@@ -117,15 +88,13 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{0,5,0,1},
 	};
 
-	//mesh box
-	std::shared_ptr<Engine::Box> box = std::make_shared<Engine::Box>(Engine::Box()); // needs to make an shared_ptr
-	box->min = glm::vec3(-1, -1, -1);
-	box->max = glm::vec3(1, 1, 1);
+	Engine::Cube::box->min = glm::vec3(-0.5f, -0.5f, -0.5f);
+	Engine::Cube::box->max = glm::vec3(0.5f, 0.5f, 0.5f);
 
-	std::vector<Engine::ColorMesh> meshes
+	std::vector<Engine::ColorCube> meshes
 	{
-		Engine::ColorMesh(ptrCubeTriangles, tMatCube1, box, meshMaterial),
-		Engine::ColorMesh(ptrCubeTriangles, tMatCube2, box, meshMaterial),
+		Engine::ColorCube(tMatCube1, meshMaterial),
+		Engine::ColorCube(tMatCube2, meshMaterial),
 	};
 	//----------------------------------------------------------------------------------
 
@@ -139,19 +108,16 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::vector<Engine::ColorDirectionLight> directionalLights
 	{
 		Engine::ColorDirectionLight(glm::vec3(-1, -1, -1), glm::vec3(0.1f, 0.1f, 0.1f)),
-
 	};
 	//pointLight
 	std::vector<Engine::ColorPointLight> pointLights
 	{
-		Engine::ColorPointLight(Engine::Sphere(glm::vec3(-20, 10, 10), 2), glm::vec3(0.5, 0.5 , 0)),
-
+		Engine::ColorPointLight(Engine::Sphere(glm::vec3(0, -3, -5), 0.5), glm::vec3(0.5, 0.5 , 0)),
 	};
-	//flashLight
+	//spotLight
 	std::vector<Engine::ColorSpotLight> spotLight
 	{
-		Engine::ColorSpotLight(glm::vec3(20,10,5), glm::vec3(0,-1,0), 40.0f, glm::vec3(0,0,0.5)),
-
+		Engine::ColorSpotLight(Engine::Sphere(glm::vec3(20,10,5), 0.5), glm::vec3(0,-1,0), glm::radians(20.f), glm::radians(15.0f), glm::vec3(0,0,0.5)),
 	};
 	//----------------------------------------------------------------------------------
 

@@ -1,6 +1,7 @@
+
 #include "ray.h"
 
-bool Engine::hit(const ray& r, float& near_t, const glm::vec3& V1, const glm::vec3& V2, const glm::vec3& V3)
+bool Engine::hit(const ray& r, Intersection& near, const glm::vec3& V1, const glm::vec3& V2, const glm::vec3& V3)
 {
 
     glm::vec3 v0v1{ V2 - V1 };
@@ -26,9 +27,11 @@ bool Engine::hit(const ray& r, float& near_t, const glm::vec3& V1, const glm::ve
         return false;
 
     float t{ invDet * glm::dot(v0v2, qvec) };
-    if (t < near_t && t > 0)
+    if (t < near.t && t > 0)
     {
-        near_t = t;
+        near.t = t;
+        near.point = r.at(near.t) + near.normal * near.bias;
+        near.dir = r.direction();
         return true;
     }
 

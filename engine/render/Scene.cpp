@@ -125,11 +125,14 @@ void Engine::Scene::setCapturedObj(const ObjRef& obj, const Intersection& inters
 	case IntersectedType::Triangle:
 		mover.reset(new TriangleMover(static_cast<Triangle*>(obj.object), aspectRatio));
 		break;
-	case IntersectedType::Mesh:
-		mover.reset(new MeshMover(static_cast<ColorMesh*>(obj.object)->getPtrMathMesh(), aspectRatio));
+	case IntersectedType::Cube:
+		mover.reset(new MeshMover(static_cast<ColorCube*>(obj.object)->getPtrMathMesh(), aspectRatio));
 		break;
 	case IntersectedType::PointLight:
 		mover.reset(new SphereMover(static_cast<PointLight*>(obj.object)->GetPtrSphere(), aspectRatio));
+		break;
+	case IntersectedType::SpotLight:
+		mover.reset(new SphereMover(static_cast<SpotLight*>(obj.object)->GetPtrSphere(), aspectRatio));
 		break;
 	case IntersectedType::Num:
 		mover.reset(nullptr);
@@ -141,8 +144,7 @@ void Engine::Scene::setCapturedObj(const ObjRef& obj, const Intersection& inters
 
 void Engine::Scene::getObjectColor(const Intersection& intersection, const ObjRef& objRef, glm::vec3& color)
 {
-	Intersection shadowIntersection{ intersection };
-	ObjRef shadowObjRef{ objRef };
+	
 	Material mat;
 	const float shineCoef{ 128 };
 
@@ -157,11 +159,15 @@ void Engine::Scene::getObjectColor(const Intersection& intersection, const ObjRe
 	case IntersectedType::Triangle:
 		mat = static_cast<ColoredTriangle*>(objRef.object)->material;
 		break;
-	case IntersectedType::Mesh:
-		mat = static_cast<const ColorMesh*>(objRef.object)->material;
+	case IntersectedType::Cube:
+		mat = reinterpret_cast<const ColorCube*>(objRef.object)->material;
 		break;
 	case IntersectedType::PointLight:
 		color = static_cast<ColorPointLight*>(objRef.object)->getColor();
+		return;
+		break;
+	case IntersectedType::SpotLight:
+		color = reinterpret_cast<ColorSpotLight*>(objRef.object)->getColor();
 		return;
 		break;
 	case IntersectedType::Num:
@@ -178,108 +184,43 @@ void Engine::Scene::getObjectColor(const Intersection& intersection, const ObjRe
 
 	for (const auto& directionLight : directionLights)
 	{
-		ray lDir{ Engine::ray(intersection.point, -directionLight.getDirection()) };
-		if (findIntersection(lDir, shadowIntersection, shadowObjRef) 
-			&& shadowObjRef.type != IntersectedType::PointLight)
-		{
+		Intersection shadowIntersection{ intersection };
+		ObjRef shadowObjRef{ objRef };
 
-			color += mat.ambient * directionLight.getColor();
-
-		}
-		else
-		{
-			glm::vec3 vDir{ intersection.dir };
-			glm::vec3 halfVec{ glm::normalize(lDir.direction() - vDir) };
-
-			float diffCoef{};
-			float specCoef{};
-			// camera is not in unlitted side of object
-			if (glm::dot(vDir, intersection.normal) < 0)
-			{
-				diffCoef = std::max(glm::dot(intersection.normal, lDir.direction()), 0.0001f);
-				specCoef = std::max(glm::dot(halfVec, intersection.normal), 0.0001f);
-			}
-			glm::vec3 diffuse = diffCoef * mat.diffuse;
-
-			glm::vec3 specular = mat.specular * std::pow(specCoef, mat.shininess * shineCoef);
-
-			color += mat.ambient * directionLight.getColor() + diffuse * directionLight.getColor() + specular * directionLight.getColor();
-		}
+		ray lDir{ directionLight.getRayToLight(intersection)};
+		bool intersectedObject{ findIntersection(lDir, shadowIntersection, shadowObjRef)
+			&& shadowObjRef.type != IntersectedType::PointLight
+			&& shadowObjRef.type != IntersectedType::SpotLight };
+		color += directionLight.computeFragmentColor(intersection, mat, lDir, shineCoef, intersectedObject);
 	}
 
 
 	//point light
 	for (const auto& pointLight : pointLights)
 	{
-		glm::vec3 fragTolight{ pointLight.GetPosition() - intersection.point };
-		ray lDir{ Engine::ray(intersection.point, glm::normalize(fragTolight)) };
-		shadowIntersection.t = glm::length(fragTolight);
-		if (findIntersection(lDir, shadowIntersection, shadowObjRef)
-			&& shadowObjRef.type != IntersectedType::PointLight)
-		{
-			color += mat.ambient * pointLight.getColor();
-		}
-		else
-		{
-			glm::vec3 vDir{ intersection.dir };
-			glm::vec3 halfVec{ glm::normalize(lDir.direction() - vDir) };
-			float diffCoef{};
-			float specCoef{};
-			if (glm::dot(vDir, intersection.normal ) < 0)
-			{
-				diffCoef = std::max(glm::dot(lDir.direction(), intersection.normal), 0.0001f);
-				specCoef = std::max(glm::dot(halfVec, intersection.normal), 0.0001f);
-			}
-			glm::vec3 diffuse{ diffCoef * mat.diffuse };
-
-			glm::vec3 specular{ std::pow(specCoef, mat.shininess * shineCoef) * mat.specular };
-
-			color += mat.ambient * pointLight.getColor() + diffuse * pointLight.getColor() + specular * pointLight.getColor();
-		}
+		Intersection shadowIntersection{ intersection };
+		ObjRef shadowObjRef{ objRef };
+		ray lDir{ pointLight.getRayToLight(shadowIntersection) };
+		bool intersectedObject{ findIntersection(lDir, shadowIntersection, shadowObjRef)
+			&& shadowObjRef.type != IntersectedType::PointLight 
+			&& shadowObjRef.type != IntersectedType::SpotLight };
+		color += pointLight.computeFragmentColor(intersection, mat, lDir, shineCoef, intersectedObject);
 
 	}
 
+	
+
 	//flash light
-	for (const auto& flashLight : spotLights)
+	for (const auto& spotLight : spotLights)
 	{
+		Intersection shadowIntersection{ intersection };
+		ObjRef shadowObjRef{ objRef };
+		ray lDir{ spotLight.getRayToLight(shadowIntersection) };
+		bool intersectedObject{ findIntersection(lDir, shadowIntersection, shadowObjRef)
+			&& shadowObjRef.type != IntersectedType::PointLight
+			&& shadowObjRef.type != IntersectedType::SpotLight };
+		color += spotLight.computeFragmentColor(intersection, mat, lDir, shineCoef, intersectedObject);
 
-		glm::vec3 lightToFrag{ intersection.point - flashLight.getPosition() };
-		ray lDir{ ray(intersection.point, glm::normalize(-lightToFrag)) };
-		shadowIntersection.t = glm::length(lightToFrag);
-
-		if (findIntersection(lDir, shadowIntersection, shadowObjRef)
-			&& shadowObjRef.type != IntersectedType::PointLight)
-		{
-			color += mat.ambient * flashLight.getColor();
-		}
-		else
-		{
-			// angle between light direction from fragment and flashlight direction 
-			float phi{ std::max(glm::dot(glm::normalize(lightToFrag), glm::normalize(flashLight.getDirection())), 0.0f) };
-			float halfCutOff{ glm::cos(glm::radians(flashLight.getCutOff() / 2)) };
-
-			if (phi >= halfCutOff)
-			{
-				glm::vec3 vDir{ intersection.dir };
-				glm::vec3 halfVec{ glm::normalize(lDir.direction() - vDir) };
-				float diffCoef{  };
-				float specCoef{};
-				if (glm::dot(vDir, intersection.normal) < 0)
-				{
-					diffCoef = std::max(glm::dot(lDir.direction(), intersection.normal), 0.0001f);
-					specCoef = std::max(glm::dot(halfVec, intersection.normal), 0.0001f);
-				}
-				glm::vec3 diffuse{ diffCoef * mat.diffuse };
-				glm::vec3 specular{ std::pow(specCoef, mat.shininess * shineCoef) * mat.specular };
-
-				color += mat.ambient * flashLight.getColor() + diffuse * flashLight.getColor() + specular * flashLight.getColor();
-			}
-			else
-			{
-				color += mat.ambient * flashLight.getColor();
-			}
-
-		}
 	}
 
 	color = glm::clamp(color, 0.0f, 1.0f);
@@ -288,17 +229,15 @@ void Engine::Scene::getObjectColor(const Intersection& intersection, const ObjRe
 bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, ObjRef& obj)
 {
 	bool hitObject{ false };
-	float bias{ 1e-3 };
 
-	//intersection.t = closest_t;
 
 	//sphere hit
 	for (auto& sphere : matSpheres)
 	{
-		if (sphere.hit(r, intersection.t))
+		if (sphere.hit(r, intersection))
 		{
-			intersection.normal = glm::normalize(r.getPointAt(intersection.t) - sphere.getCenter());
-			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
+			intersection.normal = glm::normalize(r.at(intersection.t) - sphere.getCenter());
+			intersection.point = r.at(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.type = IntersectedType::Sphere;
 			obj.object = &sphere;
@@ -310,11 +249,11 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	//plane hit
 	for (auto& plane : matPlanes)
 	{
-		if (plane.hit(r, intersection.t))
+		if (plane.hit(r, intersection))
 		{
 
-			intersection.normal = plane.getNormal();
-			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
+			intersection.normal = plane.getN();
+			intersection.point = r.at(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.type = IntersectedType::Plane;
 			obj.object = &plane;
@@ -326,11 +265,8 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	//triangle hit 
 	for (auto& triangle : matTriangles)
 	{
-		if (triangle.hit(r, intersection.t))
-		{
-			intersection.normal = triangle.getN();
-			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
-			intersection.dir = r.direction();
+		if (triangle.hit(r, intersection))
+		{	
 			obj.type = IntersectedType::Triangle;
 			obj.object = &triangle;
 			hitObject = true;
@@ -347,7 +283,7 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	//		intersection.normal = triangleN;
 	//		intersection.point = r.at(intersection.t ) + intersection.normal * bias;
 	//		intersection.dir = r.direction();
-	//		obj.type = IntersectedType::Mesh;
+	//		obj.type = IntersectedType::Cube;
 	//		obj.object = &mesh;
 	//		hitObject = true;
 	//	}
@@ -356,13 +292,12 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	//triangle octree hit
 	for (auto& tOctree : triangleOctrees)
 	{
-
 		if (tOctree.intersect(r, intersection))
 		{
-			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
+			intersection.point = r.at(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.object = tOctree.m_mesh;
-			obj.type = IntersectedType::Mesh;
+			obj.type = IntersectedType::Cube;
 			hitObject = true;
 		}
 	}
@@ -370,13 +305,24 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	//pointlight hit
 	for (auto& pointLight : pointLights)
 	{
-		if (pointLight.hit(r, intersection.t))
+		if (pointLight.hit(r, intersection))
 		{
-			intersection.normal = glm::normalize(r.getPointAt(intersection.t) - pointLight.GetPosition());
-			intersection.point = r.getPointAt(intersection.t) + intersection.normal * bias;
+			intersection.normal = glm::normalize(r.at(intersection.t) - pointLight.GetPosition());
+			intersection.point = r.at(intersection.t) + intersection.normal * bias;
 			intersection.dir = r.direction();
 			obj.type = IntersectedType::PointLight;
 			obj.object = &pointLight;
+			hitObject = true;
+		}
+	}
+
+	//spotlight hit
+	for (auto& spotLight : spotLights)
+	{
+		if (spotLight.hit(r, intersection))
+		{
+			obj.type = IntersectedType::SpotLight;
+			obj.object = &spotLight;
 			hitObject = true;
 		}
 	}

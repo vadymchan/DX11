@@ -11,7 +11,7 @@ namespace Engine
 			: sphere (sphere)
 		{};
 
-		glm::vec3 GetPosition() const
+		const glm::vec3& GetPosition() const
 		{
 			return sphere.getCenter();
 		}
@@ -21,12 +21,20 @@ namespace Engine
 			return sphere.getRadius();
 		}
 
+		ray getRayToLight(Intersection& intersection) const
+		{
+			glm::vec3 fragTolight{ GetPosition() - intersection.point };
+			ray lDir{ Engine::ray(intersection.point, glm::normalize(fragTolight)) };
+			intersection.t = glm::length(fragTolight);
+			return lDir;
+		}
+
 		Sphere* GetPtrSphere() 
 		{
 			return &sphere;
 		}
 
-		bool hit(const ray& r, float& near_t) 
+		bool hit(const ray& r, Intersection& near_t)
 		{
 			return sphere.hit(r, near_t);
 		}

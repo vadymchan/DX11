@@ -4,6 +4,7 @@
 #include "../../dependencies/glm-0.9.9.9/glm/ext/vector_float3.hpp"
 #include "../../dependencies/glm-0.9.9.9/glm/geometric.hpp"
 #include "ray.h"
+#include "intersection.h"
 
 
 namespace Engine
@@ -24,7 +25,7 @@ public:
 
 	void setDistance(const glm::vec3& value) { distance = value; }
 
-	bool hit(const ray& r, float& near);
+	bool hit(const ray& r, Intersection& near);
 
 private:
 	glm::vec3 normal;

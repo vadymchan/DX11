@@ -1,6 +1,7 @@
 #pragma once
 #include "../../dependencies/glm-0.9.9.9/glm/ext/vector_float3.hpp"
 #include "../../dependencies/glm-0.9.9.9/glm/geometric.hpp"
+#include "intersection.h"
 #include "ray.h"
 #include <array>
 #include <vector>
@@ -23,7 +24,7 @@ namespace Engine
 			this->normal = other.normal;
 		}
 
-		bool hit(const ray& r, float& near_t);
+		bool hit(const ray& r, Intersection& near_t);
 		const glm::vec3& getN() const { return normal; }
 		glm::vec3& operator[] (size_t i)
 		{

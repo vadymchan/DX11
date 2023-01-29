@@ -1,6 +1,6 @@
 #include "triangle.h"
 
-bool Engine::Triangle::hit(const ray& r, float& near)
+bool Engine::Triangle::hit(const ray& r, Intersection& near)
 {
  
     glm::vec3 v0v1{ v[1] - v[0]};
@@ -26,9 +26,12 @@ bool Engine::Triangle::hit(const ray& r, float& near)
         return false;
 
     float t{ invDet * glm::dot(v0v2, qvec) };
-    if (t < near && t > 0)
+    if (t < near.t && t > 0)
     {
-        near = t;
+        near.t = t;
+        near.normal = getN();
+        near.point = r.at(near.t) + near.normal * near.bias;
+        near.dir = r.direction();
         return true;
     }
 
