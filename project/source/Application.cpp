@@ -31,8 +31,8 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	rotationSpeed = 0.0005f;
 	rollRotationCoeff = 5;
 	dragCoef = 1.4;
-	glm::vec3 cameraPosition{ glm::vec3(0,0, 10) };
-	glm::vec3 cameraForward{ glm::vec3(0, 0.f, -1.0f) };
+	glm::vec3 cameraPosition{ glm::vec3(0,0, -10) };
+	glm::vec3 cameraForward{ glm::vec3(0, 0.f, 1.0f) };
 	glm::vec3 worldUp{ glm::vec3(0, 1, 0) };
 	nearPlaneHeight = cameraNearZ * glm::tan(glm::radians(cameraFov / 2)) * 2 ;
 	nearPlaneWidth = nearPlaneHeight * cameraAspectRatio ;

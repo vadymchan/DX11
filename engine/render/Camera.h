@@ -57,7 +57,15 @@ namespace Engine
 
 		void setPerspective(float fov, float aspect, float zNear, float zFar)
 		{
-			proj = glm::perspectiveLH(fov, aspect, zNear, zFar);
+			glm::mat4 transformMat
+			{
+				{1,0,0,0},
+				{0,1,0,0},
+				{0,0,-1,0},
+				{0,0,1,1},
+			};
+
+			proj = transformMat * glm::perspectiveLH(fov, aspect, zNear, zFar);
 		}
 
 		void setView(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& cameraUp)
