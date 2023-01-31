@@ -40,12 +40,13 @@ namespace DX::engine
 
 	void Scene::initShaders()
 	{
-		HRESULT result = D3DX11CompileFromFile((pathToShaders + L"vertexShader.hlsl").c_str(), 0, 0, "main", "vs_4_0", 0, 0, 0, &VSbinary, 0, 0);
+		
+		HRESULT result = D3DCompileFromFile((pathToShaders + L"vertexShader.hlsl").c_str(), 0, 0, "main", "vs_4_0", 0, 0, &VSbinary, 0);
 		if (FAILED(result))
 		{
 			std::cerr << "Vertex shader was not initialized\n";
 		}
-		result = D3DX11CompileFromFile((pathToShaders + L"pixelShader.hlsl").c_str(), 0, 0, "main", "ps_4_0", 0, 0, 0, &PSbinary, 0, 0);
+		result = D3DCompileFromFile((pathToShaders + L"pixelShader.hlsl").c_str(), 0, 0, "main", "ps_4_0", 0, 0, &PSbinary, 0);
 		if (FAILED(result))
 		{
 			std::cerr << "Pixel shader was not initialized\n";
