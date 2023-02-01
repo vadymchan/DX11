@@ -12,7 +12,7 @@ namespace Engine
 
 	struct Transform // We can build a transformation matrix from this
 	{
-		glm::quat rotation = glm::quat(1,0,0,0);
+		glm::quat rotation = glm::quat(1, 0, 0, 0);
 		glm::vec3 position;
 		glm::vec3 scale;
 	};
@@ -47,8 +47,8 @@ namespace Engine
 	public:
 
 
-		
-		
+
+
 		const glm::vec3& right() 	const { return glm::vec3(view[0][0], view[1][0], view[2][0]); }
 		const glm::vec3& up() 		const { return glm::vec3(view[0][1], view[1][1], view[2][1]); }
 		const glm::vec3& forward() 	const { return glm::vec3(view[0][2], view[1][2], view[2][2]); }
@@ -65,7 +65,22 @@ namespace Engine
 				{0,0,1,1},
 			};
 
+			proj = glm::perspectiveLH(fov, aspect, zNear, zFar);
+			proj[2][2] = -proj[2][2] + proj[2][3];
+			proj[2][3] = -proj[3][2];
+			proj[3][2] = proj[2][3];
+			// this is the same as:
+			/*
+			glm::mat4 transformMat
+			{
+				{1,0,0,0},
+				{0,1,0,0},
+				{0,0,-1,0},
+				{0,0,1,1},
+			};
 			proj = transformMat * glm::perspectiveLH(fov, aspect, zNear, zFar);
+			*/
+
 		}
 
 		void setView(const glm::vec3& position, const glm::vec3& direction, const glm::vec3& cameraUp)
@@ -96,7 +111,7 @@ namespace Engine
 		void addWorldOffset(const glm::vec3& offset)
 		{
 			m_updatedMatrices = false;
-			
+
 			view[3][0] += offset.x;
 			view[3][1] += offset.y;
 			view[3][2] += offset.z;
@@ -106,7 +121,7 @@ namespace Engine
 
 		void addRelativeOffset(const glm::vec3& offset) // relative to camera axis
 		{
-			updateBasis(); 
+			updateBasis();
 
 			m_updatedMatrices = false;
 			view = glm::translate(view, -offset);

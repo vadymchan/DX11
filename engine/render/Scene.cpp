@@ -45,7 +45,7 @@ void Engine::Scene::computeColor(const Window& window, float windowHeight, float
 
 	// screen to ndc
 	glm::vec4 nearPointNDC(xNdc, yNdc, 1.0f, 1.0f);
-	glm::vec4 farPointNDC(xNdc, yNdc, 0, 1.0f);
+	glm::vec4 farPointNDC(xNdc, yNdc, 0.0f, 1.0f);
 
 	//ndc to perspective to view to world
 	glm::vec4 nearPointWorld = IPV * nearPointNDC;
