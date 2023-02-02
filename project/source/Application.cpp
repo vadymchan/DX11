@@ -76,9 +76,8 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{4,0,0,0},
 		{0,2,0,0},
 		{0,0,2,0},
-		{0,0,0,1},
+		{5,0,-5,1},
 	};
-
 
 	glm::mat4 tMatCube2
 	{
@@ -98,10 +97,6 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	};
 	//----------------------------------------------------------------------------------
 
-
-
-
-
 	//lights
 	//----------------------------------------------------------------------------------
 	//direction light
@@ -114,7 +109,7 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//pointLight
 	std::vector<Engine::ColorPointLight> pointLights
 	{
-		Engine::ColorPointLight(Engine::Sphere(glm::vec3(0, -3, -5), 0.5), glm::vec3(0.5, 0.5 , 0)),
+		Engine::ColorPointLight(Engine::Sphere(glm::vec3(-10, 5, 5), 0.5), glm::vec3(0.5, 0.5 , 0)),
 	};
 	//spotLight
 	std::vector<Engine::ColorSpotLight> spotLight

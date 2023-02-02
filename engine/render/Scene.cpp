@@ -129,13 +129,13 @@ void Engine::Scene::setCapturedObj(const ObjRef& obj, const Intersection& inters
 		mover.reset(new TriangleMover(static_cast<Triangle*>(obj.object), aspectRatio, lenToNearPlane, rayToObjIntersection, intersection.point));
 		break;
 	case IntersectedType::Cube:
-		mover.reset(new MeshMover(static_cast<ColorCube*>(obj.object)->getPtrMathMesh(), aspectRatio));
+		mover.reset(new CubeMover(static_cast<ColorCube*>(obj.object)->getPtrMathMesh(), aspectRatio, lenToNearPlane, rayToObjIntersection, intersection.point));
 		break;
 	case IntersectedType::PointLight:
 		mover.reset(new SphereMover(static_cast<PointLight*>(obj.object)->GetPtrSphere(), aspectRatio, lenToNearPlane, rayToObjIntersection, intersection.point));
 		break;
 	case IntersectedType::SpotLight:
-		mover.reset(new SphereMover(static_cast<SpotLight*>(obj.object)->GetPtrSphere(), aspectRatio));
+		mover.reset(new SphereMover(static_cast<SpotLight*>(obj.object)->GetPtrSphere(), aspectRatio, lenToNearPlane, rayToObjIntersection, intersection.point));
 		break;
 	case IntersectedType::Num:
 		mover.reset(nullptr);
@@ -163,14 +163,14 @@ void Engine::Scene::getObjectColor(const Intersection& intersection, const ObjRe
 		mat = static_cast<ColoredTriangle*>(objRef.object)->material;
 		break;
 	case IntersectedType::Cube:
-		mat = reinterpret_cast<const ColorCube*>(objRef.object)->material;
+		mat = static_cast<const ColorCube*>(objRef.object)->material;
 		break;
 	case IntersectedType::PointLight:
 		color = static_cast<ColorPointLight*>(objRef.object)->getColor();
 		return;
 		break;
 	case IntersectedType::SpotLight:
-		color = reinterpret_cast<ColorSpotLight*>(objRef.object)->getColor();
+		color = static_cast<ColorSpotLight*>(objRef.object)->getColor();
 		return;
 		break;
 	case IntersectedType::Num:

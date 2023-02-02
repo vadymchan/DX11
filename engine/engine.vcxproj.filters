@@ -96,7 +96,7 @@
     <ClInclude Include="utils\Dragger\PlaneMover.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\Dragger\MeshMover.h">
+    <ClInclude Include="utils\Dragger\CubeMover.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="utils\parallel\parallel_executor.h">

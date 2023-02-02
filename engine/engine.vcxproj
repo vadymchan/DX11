@@ -176,7 +176,7 @@
     <ClInclude Include="utils\Dragger\SphereMover.h" />
     <ClInclude Include="utils\Dragger\TriangleMover.h" />
     <ClInclude Include="utils\timer\FPSTimer.h" />
-    <ClInclude Include="utils\Dragger\MeshMover.h" />
+    <ClInclude Include="utils\Dragger\CubeMover.h" />
     <ClInclude Include="windows\Window.h" />
   </ItemGroup>
   <ItemGroup>

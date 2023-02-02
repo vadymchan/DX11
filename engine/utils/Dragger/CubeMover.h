@@ -5,15 +5,15 @@
 
 namespace Engine
 {
-	class MeshMover : public IObjectMover
+	class CubeMover : public IObjectMover
 	{
 	public:
-		Cube* mesh;
+		Cube* cube;
 
 
-		MeshMover(Cube* mesh, float aspectRatio)
+		CubeMover(Cube* mesh, float aspectRatio,  float cameraToNearPlane, float rayToObjIntersection, const glm::vec3& intersectionPoint)
 		{
-			this->mesh = mesh;
+			this->cube = mesh;
 			this->cameraToNearPlane = cameraToNearPlane;
 			this->intersectionPoint = intersectionPoint;
 			this->rayToObjIntersection = rayToObjIntersection;
@@ -23,9 +23,9 @@ namespace Engine
 		virtual void move(const glm::vec3& offset) override
 		{
 
-			mesh->tMat[3][0] += offset.x;
-			mesh->tMat[3][1] += offset.y;
-			mesh->tMat[3][2] += offset.z;
+			cube->tMat[3][0] += offset.x;
+			cube->tMat[3][1] += offset.y;
+			cube->tMat[3][2] += offset.z;
 
 
 

@@ -11,7 +11,7 @@
 #include "../source/math/intersection.h"
 #include "../utils/Dragger/IObjectMover.h"
 #include "../utils/Dragger/SphereMover.h"
-#include "../utils/Dragger/MeshMover.h"
+#include "../utils/Dragger/CubeMover.h"
 #include "../utils/Dragger/PlaneMover.h"
 #include "../utils/Dragger/TriangleMover.h"
 #include "../utils/parallel/parallel_executor.h"
