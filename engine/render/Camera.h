@@ -57,21 +57,10 @@ namespace Engine
 
 		void setPerspective(float fov, float aspect, float zNear, float zFar)
 		{
-			glm::mat4 transformMat
-			{
-				{1,0,0,0},
-				{0,1,0,0},
-				{0,0,-1,0},
-				{0,0,1,1},
-			};
-
-			proj = transformMat * glm::perspectiveLH(fov, aspect, zNear, zFar) ;
-			/*proj[2][2] = -proj[2][2] + proj[2][3];
-			proj[2][3] = -proj[3][2];
-			proj[3][2] = proj[2][3];*/
-
-
-
+			proj = glm::perspectiveLH(fov, aspect, zNear, zFar) ;
+			proj[2][2] = -proj[2][2] + proj[2][3];
+			proj[3][2] = -proj[3][2];
+			proj[2][3] = proj[2][3];
 			// this is the same as:
 			/*
 			glm::mat4 transformMat
@@ -94,15 +83,6 @@ namespace Engine
 
 		glm::mat4 getIPV()
 		{
-
-			glm::mat4 transformMat
-			{
-				{1,0,0,0},
-				{0,1,0,0},
-				{0,0,-1,0},
-				{0,0,1,1},
-			};
-
 			if (!m_updatedMatrices)
 			{
 				updateMatrices();

@@ -14,7 +14,7 @@ namespace Engine
 			, ColorLight(lightColor)
 		{};
 
-		const glm::vec3& computeFragmentColor(const Intersection& intersection, const Material& objectMaterial, const Engine::ray& dirToLight, float shineCoef, bool intersectObj) const 
+		glm::vec3 computeFragmentColor(const Intersection& intersection, const Material& objectMaterial, const Engine::ray& dirToLight, float shineCoef, bool intersectObj) const 
 		{
 			if (intersectObj)
 			{

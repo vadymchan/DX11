@@ -19,7 +19,7 @@ namespace Engine
 			: center(cen), radius(r) {};
 
 		bool hit(const ray& r, Intersection& far);
-		inline glm::vec3 getCenter() const { return center; }
+		inline const glm::vec3& getCenter() const { return center; }
 		inline float getRadius() const { return radius; }
 		inline void setCenter(glm::vec3 newCenter) { center = newCenter; }
 	private:

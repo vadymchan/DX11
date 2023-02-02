@@ -20,8 +20,8 @@ public:
 		, distance(distance)
 	{}
 
-	glm::vec3 getNormal() const { return normal; }
-	glm::vec3 getDistance() const { return distance; }
+	const glm::vec3& getNormal() const { return normal; }
+	const glm::vec3& getDistance() const { return distance; }
 
 	void setDistance(const glm::vec3& value) { distance = value; }
 

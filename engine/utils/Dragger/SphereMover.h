@@ -11,13 +11,11 @@ namespace Engine
 		Sphere* sphere;
 
 
-		SphereMover(Sphere* sphere, float aspectRatio, float cameraToNearPlane, float rayToObjIntersection, const glm::vec3& intersectionPoint)
+		SphereMover(Sphere* sphere, float cameraToNearPlane, const glm::vec3& intersectionPoint)
 		{
 			this->sphere = sphere;
 			this->cameraToNearPlane = cameraToNearPlane;
-			this->rayToObjIntersection = rayToObjIntersection;
 			this->intersectionPoint = intersectionPoint;
-			rayNearPlaneRatio = aspectRatio;
 
 		}
 		

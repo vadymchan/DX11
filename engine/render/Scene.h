@@ -67,6 +67,7 @@ namespace Engine
 				triangleOctrees.emplace_back(std::move(tOctree));
 
 			}
+			
 		}
 
 

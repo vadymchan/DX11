@@ -22,8 +22,8 @@ namespace Engine
 			: orig(origin), dir(glm::normalize(direction))
 		{}
 
-		glm::vec3 origin() const { return orig; } // A
-		glm::vec3 direction() const { return dir; } // b
+		const glm::vec3& origin() const { return orig; } // A
+		const glm::vec3& direction() const { return dir; } // b
 
 		void changeOrigin(glm::vec3 newOrigin) { orig = newOrigin; }
 		void changeDirection(glm::vec3 newDirection) { dir = newDirection; }

@@ -18,7 +18,7 @@ namespace Engine
 			return lightColor;
 		}
 
-		const glm::vec3& computeBlinnPhong(const Intersection& intersection,
+		glm::vec3 computeBlinnPhong(const Intersection& intersection,
 			const Material& objectMaterial,
 			const ray& dirToLight,
 			float shineCoef,

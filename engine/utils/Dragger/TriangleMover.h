@@ -11,13 +11,11 @@ namespace Engine
 		Triangle* triangle;
 
 
-		TriangleMover(Triangle* triangle, float aspectRatio, float cameraToNearPlane, float rayToObjIntersection, const glm::vec3& intersectionPoint)
+		TriangleMover(Triangle* triangle,float cameraToNearPlane, const glm::vec3& intersectionPoint)
 		{
 			this->triangle = triangle;
 			this->cameraToNearPlane = cameraToNearPlane;
-			this->rayToObjIntersection = rayToObjIntersection;
 			this->intersectionPoint = intersectionPoint;
-			rayNearPlaneRatio = aspectRatio;
 
 		}
 		

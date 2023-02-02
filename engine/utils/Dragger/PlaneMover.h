@@ -11,14 +11,11 @@ namespace Engine
 		Plane* plane;
 
 
-		PlaneMover(Plane* plane, float aspectRatio, float cameraToNearPlane, float rayToObjIntersection, const glm::vec3& intersectionPoint)
+		PlaneMover(Plane* plane, float cameraToNearPlane, const glm::vec3& intersectionPoint)
 		{
 			this->plane = plane;
 			this->cameraToNearPlane = cameraToNearPlane;
-			this->rayToObjIntersection = rayToObjIntersection;
 			this->intersectionPoint = intersectionPoint;
-			rayNearPlaneRatio = aspectRatio;
-
 		}
 		
 		virtual void move(const glm::vec3& offset) override

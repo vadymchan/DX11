@@ -11,13 +11,11 @@ namespace Engine
 		Cube* cube;
 
 
-		CubeMover(Cube* mesh, float aspectRatio,  float cameraToNearPlane, float rayToObjIntersection, const glm::vec3& intersectionPoint)
+		CubeMover(Cube* mesh,float cameraToNearPlane, const glm::vec3& intersectionPoint)
 		{
 			this->cube = mesh;
 			this->cameraToNearPlane = cameraToNearPlane;
 			this->intersectionPoint = intersectionPoint;
-			this->rayToObjIntersection = rayToObjIntersection;
-			rayNearPlaneRatio = aspectRatio;
 		}
 		
 		virtual void move(const glm::vec3& offset) override

@@ -56,13 +56,12 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//----------------------------------------------------------------------------------
 
 
-	//triangles
+	//triangles - example
 	//----------------------------------------------------------------------------------
 	Engine::Material triangleMaterial = Engine::Material({ 0,0,0 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
 	auto mathTriangle = Engine::Triangle(glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f), glm::vec3(0.0f, 1.0f, 0.0f));
 	std::vector<Engine::ColoredTriangle> triangles
 	{
-		// example
 		//Engine::ColoredTriangle(mathTriangle, triangleMaterial),
 	};
 	//----------------------------------------------------------------------------------
