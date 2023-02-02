@@ -236,9 +236,6 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	{
 		if (sphere.hit(r, intersection))
 		{
-			intersection.normal = glm::normalize(r.at(intersection.t) - sphere.getCenter());
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
-			intersection.dir = r.direction();
 			obj.type = IntersectedType::Sphere;
 			obj.object = &sphere;
 			hitObject = true;
@@ -251,10 +248,6 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	{
 		if (plane.hit(r, intersection))
 		{
-
-			intersection.normal = plane.getN();
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
-			intersection.dir = r.direction();
 			obj.type = IntersectedType::Plane;
 			obj.object = &plane;
 			hitObject = true;
@@ -294,8 +287,6 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	{
 		if (tOctree.intersect(r, intersection))
 		{
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
-			intersection.dir = r.direction();
 			obj.object = tOctree.m_mesh;
 			obj.type = IntersectedType::Cube;
 			hitObject = true;
@@ -307,9 +298,6 @@ bool Engine::Scene::findIntersection(const ray& r, Intersection& intersection, O
 	{
 		if (pointLight.hit(r, intersection))
 		{
-			intersection.normal = glm::normalize(r.at(intersection.t) - pointLight.GetPosition());
-			intersection.point = r.at(intersection.t) + intersection.normal * bias;
-			intersection.dir = r.direction();
 			obj.type = IntersectedType::PointLight;
 			obj.object = &pointLight;
 			hitObject = true;

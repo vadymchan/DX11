@@ -30,7 +30,7 @@ bool Engine::hit(const ray& r, Intersection& near, const glm::vec3& V1, const gl
     if (t < near.t && t > 0)
     {
         near.t = t;
-        near.point = r.at(near.t) + near.normal * near.bias;
+        near.point = r.getPointAt(near.t) + near.normal * near.bias;
         near.dir = r.direction();
         return true;
     }

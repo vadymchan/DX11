@@ -15,8 +15,8 @@ bool Engine::Plane::hit(const ray& r, Intersection& near)
 		if (t < near.t && t > 0) 
 		{
 			near.t = t;
-			near.normal = getN();
-			near.point = r.at(near.t) + near.normal * near.bias;
+			near.normal = normal;
+			near.point = r.getPointAt(near.t) + near.normal * near.bias;
 			near.dir = r.direction();
 			return true;
 		}

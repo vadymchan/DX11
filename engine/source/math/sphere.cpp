@@ -26,8 +26,8 @@ bool Engine::Sphere::hit(const ray& r, Intersection& near)
 		}
 	}
 	near.t = t;
-	near.normal = glm::normalize(r.at(near.t) - getCenter());
-	near.point = r.at(near.t) + near.normal * near.bias;
+	near.normal = glm::normalize(r.getPointAt(near.t) - getCenter());
+	near.point = r.getPointAt(near.t) + near.normal * near.bias;
 	near.dir = r.direction();
 
 
