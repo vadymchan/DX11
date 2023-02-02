@@ -11,9 +11,12 @@ namespace Engine
 		Plane* plane;
 
 
-		PlaneMover(Plane* plane, float aspectRatio)
+		PlaneMover(Plane* plane, float aspectRatio, float cameraToNearPlane, float rayToObjIntersection, const glm::vec3& intersectionPoint)
 		{
 			this->plane = plane;
+			this->cameraToNearPlane = cameraToNearPlane;
+			this->rayToObjIntersection = rayToObjIntersection;
+			this->intersectionPoint = intersectionPoint;
 			rayNearPlaneRatio = aspectRatio;
 
 		}

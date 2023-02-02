@@ -96,7 +96,8 @@ glm::vec3 Engine::Scene::castRay(ray& ray, float farPlane, float bgColorCoef, bo
 		}
 		else if (captureObjRay && mover != nullptr)
 		{
-			mover->rayNearPlaneRatio = (lenToNearPlane + intersection.t) / lenToNearPlane;
+			mover->cameraToNearPlane = lenToNearPlane;
+			//mover->rayNearPlaneRatio = (lenToNearPlane + intersection.t) / lenToNearPlane;
 		}
 		getObjectColor(intersection, obj, finalColor);
 	}
@@ -112,24 +113,26 @@ glm::vec3 Engine::Scene::castRay(ray& ray, float farPlane, float bgColorCoef, bo
 void Engine::Scene::setCapturedObj(const ObjRef& obj, const Intersection& intersection)
 {
 
-	float aspectRatio = (lenToNearPlane + intersection.t)  / lenToNearPlane;
+	//float aspectRatio = (lenToNearPlane + intersection.t)  / lenToNearPlane; 
+	float aspectRatio = intersection.t; 
+	float rayToObjIntersection = intersection.t;
 
 	switch (obj.type)
 	{
 	case IntersectedType::Sphere:
-		mover.reset(new SphereMover(static_cast<Sphere*>(obj.object), aspectRatio));
+		mover.reset(new SphereMover(static_cast<Sphere*>(obj.object), aspectRatio, lenToNearPlane, rayToObjIntersection, intersection.point));
 		break;
 	case IntersectedType::Plane:
-		mover.reset(new PlaneMover(static_cast<Plane*>(obj.object), aspectRatio));
+		mover.reset(new PlaneMover(static_cast<Plane*>(obj.object), aspectRatio, lenToNearPlane, rayToObjIntersection, intersection.point));
 		break;
 	case IntersectedType::Triangle:
-		mover.reset(new TriangleMover(static_cast<Triangle*>(obj.object), aspectRatio));
+		mover.reset(new TriangleMover(static_cast<Triangle*>(obj.object), aspectRatio, lenToNearPlane, rayToObjIntersection, intersection.point));
 		break;
 	case IntersectedType::Cube:
 		mover.reset(new MeshMover(static_cast<ColorCube*>(obj.object)->getPtrMathMesh(), aspectRatio));
 		break;
 	case IntersectedType::PointLight:
-		mover.reset(new SphereMover(static_cast<PointLight*>(obj.object)->GetPtrSphere(), aspectRatio));
+		mover.reset(new SphereMover(static_cast<PointLight*>(obj.object)->GetPtrSphere(), aspectRatio, lenToNearPlane, rayToObjIntersection, intersection.point));
 		break;
 	case IntersectedType::SpotLight:
 		mover.reset(new SphereMover(static_cast<SpotLight*>(obj.object)->GetPtrSphere(), aspectRatio));

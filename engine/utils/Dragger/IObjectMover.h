@@ -7,6 +7,9 @@ namespace Engine
 	{
 	public:
 		float rayNearPlaneRatio;
+		float cameraToNearPlane;
+		float rayToObjIntersection;
+		glm::vec3 intersectionPoint;
 		virtual void move(const glm::vec3& offset) = 0;
 	};
 }

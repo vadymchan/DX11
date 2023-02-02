@@ -14,6 +14,9 @@ namespace Engine
 		MeshMover(Cube* mesh, float aspectRatio)
 		{
 			this->mesh = mesh;
+			this->cameraToNearPlane = cameraToNearPlane;
+			this->intersectionPoint = intersectionPoint;
+			this->rayToObjIntersection = rayToObjIntersection;
 			rayNearPlaneRatio = aspectRatio;
 		}
 		

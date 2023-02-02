@@ -19,8 +19,8 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const int ScreenHeight{ 480 };
 
 	cameraAspectRatio = static_cast<float>(ScreenWidth) / ScreenHeight;
-	cameraFov = 45.0f;
-	cameraNearZ = 1.0f;
+	cameraFov = glm::radians(60.0f);
+	cameraNearZ = 0.1f;
 	cameraFarZ = 1000.0f;
 	cameraSpeed = 0.05f;
 	rotationSpeed = 0.0005f;
@@ -29,7 +29,7 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	glm::vec3 cameraPosition{ glm::vec3(0,0,5) };
 	glm::vec3 cameraForward{ glm::vec3(0.0, 0.0f, -1.0f) };
 	glm::vec3 worldUp{ glm::vec3(0, 1, 0) };
-	nearPlaneHeight = cameraNearZ * glm::tan(glm::radians(cameraFov / 2)) * 2 ;
+	nearPlaneHeight = cameraNearZ * glm::tan(cameraFov / 2) * 2 ;
 	nearPlaneWidth = nearPlaneHeight * cameraAspectRatio ;
 
 
@@ -47,7 +47,7 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//spheres
 	//----------------------------------------------------------------------------------
 	Engine::Material sphereMaterial = Engine::Material({ 0.1745, 0.01175, 0.01175 }, { 0.61424,	0.04136	,0.04136 }, { 0.727811,	0.626959, 0.626959 }, 0.6);
-	auto mathSphere = Engine::Sphere(glm::vec3(10, 0, 5), 2); // front
+	auto mathSphere = Engine::Sphere(glm::vec3(10, 0, 5), 2); 
 
 	std::vector<Engine::ColoredSphere> spheres
 	{
@@ -108,6 +108,8 @@ void Application::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::vector<Engine::ColorDirectionLight> directionalLights
 	{
 		Engine::ColorDirectionLight(glm::vec3(-1, -1, -1), glm::vec3(0.1f, 0.1f, 0.1f)),
+		//Engine::ColorDirectionLight(glm::vec3(-1, -1, -1), glm::vec3(0.5f, 0.5f, 0.5f)),
+
 	};
 	//pointLight
 	std::vector<Engine::ColorPointLight> pointLights
@@ -201,7 +203,6 @@ bool Application::ProcessInputs()
 		case WM_RBUTTONUP:
 			captureObj = false;
 			lastMousePosition = initMousePosition = glm::vec2(-1.f);
-			//scene->mover.reset(nullptr);
 			scene->mover.release();
 			break;
 		case WM_KEYDOWN:
@@ -343,11 +344,14 @@ void Application::DragObject(float x, float y, float deltaTime)
 		//drag along plane
 		else if (xOffset != 0 || yOffset != 0)
 		{
+			float ratio{ glm::length(scene->mover->intersectionPoint - camera->position()) / scene->mover->cameraToNearPlane};
 
-			xWorldOffset = scene->mover->rayNearPlaneRatio * xWorldOffset * dragCoef;
-			yWorldOffset = scene->mover->rayNearPlaneRatio * yWorldOffset * dragCoef;
+			xWorldOffset = ratio * xWorldOffset * dragCoef;
+			yWorldOffset = ratio * yWorldOffset * dragCoef;
 
-			scene->mover->move(xWorldOffset * camera->right() - yWorldOffset * camera->up());
+			glm::vec3 delta{ xWorldOffset * camera->right() - yWorldOffset * camera->up() };
+			scene->mover->intersectionPoint += delta;
+			scene->mover->move(delta);
 		}
 	}
 
