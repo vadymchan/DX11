@@ -9,7 +9,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	window.initConsole();
 
-	DX::engine::Vertex vertices[] =
+	engine::DX::Vertex vertices[] =
 	{
 		{0.0f, 0.5f, 0.0f, {1.0f, 0.0f, 0.0f, 1.0f}},
 		{0.45f, -0.5, 0.0f, {0.0f, 1.0f, 0.0f, 1.0f}},
@@ -18,14 +18,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::cout << sizeof(vertices) << std::endl;
 
-	DX::engine::D3D::Init();
+	engine::DX::D3D::Init();
 
 	window.initWindow(L"DirectX 11 Triangle", windowStartX, windowStartY, windowWidth, windowHeight, appHandle, windowShowParams);
 
 	scene.initPipeline();
-	scene.addVertex(DX::engine::Vertex(0.0f, 0.5f, 0.0f, { 1.0f, 0.0f, 0.0f, 1.0f }));
-	scene.addVertex(DX::engine::Vertex(0.45f, -0.5, 0.0f, { 0.0f, 1.0f, 0.0f, 1.0f }));
-	scene.addVertex(DX::engine::Vertex(-0.45f, -0.5f, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }));
+	scene.addVertex(engine::DX::Vertex(0.0f, 0.5f, 0.0f, { 1.0f, 0.0f, 0.0f, 1.0f }));
+	scene.addVertex(engine::DX::Vertex(0.45f, -0.5, 0.0f, { 0.0f, 1.0f, 0.0f, 1.0f }));
+	scene.addVertex(engine::DX::Vertex(-0.45f, -0.5f, 0.0f, { 0.0f, 0.0f, 1.0f, 1.0f }));
 	scene.initVertexBuffer();
 
 }

@@ -9,7 +9,7 @@
 #include "../../dependencies/glm/glm/vec3.hpp"
 #include "../../dependencies/glm/glm/gtc/matrix_transform.hpp"
 
-namespace RC::engine
+namespace engine::RC
 {
 	
 

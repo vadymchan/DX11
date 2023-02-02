@@ -3,7 +3,7 @@
 #include "../../source/math/triangleRC.h"
 
 
-namespace RC::engine
+namespace engine::RC
 {
 	class TriangleMover : public IObjectMover
 	{

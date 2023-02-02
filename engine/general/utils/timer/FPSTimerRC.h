@@ -2,7 +2,7 @@
 
 #include <chrono>
 
-namespace general::engine
+namespace engine::general
 {
 
 	class FPSTimer

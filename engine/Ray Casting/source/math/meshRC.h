@@ -5,7 +5,7 @@
 #include "triangleRC.h"
 #include "boxRC.h"
 
-namespace RC::engine
+namespace engine::RC
 {
 	class Mesh
 	{

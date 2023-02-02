@@ -1,7 +1,7 @@
 #include "D3D.h"
 
 
-namespace DX::engine
+namespace engine::DX
 {
 	//why we don't assign it directly?
 	ID3D11Device5* g_device = nullptr;

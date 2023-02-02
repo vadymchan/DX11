@@ -14,12 +14,12 @@ public:
 	bool ProcessInputs();
 	~ApplicationDX()
 	{
-		DX::engine::D3D::Deinit();
+		engine::DX::D3D::Deinit();
 	}
 
 private:
-	general::engine::FPSTimer fpsTimer;
-	DX::engine::Scene scene;
-	DX::engine::Window window;
+	engine::general::FPSTimer fpsTimer;
+	engine::DX::Scene scene;
+	engine::DX::Window window;
 };
 

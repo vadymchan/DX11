@@ -7,7 +7,7 @@
 #include "rayRC.h"
 #include "../../dependencies/glm/glm/vec3.hpp"
 
-namespace RC::engine
+namespace engine::RC
 {
 
 	class Sphere

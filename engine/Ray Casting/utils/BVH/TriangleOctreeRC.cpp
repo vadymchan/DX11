@@ -2,7 +2,7 @@
 #include <algorithm>
 
 
-namespace RC::engine
+namespace engine::RC
 {
 	const int TriangleOctree::PREFFERED_TRIANGLE_COUNT = 32;
 	const float TriangleOctree::MAX_STRETCHING_RATIO = 1.05f;

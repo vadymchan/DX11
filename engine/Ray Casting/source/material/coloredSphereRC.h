@@ -2,7 +2,7 @@
 #include "../math/sphereRC.h"
 #include "materialRC.h"
 
-namespace RC::engine
+namespace engine::RC
 {
 
 	class ColoredSphere : public Sphere

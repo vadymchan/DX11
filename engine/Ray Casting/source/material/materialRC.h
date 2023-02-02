@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace RC::engine
+namespace engine::RC
 {
 
 	struct Material

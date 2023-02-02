@@ -2,7 +2,7 @@
 #include "../../dependencies/glm/glm/ext/vector_float3.hpp"
 #include "sphereRC.h"
 
-namespace RC::engine
+namespace engine::RC
 {
 	class PointLight
 	{

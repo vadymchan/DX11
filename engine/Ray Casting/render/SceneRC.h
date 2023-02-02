@@ -25,7 +25,7 @@
 #include "../../general/Camera.h"
 
 
-namespace RC::engine
+namespace engine::RC
 {
 
 
@@ -72,7 +72,7 @@ namespace RC::engine
 		}
 
 
-		void render(const Window& window, std::shared_ptr<general::engine::Camera> camera, const glm::vec2& mousePoint);
+		void render(const Window& window, std::shared_ptr<engine::general::Camera> camera, const glm::vec2& mousePoint);
 		uint32_t castRayColorToUint(const glm::vec3& rayColor);
 		void computeColor(const Window& window, float windowHeight, float windowWidth, float verticalOffset,
 			float horizontalOffset, float xNdcCoefficient, const glm::mat4& IPV, int xCapture, int yCapture,

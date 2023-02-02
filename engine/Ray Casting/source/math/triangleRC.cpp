@@ -1,6 +1,6 @@
 #include "triangleRC.h"
 
-bool RC::engine::Triangle::hit(const ray& r, float& near)
+bool engine::RC::Triangle::hit(const ray& r, float& near)
 {
  
     glm::vec3 v0v1{ v[1] - v[0]};

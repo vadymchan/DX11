@@ -8,7 +8,7 @@
 #include "../../general/utils/timer/FPSTimerRC.h"
 #include <algorithm>
 
-namespace DX::engine
+namespace engine::DX
 {
 	class Scene
 	{
@@ -19,7 +19,7 @@ namespace DX::engine
 		void addVertex(const Vertex& vertex) { vertices.emplace_back(vertex); }
 
 	private:
-		general::engine::FPSTimer timer;
+		engine::general::FPSTimer timer;
 		void initShaders();
 		void initInputLayout();
 		void initConstantBuffer();

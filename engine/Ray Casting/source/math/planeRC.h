@@ -6,7 +6,7 @@
 #include "rayRC.h"
 
 
-namespace RC::engine
+namespace engine::RC
 {
 
 

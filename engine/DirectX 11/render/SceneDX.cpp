@@ -5,9 +5,9 @@
 
 
 
-namespace DX::engine
+namespace engine::DX
 {
-	const std::wstring pathToShaders { L"..\\..\\engine\\DirectX 11\\shaders\\" };
+	const std::wstring pathToShaders { L"engine\\DirectX 11\\shaders\\" };
 
 	void Scene::render(Window& window)
 	{

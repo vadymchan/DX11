@@ -4,7 +4,7 @@
 
 
 
-bool RC::engine::Sphere::hit(const ray& r, float& near) 
+bool engine::RC::Sphere::hit(const ray& r, float& near) 
 {
 	glm::vec3 oc = r.origin() - center;
 	auto a = glm::length(r.direction()) * glm::length(r.direction());

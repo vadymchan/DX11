@@ -2,7 +2,7 @@
 #include "../math/pointLightRC.h"
 
 
-namespace RC::engine
+namespace engine::RC
 {
 	class ColorPointLight : public PointLight
 	{

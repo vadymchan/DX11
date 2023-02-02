@@ -3,7 +3,7 @@
 #include "../../source/math/meshRC.h"
 
 
-namespace RC::engine
+namespace engine::RC
 {
 	class MeshMover : public IObjectMover
 	{

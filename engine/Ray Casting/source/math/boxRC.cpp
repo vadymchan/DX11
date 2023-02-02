@@ -1,7 +1,7 @@
 #include "boxRC.h"
 #include <algorithm>
 
-bool RC::engine::Box::hit(const ray& r, float& near_t) const
+bool engine::RC::Box::hit(const ray& r, float& near_t) const
 {
 	glm::vec3 tMin = (min - r.origin()) / r.direction();
 	glm::vec3 tMax = (max - r.origin()) / r.direction();

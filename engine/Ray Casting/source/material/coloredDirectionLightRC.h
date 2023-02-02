@@ -4,7 +4,7 @@
 
 
 
-namespace RC::engine
+namespace engine::RC
 {
 	class ColorDirectionLight : public DirectionalLight
 	{

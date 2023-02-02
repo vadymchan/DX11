@@ -5,7 +5,7 @@
 #include <array>
 #include <vector>
 
-namespace RC::engine
+namespace engine::RC
 {
 	class Triangle
 	{

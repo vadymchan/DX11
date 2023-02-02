@@ -1,6 +1,6 @@
 #include "planeRC.h"
 
-bool RC::engine::Plane::hit(const ray& r, float& near) 
+bool engine::RC::Plane::hit(const ray& r, float& near) 
 {
 	glm::vec3 currentN{ normal };
 

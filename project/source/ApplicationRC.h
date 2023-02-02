@@ -43,13 +43,13 @@ public:
 	void OnShiftReleased();
 	void Close();
 
-	general::engine::FPSTimer fpsTimer;
+	engine::general::FPSTimer fpsTimer;
 private:
 
 	MSG msg;
-	RC::engine::Window window;
-	std::shared_ptr<general::engine::Camera> camera;
-	std::shared_ptr<RC::engine::Scene> scene;
+	engine::RC::Window window;
+	std::shared_ptr<engine::general::Camera> camera;
+	std::shared_ptr<engine::RC::Scene> scene;
 
 	glm::vec2 lastMousePosition{};
 	glm::vec2 initMousePosition{};

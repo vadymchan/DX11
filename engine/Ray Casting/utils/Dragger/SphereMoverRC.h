@@ -3,7 +3,7 @@
 #include "../../source/math/sphereRC.h"
 
 
-namespace RC::engine
+namespace engine::RC
 {
 	class SphereMover : public IObjectMover
 	{

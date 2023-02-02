@@ -31,7 +31,7 @@
 #define DEV_ASSERT(expression, ...) ALWAYS_ASSERT(expression, __VA_ARGS__);
 #endif
 
-namespace RC::engine
+namespace engine::RC
 {
 
 

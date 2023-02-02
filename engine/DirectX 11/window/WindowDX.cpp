@@ -1,7 +1,7 @@
 #include "WindowDX.h"
 #include <iostream>
 
-namespace DX::engine
+namespace engine::DX
 {
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{

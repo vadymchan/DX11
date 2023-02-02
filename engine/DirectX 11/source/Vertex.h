@@ -3,7 +3,7 @@
 #include "../render/D3D.h"
 #include <array>
 
-namespace DX::engine
+namespace engine::DX
 {
 	struct Vertex
 	{

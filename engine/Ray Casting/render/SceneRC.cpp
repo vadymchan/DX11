@@ -1,12 +1,12 @@
 #include "SceneRC.h"
 
-void RC::engine::Scene::render(const Window& window, std::shared_ptr <general::engine::Camera> camera, const glm::vec2& mousePoint)
+void engine::RC::Scene::render(const Window& window, std::shared_ptr <engine::general::Camera> camera, const glm::vec2& mousePoint)
 {
 	uint32_t numThreads = std::max(1u,
-		std::max(RC::engine::ParallelExecutor::MAX_THREADS > 4u ? RC::engine::ParallelExecutor::MAX_THREADS - 4u : 1u,
-			RC::engine::ParallelExecutor::HALF_THREADS));
+		std::max(engine::RC::ParallelExecutor::MAX_THREADS > 4u ? engine::RC::ParallelExecutor::MAX_THREADS - 4u : 1u,
+			engine::RC::ParallelExecutor::HALF_THREADS));
 
-	RC::engine::ParallelExecutor executor{ numThreads };
+	engine::RC::ParallelExecutor executor{ numThreads };
 
 	glm::mat4 IPV = camera->getIPV();
 
@@ -31,7 +31,7 @@ void RC::engine::Scene::render(const Window& window, std::shared_ptr <general::e
 	return;
 }
 
-void RC::engine::Scene::computeColor(const Window& window, float windowHeight, float windowWidth, float verticalOffset, float horizontalOffset, float xNdcCoefficient, const glm::mat4& IPV, int xCapture, int yCapture, int x, int y, const glm::vec3& cameraPosition)
+void engine::RC::Scene::computeColor(const Window& window, float windowHeight, float windowWidth, float verticalOffset, float horizontalOffset, float xNdcCoefficient, const glm::mat4& IPV, int xCapture, int yCapture, int x, int y, const glm::vec3& cameraPosition)
 {
 	bool captureObjRay{ xCapture == x && yCapture == y };
 
@@ -67,7 +67,7 @@ void RC::engine::Scene::computeColor(const Window& window, float windowHeight, f
 }
 
 
-uint32_t RC::engine::Scene::castRayColorToUint(const glm::vec3& rayColor)
+uint32_t engine::RC::Scene::castRayColorToUint(const glm::vec3& rayColor)
 {
 	auto r = rayColor.r * 255;
 	auto g = rayColor.g * 255;
@@ -81,7 +81,7 @@ uint32_t RC::engine::Scene::castRayColorToUint(const glm::vec3& rayColor)
 }
 
 
-glm::vec3 RC::engine::Scene::castRay(ray& ray, float farPlane, float bgColorCoef, bool captureObjRay)
+glm::vec3 engine::RC::Scene::castRay(ray& ray, float farPlane, float bgColorCoef, bool captureObjRay)
 {
 	glm::vec3 finalColor = glm::vec3(0);
 	Intersection intersection{};
@@ -109,7 +109,7 @@ glm::vec3 RC::engine::Scene::castRay(ray& ray, float farPlane, float bgColorCoef
 	return finalColor;
 }
 
-void RC::engine::Scene::setCapturedObj(const ObjRef& obj, const Intersection& intersection)
+void engine::RC::Scene::setCapturedObj(const ObjRef& obj, const Intersection& intersection)
 {
 
 	float aspectRatio = (lenToNearPlane + intersection.t)  / lenToNearPlane;
@@ -139,7 +139,7 @@ void RC::engine::Scene::setCapturedObj(const ObjRef& obj, const Intersection& in
 }
 
 
-void RC::engine::Scene::getObjectColor(const Intersection& intersection, const ObjRef& objRef, glm::vec3& color)
+void engine::RC::Scene::getObjectColor(const Intersection& intersection, const ObjRef& objRef, glm::vec3& color)
 {
 	Intersection shadowIntersection{ intersection };
 	ObjRef shadowObjRef{ objRef };
@@ -178,7 +178,7 @@ void RC::engine::Scene::getObjectColor(const Intersection& intersection, const O
 
 	for (const auto& directionLight : directionLights)
 	{
-		ray lDir{ RC::engine::ray(intersection.point, -directionLight.getDirection()) };
+		ray lDir{ engine::RC::ray(intersection.point, -directionLight.getDirection()) };
 		if (findIntersection(lDir, shadowIntersection, shadowObjRef) 
 			&& shadowObjRef.type != IntersectedType::PointLight)
 		{
@@ -212,7 +212,7 @@ void RC::engine::Scene::getObjectColor(const Intersection& intersection, const O
 	for (const auto& pointLight : pointLights)
 	{
 		glm::vec3 fragTolight{ pointLight.GetPosition() - intersection.point };
-		ray lDir{ RC::engine::ray(intersection.point, glm::normalize(fragTolight)) };
+		ray lDir{ engine::RC::ray(intersection.point, glm::normalize(fragTolight)) };
 		shadowIntersection.t = glm::length(fragTolight);
 		if (findIntersection(lDir, shadowIntersection, shadowObjRef)
 			&& shadowObjRef.type != IntersectedType::PointLight)
@@ -285,7 +285,7 @@ void RC::engine::Scene::getObjectColor(const Intersection& intersection, const O
 	color = glm::clamp(color, 0.0f, 1.0f);
 }
 
-bool RC::engine::Scene::findIntersection(const ray& r, Intersection& intersection, ObjRef& obj)
+bool engine::RC::Scene::findIntersection(const ray& r, Intersection& intersection, ObjRef& obj)
 {
 	bool hitObject{ false };
 	float bias{ 1e-3 };

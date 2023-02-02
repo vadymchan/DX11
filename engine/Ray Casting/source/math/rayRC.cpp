@@ -1,6 +1,6 @@
 #include "rayRC.h"
 
-bool RC::engine::hit(const ray& r, float& near_t, const glm::vec3& V1, const glm::vec3& V2, const glm::vec3& V3)
+bool engine::RC::hit(const ray& r, float& near_t, const glm::vec3& V1, const glm::vec3& V2, const glm::vec3& V3)
 {
 
     glm::vec3 v0v1{ V2 - V1 };

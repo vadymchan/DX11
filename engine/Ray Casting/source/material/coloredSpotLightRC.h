@@ -1,7 +1,7 @@
 #pragma once
 #include "../math/spotLightRC.h"
 
-namespace RC::engine
+namespace engine::RC
 {
 	class ColorSpotLight : public SpotLight
 	{

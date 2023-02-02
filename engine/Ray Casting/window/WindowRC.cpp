@@ -2,7 +2,7 @@
 #include <iostream>
 #include "../dependencies/glm/glm/ext/vector_float2.hpp"
 
-namespace RC::engine
+namespace engine::RC
 {
 
 

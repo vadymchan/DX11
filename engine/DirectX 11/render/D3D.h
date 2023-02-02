@@ -23,7 +23,7 @@
 
 using Microsoft::WRL::ComPtr;
 
-namespace DX::engine
+namespace engine::DX
 {
 	//  for have an access to resources
 	extern ID3D11Device5* g_device;

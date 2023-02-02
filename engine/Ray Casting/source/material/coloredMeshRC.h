@@ -2,7 +2,7 @@
 #include "../math/meshRC.h"
 #include "materialRC.h"
 
-namespace RC::engine
+namespace engine::RC
 {
 	class ColorMesh
 	{

@@ -3,7 +3,7 @@
 #include "../../source/math/planeRC.h"
 
 
-namespace RC::engine
+namespace engine::RC
 {
 	class PlaneMover : public IObjectMover
 	{

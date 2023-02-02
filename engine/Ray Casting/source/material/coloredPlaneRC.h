@@ -4,7 +4,7 @@
 #include "materialRC.h"
 
 
-namespace RC::engine
+namespace engine::RC
 {
 
 	class ColoredPlane : public Plane

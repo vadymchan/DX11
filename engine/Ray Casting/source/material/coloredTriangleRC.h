@@ -2,7 +2,7 @@
 #include "../math/triangleRC.h"
 #include "materialRC.h"
 
-namespace RC::engine // rc - ray caster namespace
+namespace engine::RC // rc - ray caster namespace
 {
 
 		class ColoredTriangle : public Triangle

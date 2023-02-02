@@ -1,6 +1,6 @@
 #include "meshRC.h"
 
-bool RC::engine::Mesh::hit(ray r, float& near, glm::vec3& intersectionN)
+bool engine::RC::Mesh::hit(ray r, float& near, glm::vec3& intersectionN)
 {
     bool hitAny{};
 

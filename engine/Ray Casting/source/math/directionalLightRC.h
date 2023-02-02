@@ -1,7 +1,7 @@
 #pragma once
 #include "../../dependencies/glm/glm/ext/vector_float3.hpp"
 
-namespace RC::engine
+namespace engine::RC
 {
 
 	class DirectionalLight

@@ -1,7 +1,7 @@
 #pragma once
 #include "../render/D3D.h"
 
-namespace DX::engine
+namespace engine::DX
 {
 	struct ConstBuffer
 	{
