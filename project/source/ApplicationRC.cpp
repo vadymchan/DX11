@@ -416,28 +416,26 @@ void ApplicationRC::PitchYawRotate(float x, float y)
 	bool yawConstRotation{ std::abs(x - initMousePosition.x) >= (float)window.GetClientWidth() / 2 };
 	bool pitchConstRotation{ std::abs(y - initMousePosition.y) >= (float)window.GetClientHeight() / 2 };
 
-
-	float miliToSec{ 0.001f };
 	if (yawConstRotation)
 	{
 		if (x - initMousePosition.x > 0)
 		{
-			offsetYaw = glm::radians(180.f) * miliToSec;
+			offsetYaw = glm::radians(180.f) * fpsTimer.milliToSec;
 		}
 		else
 		{
-			offsetYaw = glm::radians(-180.f) * miliToSec;
+			offsetYaw = glm::radians(-180.f) * fpsTimer.milliToSec;
 		}
 	}
 	if (pitchConstRotation)
 	{
 		if (y - initMousePosition.y > 0)
 		{
-			offsetPitch = glm::radians(180.f) * miliToSec;
+			offsetPitch = glm::radians(180.f) * fpsTimer.milliToSec;
 		}
 		else
 		{
-			offsetPitch = glm::radians(-180.f) * miliToSec;
+			offsetPitch = glm::radians(-180.f) * fpsTimer.milliToSec;
 		}
 
 	}

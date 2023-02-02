@@ -15,7 +15,7 @@ namespace engine::DX
 		g_devcon->OMSetRenderTargets(1, window.GetppRenderTargetView()	, nullptr);
 
 
-		constBufferData.time.x = timer.frameTimeElapsed() * 0.001f;
+		constBufferData.time.x = timer.frameTimeElapsed() * timer.milliToSec;
 
 
 		constBufferData.viewport.x = window.GetViewport().Width;
