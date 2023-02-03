@@ -2,10 +2,10 @@
 
 
 
-#include <utils/timer/FPSTimer.h>
-#include <windows/Window.h>
-#include <render/Scene.h>
-#include <render/Camera.h>
+#include <Ray Casting/utils/timer/FPSTimer.h>
+#include <Ray Casting/windows/Window.h>
+#include <Ray Casting/render/Scene.h>
+#include <Ray Casting/render/Camera.h>
 
 
 class Application

@@ -15,69 +15,69 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\math\ray.h">
+    <ClInclude Include="Ray Casting\source\math\ray.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\sphere.h">
+    <ClInclude Include="Ray Casting\source\math\sphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\Scene.h">
+    <ClInclude Include="Ray Casting\render\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils\timer\FPSTimer.h">
+    <ClInclude Include="Ray Casting\utils\timer\FPSTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="windows\Window.h">
+    <ClInclude Include="Ray Casting\windows\Window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\directionalLight.h">
+    <ClInclude Include="Ray Casting\source\math\directionalLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\Camera.h">
+    <ClInclude Include="Ray Casting\render\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\plane.h">
+    <ClInclude Include="Ray Casting\source\math\plane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\material\coloredSphere.h">
+    <ClInclude Include="Ray Casting\source\material\coloredSphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\material\coloredPlane.h">
+    <ClInclude Include="Ray Casting\source\material\coloredPlane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\material\material.h">
+    <ClInclude Include="Ray Casting\source\material\material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\math\intersection.h">
+    <ClInclude Include="Ray Casting\source\math\intersection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="source\material\coloredDirectionLight.h">
+    <ClInclude Include="Ray Casting\source\material\coloredDirectionLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\SceneObject.h">
+    <ClInclude Include="Ray Casting\render\SceneObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\SceneSphere.h">
+    <ClInclude Include="Ray Casting\render\SceneSphere.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="render\ScenePlane.h">
+    <ClInclude Include="Ray Casting\render\ScenePlane.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="windows\Window.cpp">
+    <ClCompile Include="Ray Casting\windows\Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="render\Scene.cpp">
+    <ClCompile Include="Ray Casting\render\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\sphere.cpp">
+    <ClCompile Include="Ray Casting\source\math\sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils\timer\FPSTimer.cpp">
+    <ClCompile Include="Ray Casting\utils\timer\FPSTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\math\plane.cpp">
+    <ClCompile Include="Ray Casting\source\math\plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
