@@ -126,7 +126,7 @@
     <ClInclude Include="DirectX 11\source\ConstBufferType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="general\utils\Console.h">
+    <ClInclude Include="general\utils\console\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -173,7 +173,7 @@
     <ClCompile Include="DirectX 11\render\D3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="general\utils\Console.cpp">
+    <ClCompile Include="general\utils\console\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

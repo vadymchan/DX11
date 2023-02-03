@@ -174,7 +174,7 @@
     <ClInclude Include="general\include\win.h" />
     <ClInclude Include="general\include\win_def.h" />
     <ClInclude Include="general\include\win_undef.h" />
-    <ClInclude Include="general\utils\Console.h" />
+    <ClInclude Include="general\utils\console\Console.h" />
     <ClInclude Include="Ray Casting\render\SceneRC.h" />
     <ClInclude Include="Ray Casting\source\material\coloredDirectionLightRC.h" />
     <ClInclude Include="Ray Casting\source\material\coloredMeshRC.h" />
@@ -208,7 +208,7 @@
   <ItemGroup>
     <ClCompile Include="DirectX 11\render\D3D.cpp" />
     <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
-    <ClCompile Include="general\utils\Console.cpp" />
+    <ClCompile Include="general\utils\console\Console.cpp" />
     <ClCompile Include="Ray Casting\render\SceneRC.cpp" />
     <ClCompile Include="Ray Casting\source\math\boxRC.cpp" />
     <ClCompile Include="Ray Casting\source\math\meshRC.cpp" />

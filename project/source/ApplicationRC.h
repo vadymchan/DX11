@@ -3,7 +3,7 @@
 
 
 #include <general/utils/timer/FPSTimerRC.h>
-#include <general/utils/Console.h>
+#include <general/utils/console/Console.h>
 #include <general/Camera.h>
 #include <Ray Casting/render/SceneRC.h>
 #include <Ray Casting/window/WindowRC.h>
