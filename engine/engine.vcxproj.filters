@@ -135,9 +135,6 @@
     <ClInclude Include="DirectX 11\source\ConstBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\Vertex.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Ray Casting\source\math\boxRC.cpp">
@@ -182,7 +179,7 @@
     <ClCompile Include="DirectX 11\render\D3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX 11\EngineDX.cpp">
+    <ClCompile Include="general\utils\console\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -3,7 +3,7 @@
 
 namespace engine::DX
 {
-	struct ConstBuffer
+	struct ConstBufferType
 	{
 		DirectX::XMFLOAT2 viewport{};
 		DirectX::XMFLOAT2 time{};

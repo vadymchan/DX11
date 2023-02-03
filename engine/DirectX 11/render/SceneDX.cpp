@@ -106,23 +106,23 @@ namespace engine::DX
 
 	void Scene::initVertexBuffer()
 	{
-		//delete resources if it's already allocated
-
 		D3D11_BUFFER_DESC bufferDescription;
 		ZeroMemory(&bufferDescription, sizeof(bufferDescription));
 
-		bufferDescription.Usage = D3D11_USAGE_DYNAMIC;
-		bufferDescription.ByteWidth = sizeof(Vertex) * vertices.size();
+		bufferDescription.Usage = D3D11_USAGE_IMMUTABLE;
+		bufferDescription.ByteWidth = sizeof(VertexType) * vertices.size();
 		bufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		bufferDescription.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-		g_device->CreateBuffer(&bufferDescription, NULL, vertexBuffer.GetAddressOf());
+		D3D11_SUBRESOURCE_DATA bufferData;
+		bufferData.pSysMem = vertices.data();
+		bufferData.SysMemPitch = 0;
+		bufferData.SysMemSlicePitch = 0;
 
-		//map (copy) resources
-		D3D11_MAPPED_SUBRESOURCE mapSubresource;
-		g_devcon->Map(vertexBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapSubresource);
-		memcpy(mapSubresource.pData, vertices.data(), vertices.size() * sizeof(Vertex));
-		g_devcon->Unmap(vertexBuffer.Get(), NULL);
+		HRESULT result = g_device->CreateBuffer(&bufferDescription, &bufferData, vertexBuffer.GetAddressOf());
+		if (FAILED(result))
+		{
+			std::cerr << "Vertex buffer was not inited\n";
+		}
 	}
 
 
