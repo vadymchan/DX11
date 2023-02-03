@@ -120,10 +120,13 @@
     <ClInclude Include="DirectX 11\render\D3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\Vertex.h">
+    <ClInclude Include="DirectX 11\source\VertexType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\ConstBuffer.h">
+    <ClInclude Include="DirectX 11\source\ConstBufferType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general\utils\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -168,6 +171,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DirectX 11\render\D3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="general\utils\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

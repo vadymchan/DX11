@@ -50,15 +50,15 @@ namespace engine::DX
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
-	void Window::initConsole()
-	{
-		AllocConsole();
-		FILE* dummy;
+	//void //initConsole()
+	//{
+	//	AllocConsole();
+	//	FILE* dummy;
 
-		freopen_s(&dummy, "CONIN$", "r", stdin);
-		freopen_s(&dummy, "CONOUT$", "w", stdout);
-		freopen_s(&dummy, "CONOUT$", "w", stderr);
-	}
+	//	freopen_s(&dummy, "CONIN$", "r", stdin);
+	//	freopen_s(&dummy, "CONOUT$", "w", stdout);
+	//	freopen_s(&dummy, "CONOUT$", "w", stderr);
+	//}
 
 	void Window::initWindow(const LPCWSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 	{

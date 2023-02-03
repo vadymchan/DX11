@@ -13,7 +13,6 @@ namespace engine::DX
 	class Window
 	{
 	public:
-		void initConsole();
 		void initWindow(const LPCWSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 		void clearWindow();
 		void windowResize(float width, float height);

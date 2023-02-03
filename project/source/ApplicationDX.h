@@ -3,6 +3,7 @@
 #include "DirectX 11/window/WindowDX.h"
 #include "general/utils/timer/FPSTimerRC.h"
 #include "DirectX 11/render/SceneDX.h"
+#include "general/utils/Console.h"
 #include <thread>
 
 class ApplicationDX

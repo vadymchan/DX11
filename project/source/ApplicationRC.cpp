@@ -9,7 +9,7 @@ void ApplicationRC::WindowSetup(const LPCWSTR& title, int yStart, int xStart, in
 {
 
 #ifdef _DEBUG
-	window.initConsole();
+	engine::general::initConsole();
 #endif
 	window.initWindow(title, yStart, xStart, width, height, appHandle, windowShowParams);
 	window.initColorBuffer();
