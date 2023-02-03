@@ -7,7 +7,7 @@
 
 namespace engine::DX
 {
-	const std::wstring pathToShaders { L"engine\\DirectX 11\\shaders\\" };
+	const std::wstring pathToShaders { L"engine\\general\\resources\\shaders\\" };
 
 	void Scene::render(Window& window)
 	{
@@ -24,7 +24,7 @@ namespace engine::DX
 
 		D3D11_MAPPED_SUBRESOURCE mapSubresource;
 		g_devcon->Map(constBuffer.Get(), NULL, D3D11_MAP_WRITE_DISCARD, NULL, &mapSubresource);
-		memcpy(mapSubresource.pData, &constBufferData, sizeof(ConstBuffer));
+		memcpy(mapSubresource.pData, &constBufferData, sizeof(ConstBufferType));
 		g_devcon->Unmap(constBuffer.Get(), NULL);
 		g_devcon->PSSetConstantBuffers(0, 1, constBuffer.GetAddressOf());
 
@@ -66,7 +66,7 @@ namespace engine::DX
 	{
 		//constant buffer
 		D3D11_BUFFER_DESC constBufferDesc;
-		constBufferDesc.ByteWidth = sizeof(ConstBuffer);
+		constBufferDesc.ByteWidth = sizeof(ConstBufferType);
 		constBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		constBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		constBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;

@@ -4,8 +4,8 @@
 #include "../source/Vertex.h"
 #include "../source/ConstBuffer.h"
 #include "../window/WindowDX.h"
-#include <vector>
 #include "../../general/utils/timer/FPSTimerRC.h"
+#include <vector>
 #include <algorithm>
 
 namespace engine::DX

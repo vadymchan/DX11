@@ -135,7 +135,7 @@
       </Message>
     </PostBuildEvent>
     <FxCompile>
-      <ShaderModel>4.0</ShaderModel>
+      <ShaderModel>5.0</ShaderModel>
       <ShaderType>Effect</ShaderType>
     </FxCompile>
   </ItemDefinitionGroup>
@@ -161,19 +161,23 @@
       </Message>
     </PostBuildEvent>
     <FxCompile>
-      <ShaderModel>4.0</ShaderModel>
+      <ShaderModel>5.0</ShaderModel>
       <ShaderType>Effect</ShaderType>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DirectX 11\render\D3D.h" />
     <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
+    <ClInclude Include="DirectX 11\source\ConstBufferType.h" />
     <ClInclude Include="DirectX 11\source\Vertex.h" />
+    <ClInclude Include="DirectX 11\source\VertexType.h" />
     <ClInclude Include="DirectX 11\window\WindowDX.h" />
+    <ClInclude Include="DirectX 11\EngineDX.h" />
     <ClInclude Include="general\Camera.h" />
     <ClInclude Include="general\include\win.h" />
     <ClInclude Include="general\include\win_def.h" />
     <ClInclude Include="general\include\win_undef.h" />
+    <ClInclude Include="general\utils\Console.h" />
     <ClInclude Include="Ray Casting\render\SceneRC.h" />
     <ClInclude Include="Ray Casting\source\material\coloredDirectionLightRC.h" />
     <ClInclude Include="Ray Casting\source\material\coloredMeshRC.h" />
@@ -205,6 +209,7 @@
     <ClInclude Include="DirectX 11\render\SceneDX.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX 11\EngineDX.cpp" />
     <ClCompile Include="DirectX 11\render\D3D.cpp" />
     <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="Ray Casting\render\SceneRC.cpp" />
@@ -221,8 +226,8 @@
     <ClCompile Include="DirectX 11\render\SceneDX.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="DirectX 11\shaders\pixelShader.hlsl" />
-    <FxCompile Include="DirectX 11\shaders\vertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\pixelShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\vertexShader.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

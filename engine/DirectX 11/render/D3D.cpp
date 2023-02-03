@@ -3,7 +3,6 @@
 
 namespace engine::DX
 {
-	//why we don't assign it directly?
 	ID3D11Device5* g_device = nullptr;
 	ID3D11DeviceContext4* g_devcon = nullptr;
 	IDXGIFactory5* g_factory = nullptr;

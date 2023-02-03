@@ -120,10 +120,22 @@
     <ClInclude Include="DirectX 11\render\D3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\Vertex.h">
+    <ClInclude Include="DirectX 11\EngineDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\ConstBufferType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\VertexType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general\utils\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectX 11\source\ConstBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -170,9 +182,12 @@
     <ClCompile Include="DirectX 11\render\D3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DirectX 11\EngineDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="DirectX 11\shaders\pixelShader.hlsl" />
-    <FxCompile Include="DirectX 11\shaders\vertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\pixelShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\vertexShader.hlsl" />
   </ItemGroup>
 </Project>
