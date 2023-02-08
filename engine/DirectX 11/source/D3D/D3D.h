@@ -1,6 +1,7 @@
 #pragma once
 
-#include "../../general/include/win_def.h"
+
+#include "../../../general/include/win_def.h"
 
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -10,11 +11,12 @@
 
 #include <d3d11_4.h>
 #include <d3dcompiler.h>
-#include <DirectXMath.h>
+#include <SimpleMath.h>
 #include <wrl/client.h>
 #include <cstdint>
 #include <iostream>
 
+#include "../../../general/include/win_undef.h"
 
 #pragma comment( lib, "d3d11.lib" )
 #pragma comment( lib, "dxgi.lib" )
@@ -53,4 +55,3 @@ namespace engine::DX
 
 }
 
-#include "../../general/include/win_undef.h"

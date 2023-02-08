@@ -2,7 +2,7 @@
 
 #include "../../general/include/win.h"
 
-#include "../render/D3D.h"
+#include "../source/D3D/D3D.h"
 
 
 namespace engine::DX
@@ -17,11 +17,11 @@ namespace engine::DX
 		void clearWindow();
 		void windowResize(float width, float height);
 		void setBackgroundColor(float r, float g, float b, float a);
+		void setVSync(bool value) { vsync = value; }
 		ID3D11RenderTargetView* const* GetppRenderTargetView() const { return renderTargetView.GetAddressOf(); } //rm
 		const D3D11_VIEWPORT& GetViewport() const { return viewport; }
 		const HWND& GetHWND() const { return hwnd; }
 		void flush();
-
 	private:
 		void initSwapchain();
 		void initBackbuffer();
@@ -36,6 +36,7 @@ namespace engine::DX
 		FLOAT bgColorRGBA[4];
 		float width{};
 		float height{};
+		bool vsync{};
 	};
 
 

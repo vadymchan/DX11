@@ -106,9 +106,6 @@ namespace engine::DX
 		swapchainDesc.Scaling = DXGI_SCALING_NONE;
 		swapchainDesc.Stereo = false;
 		swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-		
-
-
 
 		HRESULT result = g_factory->CreateSwapChainForHwnd(g_device, hwnd, &swapchainDesc, nullptr, nullptr, swapchain.ReleaseAndGetAddressOf());
 		if (FAILED(result))
@@ -143,7 +140,7 @@ namespace engine::DX
 		bgColorRGBA[1] = 0.6f;
 		bgColorRGBA[2] = 0.4f;
 		bgColorRGBA[3] = 1.0f;
-		
+
 
 
 		g_device->CreateRenderTargetView(backBuffer.Get(), nullptr, renderTargetView.ReleaseAndGetAddressOf());
@@ -165,7 +162,8 @@ namespace engine::DX
 		g_devcon->ClearRenderTargetView(renderTargetView.Get(), bgColorRGBA);
 	}
 
-	inline void Window::setBackgroundColor(float r, float g, float b, float a) {
+	inline void Window::setBackgroundColor(float r, float g, float b, float a)
+	{
 		bgColorRGBA[0] = r;
 		bgColorRGBA[1] = g;
 		bgColorRGBA[2] = b;
@@ -185,7 +183,14 @@ namespace engine::DX
 
 	void Window::flush()
 	{
-		swapchain->Present(0, 0);
+		if (vsync)
+		{
+			swapchain->Present(1, 0);
+		}
+		else
+		{
+			swapchain->Present(0, 0);
+		}
 	}
 
 }

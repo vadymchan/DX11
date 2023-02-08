@@ -96,7 +96,7 @@
     <ClInclude Include="general\utils\timer\FPSTimerRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="general\Camera.h">
+    <ClInclude Include="Ray Casting\utils\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Ray Casting\render\SceneRC.h">
@@ -117,7 +117,7 @@
     <ClInclude Include="general\include\win.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\render\D3D.h">
+    <ClInclude Include="DirectX 11\source\D3D\D3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectX 11\EngineDX.h">
@@ -129,10 +129,64 @@
     <ClInclude Include="DirectX 11\source\VertexType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="general\utils\Console.h">
+    <ClInclude Include="DirectX 11\source\ConstBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\ConstBuffer.h">
+    <ClInclude Include="DirectX 11\source\Vertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general\utils\console\Console.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\MeshSystem\Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\MeshSystem\Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\MeshSystem\MeshSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\MeshSystem\OpaqueInstances.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Controller\ShaderManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Buffer\IndexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Buffer\VertexBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Shader\VertexShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Shader\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Shader\PixelShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Controller\BufferManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Controller\ModelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Buffer\Buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Buffer\ConstantBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Buffer\DepthStencilBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -176,10 +230,13 @@
     <ClCompile Include="DirectX 11\render\SceneDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX 11\render\D3D.cpp">
+    <ClCompile Include="DirectX 11\source\D3D\D3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="general\utils\console\Console.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\source\MeshSystem\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

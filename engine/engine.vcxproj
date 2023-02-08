@@ -78,11 +78,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)general\dependencies\assimp\include;$(ProjectDir)general\dependencies\DirectXTK\Inc;$(ProjectDir)general\dependencies\glm;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)general\dependencies\assimp\include;$(ProjectDir)general\dependencies\DirectXTK\Inc;$(ProjectDir)general\dependencies\glm;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -166,14 +166,31 @@
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX 11\render\D3D.h" />
+    <ClInclude Include="DirectX 11\source\D3D\D3D.h" />
+    <ClInclude Include="DirectX 11\source\Buffer\Buffer.h" />
+    <ClInclude Include="DirectX 11\source\Buffer\ConstantBuffer.h" />
+    <ClInclude Include="DirectX 11\source\Buffer\DepthStencilBuffer.h" />
+    <ClInclude Include="DirectX 11\source\Camera.h" />
     <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
     <ClInclude Include="DirectX 11\source\ConstBufferType.h" />
+    <ClInclude Include="DirectX 11\source\Controller\BufferManager.h" />
+    <ClInclude Include="DirectX 11\source\Controller\ModelManager.h" />
+    <ClInclude Include="DirectX 11\source\Buffer\IndexBuffer.h" />
+    <ClInclude Include="DirectX 11\source\MeshSystem\Mesh.h" />
+    <ClInclude Include="DirectX 11\source\MeshSystem\MeshSystem.h" />
+    <ClInclude Include="DirectX 11\source\MeshSystem\Model.h" />
+    <ClInclude Include="DirectX 11\source\MeshSystem\OpaqueInstances.h" />
+    <ClInclude Include="DirectX 11\source\Controller\ShaderManager.h" />
+    <ClInclude Include="DirectX 11\source\Renderer.h" />
+    <ClInclude Include="DirectX 11\source\Shader\PixelShader.h" />
+    <ClInclude Include="DirectX 11\source\Shader\Shader.h" />
     <ClInclude Include="DirectX 11\source\Vertex.h" />
+    <ClInclude Include="DirectX 11\source\Buffer\VertexBuffer.h" />
+    <ClInclude Include="DirectX 11\source\Shader\VertexShader.h" />
     <ClInclude Include="DirectX 11\source\VertexType.h" />
     <ClInclude Include="DirectX 11\window\WindowDX.h" />
     <ClInclude Include="DirectX 11\EngineDX.h" />
-    <ClInclude Include="general\Camera.h" />
+    <ClInclude Include="Ray Casting\utils\Camera.h" />
     <ClInclude Include="general\include\win.h" />
     <ClInclude Include="general\include\win_def.h" />
     <ClInclude Include="general\include\win_undef.h" />
@@ -209,8 +226,8 @@
     <ClInclude Include="DirectX 11\render\SceneDX.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectX 11\EngineDX.cpp" />
-    <ClCompile Include="DirectX 11\render\D3D.cpp" />
+    <ClCompile Include="DirectX 11\source\D3D\D3D.cpp" />
+    <ClCompile Include="DirectX 11\source\MeshSystem\Mesh.cpp" />
     <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="general\utils\console\Console.cpp" />
     <ClCompile Include="Ray Casting\render\SceneRC.cpp" />

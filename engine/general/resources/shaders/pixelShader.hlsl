@@ -1,7 +1,7 @@
 
 #define pi 3.14159265359
-//#define TRIANGLE
-#define SHADERTOY
+#define TRIANGLE
+//#define SHADERTOY
 
 cbuffer ConstBuffer : register(b0)
 {
@@ -49,7 +49,7 @@ float3 duv(float2 uv)
 
 
 
-float4 main(float4 position : SV_POSITION, float4 color : COLOR) : SV_TARGET
+float4 main(float4 position : SV_POSITION, /*float4 color : COLOR,*/ float4x4 instance : INSTANCE) : SV_TARGET
 {
     
 #ifdef SHADERTOY
@@ -61,9 +61,9 @@ float4 main(float4 position : SV_POSITION, float4 color : COLOR) : SV_TARGET
 #endif
 
 #ifdef TRIANGLE
-    return color;
+    //return color;
 #endif
     
-    return float4(0,0,0,0);
+    return float4(1,0,0,0);
     
 }

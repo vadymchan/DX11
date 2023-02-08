@@ -2,11 +2,6 @@
 
 #include "../../general/include/win.h"
 
-
-
-//#include <windows.h>
-//#include <windowsx.h>
-
 #include <cstdio>
 #include <sstream>
 

@@ -5,7 +5,7 @@
 #include "../../source/math/boxRC.h"
 #include "../../source/math/meshRC.h"
 #include "../../source/math/rayRC.h"
-#include "../../dependencies/glm/glm/ext/vector_float3.hpp"
+#include <glm/ext/vector_float3.hpp>
 #include <memory>
 #include <vector>
 #include "../../source/material/coloredMeshRC.h"

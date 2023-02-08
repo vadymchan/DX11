@@ -28,8 +28,19 @@ namespace engine::DX
 		g_devcon->Unmap(constBuffer.Get(), NULL);
 		g_devcon->PSSetConstantBuffers(0, 1, constBuffer.GetAddressOf());
 
+		UINT strides[]
+		{
+			sizeof(Position), sizeof(Color)
+		};
 
-		g_devcon->IASetVertexBuffers(0,1,vertexBuffer.GetAddressOf(), &stride, &offset);
+		UINT offsets[]
+		{
+			0, sizeof(DirectX::XMFLOAT4)
+		};
+
+		//g_devcon->IASetVertexBuffers(0,1,vertexBuffer.GetAddressOf(), &stride, &offset);
+		g_devcon->IASetVertexBuffers(0,1,vertexBuffer[0].GetAddressOf(), &strides[0], &offsets[0]);
+		g_devcon->IASetVertexBuffers(1,1,vertexBuffer[1].GetAddressOf(), &strides[1], &offsets[1]);
 		g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		g_devcon->Draw(3, 0);
 
@@ -41,7 +52,7 @@ namespace engine::DX
 	void Scene::initShaders()
 	{
 		
-		HRESULT result = D3DCompileFromFile((pathToShaders + L"vertexShader.hlsl").c_str(), 0, 0, "main", "vs_4_0", 0, 0, &VSbinary, 0);
+		HRESULT result = D3DCompileFromFile((pathToShaders + L"vertexShaderold.hlsl").c_str(), 0, 0, "main", "vs_4_0", 0, 0, &VSbinary, 0);
 		if (FAILED(result))
 		{
 			std::cerr << "Vertex shader was not initialized\n";
@@ -90,8 +101,8 @@ namespace engine::DX
 	{
 		D3D11_INPUT_ELEMENT_DESC ied[] =
 		{
-			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+			{"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		};
 
 		g_device->CreateInputLayout(ied, 2, VSbinary->GetBufferPointer(), VSbinary->GetBufferSize(), inputLayout.GetAddressOf());
@@ -106,19 +117,41 @@ namespace engine::DX
 
 	void Scene::initVertexBuffer()
 	{
+		vertexBuffer.push_back(nullptr);
+		vertexBuffer.push_back(nullptr);
+
 		D3D11_BUFFER_DESC bufferDescription;
 		ZeroMemory(&bufferDescription, sizeof(bufferDescription));
 
 		bufferDescription.Usage = D3D11_USAGE_IMMUTABLE;
-		bufferDescription.ByteWidth = sizeof(VertexType) * vertices.size();
+		bufferDescription.ByteWidth = sizeof(Position) * positions.size();
 		bufferDescription.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA bufferData;
-		bufferData.pSysMem = vertices.data();
+		bufferData.pSysMem = positions.data();
 		bufferData.SysMemPitch = 0;
 		bufferData.SysMemSlicePitch = 0;
 
-		HRESULT result = g_device->CreateBuffer(&bufferDescription, &bufferData, vertexBuffer.GetAddressOf());
+		HRESULT result = g_device->CreateBuffer(&bufferDescription, &bufferData, vertexBuffer[0].GetAddressOf());
+		if (FAILED(result))
+		{
+			std::cerr << "Vertex buffer was not inited\n";
+		}
+
+
+		D3D11_BUFFER_DESC bufferDescription1;
+		ZeroMemory(&bufferDescription1, sizeof(bufferDescription1));
+
+		bufferDescription1.Usage = D3D11_USAGE_IMMUTABLE;
+		bufferDescription1.ByteWidth = sizeof(Color) * colors.size();
+		bufferDescription1.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA bufferData1;
+		bufferData1.pSysMem = colors.data();
+		bufferData1.SysMemPitch = 0;
+		bufferData1.SysMemSlicePitch = 0;
+
+		result = g_device->CreateBuffer(&bufferDescription1, &bufferData1, vertexBuffer[1].GetAddressOf());
 		if (FAILED(result))
 		{
 			std::cerr << "Vertex buffer was not inited\n";

@@ -1,20 +1,16 @@
 #pragma once
 
-#include "../render/D3D.h"
+#include "D3D/D3D.h"
 
 namespace engine::DX
 {
 	struct VertexType
 	{
-		FLOAT x{};
-		FLOAT y{};
-		FLOAT z{};
+		DirectX::XMFLOAT4 position{};
 		DirectX::XMFLOAT4 colorRGBA{};
 
-		VertexType(FLOAT x, FLOAT y, FLOAT z, const DirectX::XMFLOAT4& colorRGBA)
-			: x{ x }
-			, y{ y }
-			, z{ z }
+		VertexType(const DirectX::XMFLOAT4& position, const DirectX::XMFLOAT4& colorRGBA)
+			: position {position}
 			, colorRGBA{ colorRGBA }
 		{}
 

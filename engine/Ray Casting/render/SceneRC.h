@@ -22,7 +22,7 @@
 #include <vector>
 #include "../utils/BVH/TriangleOctreeRC.h"
 #include "../window/WindowRC.h"
-#include "../../general/Camera.h"
+#include "../utils/Camera.h"
 
 
 namespace engine::RC

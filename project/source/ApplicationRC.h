@@ -4,13 +4,12 @@
 
 #include <general/utils/timer/FPSTimerRC.h>
 #include <general/utils/console/Console.h>
-#include <general/Camera.h>
+#include <Ray Casting/utils/Camera.h>
 #include <Ray Casting/render/SceneRC.h>
 #include <Ray Casting/window/WindowRC.h>
 #include <string>
 #include <thread>
 #include <iostream>
-
 
 class ApplicationRC
 {

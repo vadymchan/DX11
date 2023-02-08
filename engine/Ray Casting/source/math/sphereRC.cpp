@@ -1,5 +1,5 @@
 #include "sphereRC.h"
-#include "../../dependencies/glm/glm/geometric.hpp"
+#include <glm/geometric.hpp>
 
 
 

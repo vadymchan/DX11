@@ -1,6 +1,6 @@
 #include "WindowRC.h"
 #include <iostream>
-#include "../dependencies/glm/glm/ext/vector_float2.hpp"
+#include <glm/ext/vector_float2.hpp>
 
 namespace engine::RC
 {

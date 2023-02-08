@@ -1,9 +1,9 @@
 #pragma once
 
 
-#include "../Ray Casting/dependencies/glm/glm/glm.hpp"
-#include "../Ray Casting/dependencies/glm/glm/gtc/quaternion.hpp"
-#include "../Ray Casting/dependencies/glm/glm/gtx/quaternion.hpp"
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 
 
@@ -40,8 +40,8 @@ namespace engine::general
 		glm::mat4x4 view;
 		glm::vec3 cameraPos;
 
-		bool m_updatedBasis = false;
-		bool m_updatedMatrices = false;
+		bool basisUpdated = false;
+		bool matricesUpdated = false;
 
 
 
@@ -66,7 +66,7 @@ namespace engine::general
 
 		glm::mat4 getIPV()
 		{
-			if (!m_updatedMatrices)
+			if (!matricesUpdated)
 			{
 				updateMatrices();
 			}
@@ -75,7 +75,7 @@ namespace engine::general
 
 		void setWorldOffset(const glm::vec3& offset)
 		{
-			m_updatedMatrices = false;
+			matricesUpdated = false;
 			view[3][0] = offset.x;
 			view[3][1] = offset.y;
 			view[3][2] = offset.z;
@@ -85,7 +85,7 @@ namespace engine::general
 
 		void addWorldOffset(const glm::vec3& offset)
 		{
-			m_updatedMatrices = false;
+			matricesUpdated = false;
 
 			view[3][0] += offset.x;
 			view[3][1] += offset.y;
@@ -98,7 +98,7 @@ namespace engine::general
 		{
 			updateBasis();
 
-			m_updatedMatrices = false;
+			matricesUpdated = false;
 			view = glm::translate(view, -offset);
 			cameraPos += offset;
 
@@ -107,9 +107,9 @@ namespace engine::general
 
 		void setWorldAngles(const Angles& angles)
 		{
-			m_updatedBasis = false;
-			m_updatedMatrices = false;
-
+			basisUpdated = false;
+			matricesUpdated = false;
+			
 			transform.rotation = glm::angleAxis(angles.roll, glm::vec3{ 0.f, 0.f, 1.f });
 			transform.rotation *= glm::angleAxis(angles.pitch, glm::vec3{ 1.f, 0.f, 0.f });
 			transform.rotation *= glm::angleAxis(angles.yaw, glm::vec3{ 0.f, 1.f, 0.f });
@@ -119,8 +119,8 @@ namespace engine::general
 
 		void addWorldAngles(const Angles& angles)
 		{
-			m_updatedBasis = false;
-			m_updatedMatrices = false;
+			basisUpdated = false;
+			matricesUpdated = false;
 			transform.rotation *= glm::angleAxis(angles.roll, glm::vec3{ 0.f, 0.f, 1.f });
 			transform.rotation *= glm::angleAxis(angles.pitch, glm::vec3{ 1.f, 0.f, 0.f });
 			transform.rotation *= glm::angleAxis(angles.yaw, glm::vec3{ 0.f, 1.f, 0.f });
@@ -130,8 +130,8 @@ namespace engine::general
 
 		void addRelativeAngles(const Angles& angles)
 		{
-			m_updatedBasis = false;
-			m_updatedMatrices = false;
+			basisUpdated = false;
+			matricesUpdated = false;
 
 			transform.rotation *= glm::angleAxis(angles.roll, glm::vec3{ 0.f, 0.f, 1.f });
 			transform.rotation *= glm::angleAxis(angles.pitch, glm::vec3{ 1.f, 0.f, 0.f });
@@ -142,16 +142,16 @@ namespace engine::general
 
 		void updateBasis()
 		{
-			if (m_updatedBasis) return;
-			m_updatedBasis = true;
+			if (basisUpdated) return;
+			basisUpdated = true;
 			view = glm::transpose(glm::toMat4(transform.rotation)) * view;
 
 		}
 
 		void updateMatrices()
 		{
-			if (m_updatedMatrices) return;
-			m_updatedMatrices = true;
+			if (matricesUpdated) return;
+			matricesUpdated = true;
 			updateBasis();
 
 		}
