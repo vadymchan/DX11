@@ -25,10 +25,10 @@ namespace engine::DX
 
 	void D3D::Init()
 	{
-		if (m_device5 != nullptr && m_devCon4 != nullptr && m_factory5 != nullptr)
-		{
-			return;
-		}
+		
+		bool alreadyCreated{ m_device5 != nullptr && m_devCon4 != nullptr && m_factory5 != nullptr };
+		assert(alreadyCreated && "D3D is already initialized!");
+
 		HRESULT result;
 
 		result = CreateDXGIFactory(_uuidof(IDXGIFactory5), (void**)m_factory5.GetAddressOf());
