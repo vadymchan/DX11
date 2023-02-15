@@ -1,0 +1,3 @@
+[submodule "engine/general/dependencies/glm"]
+	path = engine/general/Ray Casting/glm
+	url = https://github.com/g-truc/glm.git
