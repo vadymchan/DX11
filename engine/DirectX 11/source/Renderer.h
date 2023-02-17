@@ -12,10 +12,11 @@ namespace engine::DX
 		void render(Window& window, Camera& camera) 
 		{
 			window.clearWindow();
-			g_devcon->OMSetRenderTargets(1, window.GetppRenderTargetView(), nullptr);
+			window.setViews();
 			camera.setCameraBuffer();
 			MeshSystem::getInstance().render();
 			window.flush();
+			window.clearDepthStencil();
 		}
 	private:
 

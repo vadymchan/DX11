@@ -88,6 +88,12 @@ namespace engine::DX
 		initBackbuffer();
 		initRenderTargetView();
 		initViewport();
+		
+		//refactor - mv to depthstencil
+		D3D11_TEXTURE2D_DESC backBufferDesc;
+		backBuffer.Get()->GetDesc(&backBufferDesc);
+		// 
+		depthStencilBuffer.initDepthStencil(backBufferDesc.Width, backBufferDesc.Height);
 	}
 
 	void Window::initSwapchain()
@@ -153,6 +159,8 @@ namespace engine::DX
 		viewport.TopLeftY = 0;
 		viewport.Width = width;
 		viewport.Height = height;
+		viewport.MinDepth = 0.0;
+		viewport.MaxDepth = 1.0;
 
 		g_devcon->RSSetViewports(1, &viewport);
 	}
@@ -178,6 +186,11 @@ namespace engine::DX
 		initBackbuffer();
 		initRenderTargetView();
 		initViewport();
+		//refactor - mv to depthstencil
+		D3D11_TEXTURE2D_DESC backBufferDesc;
+		backBuffer.Get()->GetDesc(&backBufferDesc);
+		// 
+		depthStencilBuffer.initDepthStencil(backBufferDesc.Width, backBufferDesc.Height);
 
 	}
 

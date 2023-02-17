@@ -3,6 +3,7 @@
 #include "../../general/include/win.h"
 
 #include "../source/D3D/D3D.h"
+#include "../source/Buffer/DepthStencilBuffer.h"
 
 
 namespace engine::DX
@@ -15,12 +16,23 @@ namespace engine::DX
 	public:
 		void initWindow(const LPCWSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 		void clearWindow();
+		void clearDepthStencil() { g_devcon->ClearDepthStencilView(depthStencilBuffer.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0.0f); }
 		void windowResize(float width, float height);
 		void setBackgroundColor(float r, float g, float b, float a);
 		void setVSync(bool value) { vsync = value; }
-		ID3D11RenderTargetView* const* GetppRenderTargetView() const { return renderTargetView.GetAddressOf(); } //rm
+		/// <summary>
+		/// sets Render Target View and Depth Stencil View to the pipeline
+		/// </summary>
+		void setViews(){ g_devcon->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilBuffer.getPDepthStencilView()); }
+		//ID3D11RenderTargetView* const* GetppRenderTargetView() const { return renderTargetView.GetAddressOf(); } //rm
 		const D3D11_VIEWPORT& GetViewport() const { return viewport; }
+		float GetAspectRatio()
+		{
+			backBuffer.Get()->GetDesc(&backBufferDesc);
+			return float(backBufferDesc.Width) / backBufferDesc.Height;
+		}
 		const HWND& GetHWND() const { return hwnd; }
+		//ID3D11DepthStencilView* GetPDepthStencilView() { return depthStencilBuffer.getPDepthStencilView(); }
 		void flush();
 	private:
 		void initSwapchain();
@@ -32,7 +44,9 @@ namespace engine::DX
 		ComPtr<IDXGISwapChain1> swapchain;
 		ComPtr<ID3D11Texture2D> backBuffer;
 		ComPtr<ID3D11RenderTargetView> renderTargetView;
+		DepthStencilBuffer depthStencilBuffer;
 		D3D11_VIEWPORT viewport;
+		D3D11_TEXTURE2D_DESC backBufferDesc;
 		FLOAT bgColorRGBA[4];
 		float width{};
 		float height{};

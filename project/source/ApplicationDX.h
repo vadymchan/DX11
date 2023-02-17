@@ -32,7 +32,7 @@ public:
 	bool ProcessInputs();
 	void AddCameraDirection();
 	void MoveCamera();
-	void RotateCamera();
+	void RotateCamera(float xPos, float yPos);
 	~ApplicationDX()
 	{
 		engine::DX::D3D::Deinit();
@@ -40,9 +40,9 @@ public:
 
 private:
 	std::array<bool, MoveDirection::COUNT> cameraMovingDirections{};
-	DirectX::XMVECTOR cameraDirection{};
-	DirectX::XMFLOAT3 cameraRotation{};
-
+	engine::DX::float3 cameraDirection{};
+	engine::DX::float3 cameraRotation{};
+	engine::DX::float2 lastMousePos{};
 
 	engine::general::FPSTimer fpsTimer;
 
@@ -54,8 +54,10 @@ private:
 
 	engine::DX::Engine engine;
 	MSG msg;
-	float cameraMoveCoef{};
+	float cameraSpeed{};
 	bool pitchYawRotation{};
+	bool firstOccurence{true};
+	float deltaTime{};
 
 };
 

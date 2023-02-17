@@ -9,7 +9,7 @@ cbuffer PerView : register(b0)
 struct VOut
 {
     float4 position : SV_POSITION;
-    //float4 color : COLOR;
+    float4 color : COLOR;
     float4x4 instance : INSTANCE;
 };
 
@@ -18,10 +18,9 @@ VOut main(float4 position : POSITION, /*float4 color : COLOR,*/ float4x4 instanc
 {
     VOut output;
 
-    //output.position = mul(instance, mul(ViewMatrix, mul(PerspectiveMatrix, position)));
-    output.position = mul(VP, position);
-    //output.position = position;
-    //output.color = color;
+
+    output.position = mul(mul(position, instance), VP);
+    output.color = position;
     output.instance = instance;
    
     return output;

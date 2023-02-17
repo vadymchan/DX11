@@ -163,7 +163,7 @@ namespace engine::DX
 						//g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), meshRange.indexOffset, meshRange.vertexOffset, renderedInstance);
 						
 						g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-						g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedInstance, meshRange.vertexOffset, renderedInstance);
+						g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size() * 3, renderedModelIndexes, meshRange.vertexOffset, renderedInstance);
 
 
 						renderedModelIndexes += meshRange.indexNum;

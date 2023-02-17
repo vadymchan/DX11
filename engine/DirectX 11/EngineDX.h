@@ -13,7 +13,7 @@
 
 namespace engine::DX
 {
-	//
+
 	class Engine
 	{
 	public:
@@ -27,7 +27,7 @@ namespace engine::DX
 
 
 		/// <param name="fov">in degrees</param>
-		void initCamera(const DirectX::SimpleMath::Vector3& position, const DirectX::SimpleMath::Vector3& direction, const DirectX::SimpleMath::Vector3& cameraUp, float fov, float aspect, float zNear, float zFar)
+		void initCamera(const float3& position, const float3& direction, const float3& cameraUp, float fov, float aspect, float zNear, float zFar)
 		{
 			camera.setView(position, direction, cameraUp);
 			camera.setPerspective(DirectX::XMConvertToRadians(fov), aspect, zNear, zFar);
@@ -49,35 +49,39 @@ namespace engine::DX
 			MeshSystem::getInstance().setPixelShader(fileName);
 		}
 
-		void moveCamera(const DirectX::SimpleMath::Vector3& offset)
+		void moveCamera(const float3& offset)
 		{
 			camera.addRelativeOffset(offset);
 		}
 
 		void rotateCamera(const Angles& angles)
 		{
-			camera.addRelativeAngles(angles);
+			camera.setWorldAngles(angles);
 		}
 
-		const DirectX::SimpleMath::Vector3& getCameraForward()
+		const float3& getCameraForward() const
 		{
 			return camera.forward();
 		}
 
-		const DirectX::SimpleMath::Vector3& getCameraRight()
+		const float3& getCameraRight() const
 		{
 			return camera.right();
 		}
 
-		const DirectX::SimpleMath::Vector3& getCameraUp()
+		const float3& getCameraUp() const
 		{
 			return camera.up();
 		}
-
-		
 			
+		const float3& getCameraPosition() const
+		{
+			return camera.position();
+		}
+
 		void render()
 		{
+			checkAspectRatio();
 			renderer.render(window, camera);
 		}
 
@@ -86,6 +90,15 @@ namespace engine::DX
 		Renderer renderer;
 		Window window;
 		Camera camera;
+
+		void checkAspectRatio()
+		{
+			float windowRatio{ window.GetAspectRatio() };
+			if (windowRatio != camera.getAspectRatio())
+			{
+				camera.changeAspectRatio(windowRatio);
+			}
+		}
 	};
 }
 

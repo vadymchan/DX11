@@ -3,7 +3,8 @@
 namespace engine::general
 {
 
-
+	const double FPSTimer::oneFPS = 1000 / 60;
+	const double FPSTimer::milliToSec = 1e-3;
 
 	double FPSTimer::frameTimeElapsed()
 	{

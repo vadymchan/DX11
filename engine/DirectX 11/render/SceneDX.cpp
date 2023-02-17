@@ -12,7 +12,7 @@ namespace engine::DX
 	void Scene::render(Window& window)
 	{
 		window.clearWindow();
-		g_devcon->OMSetRenderTargets(1, window.GetppRenderTargetView()	, nullptr);
+		window.setViews();
 
 
 		constBufferData.time.x = timer.frameTimeElapsed() * timer.milliToSec;

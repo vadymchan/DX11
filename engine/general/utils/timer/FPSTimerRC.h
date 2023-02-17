@@ -12,8 +12,8 @@ namespace engine::general
 		double frameTimeElapsed();
 
 		void resetClock();
-		const double oneFPS = 1000 / 60;
-		const double milliToSec = 1e-3;
+		const static double oneFPS;
+		const static double milliToSec;
 
 	private:
 		std::chrono::high_resolution_clock::time_point lastTime = std::chrono::high_resolution_clock::now();
@@ -21,3 +21,4 @@ namespace engine::general
 	};
 
 }
+

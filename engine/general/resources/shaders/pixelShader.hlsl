@@ -49,7 +49,7 @@ float3 duv(float2 uv)
 
 
 
-float4 main(float4 position : SV_POSITION, /*float4 color : COLOR,*/ float4x4 instance : INSTANCE) : SV_TARGET
+float4 main(float4 position : SV_POSITION, float4 color : COLOR, float4x4 instance : INSTANCE) : SV_TARGET
 {
     
 #ifdef SHADERTOY
@@ -61,7 +61,7 @@ float4 main(float4 position : SV_POSITION, /*float4 color : COLOR,*/ float4x4 in
 #endif
 
 #ifdef TRIANGLE
-    //return color;
+    return color;
 #endif
     
     return float4(1,0,0,0);

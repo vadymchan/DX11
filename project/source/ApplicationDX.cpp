@@ -1,4 +1,5 @@
 #include "ApplicationDX.h"
+#include <glm/trigonometric.hpp>
 using Instance = engine::DX::OpaqueInstances::Instance;
 using Material = engine::DX::OpaqueInstances::Material;
 using engine::DX::Model;
@@ -14,7 +15,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const int windowHeight{ 400 };
 	const int windowStartX{ 0 };
 	const int windowStartY{ 0 };
-	cameraMoveCoef = 0.5f;
+	cameraSpeed = 2.f;
 #ifdef _DEBUG
 	engine::general::initConsole();
 #endif
@@ -58,20 +59,60 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 //	scene.initVertexBuffer();
 
 	std::shared_ptr<Model> cube = ModelManager::getInstance().loadCube();
+	//std::shared_ptr<Model> cube1 = ModelManager::getInstance().loadAssimp("dald");
 
 	std::shared_ptr<Material> mat = std::make_shared<Material>();
 	mat->color = { 1.0,0,0,0 };
 
+
+		
+
+
 	std::vector<Instance> instances
 	{
-		Instance{DirectX::XMMatrixIdentity()}
+		
+		Instance
+		{
+			{{1,0,0,0},
+			{0,1,0,0},
+			{0,0,1,10},
+			{0,0,0,1},}
+		},
+		Instance
+		{
+			{{0.8,-0.6,0,0.8},
+			{0.6,0.8,0,0.4},
+			{0,0,1,2},
+			{0,0,0,1},}
+		},
+		Instance
+		{
+			{{1,0,0,10},
+			{0,1,0,0},
+			{0,0,1,0},
+			{0,0,0,1},}
+		},
+		Instance
+		{
+			{{1,0,0,-10},
+			{0,1,0,0},
+			{0,0,1,0},
+			{0,0,0,1},}
+		},
+		Instance
+		{
+			{{1,0,0,0},
+			{0,1,0,0},
+			{0,0,1,-10},
+			{0,0,0,1},}
+		},
+		
 	};
 
 	engine.addInstancedModel(cube, 0, mat, instances);
 
 	//engine::DX::VertexBuffer opaqueInstanceVertexBuffer;
 
-	std::cout << sizeof(Mesh::Vertex);
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDesc
 	{
@@ -80,11 +121,13 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		//{"COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
 
 		//instance vertex buffer
-		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 0},
-		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 0},
-		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 0},
-		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 0},
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
+
+	
 
 	ShaderManager::getInstance().addVertexShader(L"vertexShader.hlsl", inputElementDesc);
 	ShaderManager::getInstance().addPixelShader(L"pixelShader.hlsl");
@@ -94,9 +137,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const DirectX::SimpleMath::Vector3& position{0,0,-20};
-	const DirectX::SimpleMath::Vector3& direction{0,0,1};
-	const DirectX::SimpleMath::Vector3& cameraUp{0,1,0};
+	const engine::DX::float3& position{0,0,-2};
+	const engine::DX::float3& direction{1,0,0};
+	const engine::DX::float3& cameraUp{0,1,0};
 
 	float fov{45};
 	float aspect{(float)windowWidth /windowHeight};
@@ -107,26 +150,31 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//-----------------------------------------------------------------------------------------------------------------
 
 }
+DWORD lastTime{};
 
 void ApplicationDX::Run()
 {
 	while (true)
 	{
+		/*DWORD curTime = GetTickCount64();
+		deltaTime = float(curTime - lastTime) / 1000;
+		lastTime = curTime;*/
+		deltaTime = fpsTimer.frameTimeElapsed() * fpsTimer.milliToSec;
+		fpsTimer.resetClock();
 		if (!ProcessInputs())
 		{
 			return;
 		}
 		//scene.render(window);
 		engine.render();
-
 	}
 }
 
 
 bool ApplicationDX::ProcessInputs()
 {
-	float xPos{};
-	float yPos{};
+	float xPos{lastMousePos.x};
+	float yPos{lastMousePos.y};
 
 	while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
@@ -135,12 +183,14 @@ bool ApplicationDX::ProcessInputs()
 		case WM_MOUSEMOVE:
 			if (pitchYawRotation)
 			{
-				xPos = static_cast<float>(GET_X_LPARAM(msg.wParam));
-				yPos = static_cast<float>(GET_Y_LPARAM(msg.wParam));
+				xPos = static_cast<float>(GET_X_LPARAM(msg.lParam));
+				yPos = static_cast<float>(GET_Y_LPARAM(msg.lParam));
 			}
 			break;
 		case WM_LBUTTONDOWN:
 			pitchYawRotation = true;
+			lastMousePos.x = xPos = static_cast<float>(GET_X_LPARAM(msg.lParam));
+			lastMousePos.y = yPos = static_cast<float>(GET_Y_LPARAM(msg.lParam));
 			break;
 		case WM_LBUTTONUP:
 			pitchYawRotation = false;
@@ -167,6 +217,7 @@ bool ApplicationDX::ProcessInputs()
 				cameraMovingDirections[MoveDirection::DOWN] = true;
 				break;
 			case VK_SHIFT:
+				cameraSpeed *= 5;
 				break;
 			}
 			break;
@@ -192,6 +243,7 @@ bool ApplicationDX::ProcessInputs()
 				cameraMovingDirections[MoveDirection::DOWN] = false;
 				break;
 			case VK_SHIFT:
+				cameraSpeed /= 5;
 				break;
 			}
 			break;
@@ -204,26 +256,43 @@ bool ApplicationDX::ProcessInputs()
 		DispatchMessageW(&msg);
 	}
 
-	
+	if (pitchYawRotation)
+	{
+		RotateCamera(xPos, yPos);
+	}
 	MoveCamera();
-
+	
 	return true;
 }
 
 void ApplicationDX::AddCameraDirection()
 {
+	//if (cameraMovingDirections[MoveDirection::FORWARD])
+	//	cameraDirection += engine.getCameraForward();
+	//if (cameraMovingDirections[MoveDirection::BACK])
+	//	cameraDirection -= engine.getCameraForward();
+	//if (cameraMovingDirections[MoveDirection::LEFT])
+	//	cameraDirection -= engine.getCameraRight();
+	//if (cameraMovingDirections[MoveDirection::RIGHT])
+	//	cameraDirection += engine.getCameraRight();
+	//if (cameraMovingDirections[MoveDirection::UP])
+	//	cameraDirection += engine.getCameraUp();
+	//if (cameraMovingDirections[MoveDirection::DOWN])
+	//	cameraDirection -= engine.getCameraUp();
+
+
 	if (cameraMovingDirections[MoveDirection::FORWARD])
-		cameraDirection = DirectX::XMVectorAdd(cameraDirection, engine.getCameraForward());
+		cameraDirection += {0,0,1};
 	if (cameraMovingDirections[MoveDirection::BACK])
-		cameraDirection = DirectX::XMVectorAdd(cameraDirection, DirectX::XMVectorNegate(engine.getCameraForward()));
+		cameraDirection -= {0,0,1};
 	if (cameraMovingDirections[MoveDirection::LEFT])
-		cameraDirection = DirectX::XMVectorAdd(cameraDirection, DirectX::XMVectorNegate(engine.getCameraRight()));
+		cameraDirection -= {1,0,0};
 	if (cameraMovingDirections[MoveDirection::RIGHT])
-		cameraDirection = DirectX::XMVectorAdd(cameraDirection, engine.getCameraRight());
+		cameraDirection += {1,0,0};
 	if (cameraMovingDirections[MoveDirection::UP])
-		cameraDirection = DirectX::XMVectorAdd(cameraDirection, engine.getCameraUp());
+		cameraDirection += {0,1,0};
 	if (cameraMovingDirections[MoveDirection::DOWN])
-		cameraDirection = DirectX::XMVectorAdd(cameraDirection, DirectX::XMVectorNegate(engine.getCameraUp()));
+		cameraDirection -= {0,1,0};
 
 }
 	
@@ -234,23 +303,48 @@ void ApplicationDX::MoveCamera()
 
 	AddCameraDirection();
 
-	//DirectX::XMVECTOR isCameraMoveVector{ DirectX::XMVectorEqual(cameraDirection, DirectX::XMVECTOR{0}) };
-	bool isCameraMove{ cameraDirection.m128_f32[0] == 0 && cameraDirection.m128_f32[1] == 0 && cameraDirection.m128_f32[2] == 0 };
+	//std::cout << cameraDirection.x << '\t' << cameraDirection.y << '\t' << cameraDirection.z << std::endl;
+	//std::cout << engine.getCameraPosition().x << '\t' << engine.getCameraPosition().y << '\t' << engine.getCameraPosition().z << std::endl;
+
+	//engine::DX::float4 isCameraMoveVector{ DirectX::XMVectorEqual(cameraDirection, engine::DX::float4{0}) };
+
+	bool isCameraMove{ cameraDirection != engine::DX::float3()};
+
+	
 
 	if (isCameraMove)
 	{
-		DirectX::XMVECTOR moveOffset{ DirectX::XMVectorScale(cameraDirection, cameraMoveCoef * fpsTimer.frameTimeElapsed())};
-		engine.moveCamera(std::move(moveOffset));
+
+		
+		//engine::DX::float3 moveOffset{ cameraDirection * cameraSpeed * fpsTimer.frameTimeElapsed() * 1000};
+		engine::DX::float3 moveOffset{ cameraDirection * cameraSpeed * deltaTime };
+
+		//std::cout << fpsTimer.frameTimeElapsed() << std::endl;
+		//std::cout << deltaTime << std::endl;
+		engine.moveCamera(moveOffset);
 	}
 
-	cameraDirection = DirectX::XMVECTOR();
+	cameraDirection = engine::DX::float3();
 
 }
 
-void ApplicationDX::RotateCamera()
+void ApplicationDX::RotateCamera(float xPos, float yPos)
 {
+	/*if (lastMousePos != engine::DX::float2{ xPos, yPos })
+	{
+		std::cout << xPos << '\t' << yPos << std::endl;
+		std::cout << lastMousePos.x << '\t' << lastMousePos.y << std::endl << std::endl;
+	}*/
 
+	engine::DX::float2 offset{ lastMousePos.x - xPos, lastMousePos.y - yPos };
+	if (std::abs(offset.x) > FLT_EPSILON || std::abs(offset.y) > FLT_EPSILON)
+	{
+		//std::cout << offset.x << '\t' << offset.y << std::endl;
+		engine.rotateCamera({offset.y  * 0.005f, offset.x * 0.005f, 0});
+		//lastMousePos = { xPos, 0 };
+	}
 	
+		lastMousePos = { xPos, yPos };
 }
 
 

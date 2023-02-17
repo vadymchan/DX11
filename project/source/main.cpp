@@ -13,6 +13,7 @@ int WINAPI WinMain(_In_ HINSTANCE appHandle, _In_opt_ HINSTANCE hPrevInstance, _
 	application.Init(appHandle, windowShowParams);
 	application.Run();
 
+
 	HRESULT hr = engine::DX::g_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 	return EXIT_SUCCESS;
 }
