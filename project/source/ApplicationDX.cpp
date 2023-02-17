@@ -137,7 +137,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3& position{0,0,-2};
+	const engine::DX::float3& position{0,0,0};
 	const engine::DX::float3& direction{1,0,0};
 	const engine::DX::float3& cameraUp{0,1,0};
 
@@ -149,16 +149,20 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	engine.initCamera(position, direction, cameraUp, fov, aspect, zNear, zFar);
 	//-----------------------------------------------------------------------------------------------------------------
 
+
+	DirectX::XMVECTOR pos = { 0, 0, 0 };
+	DirectX::XMVECTOR dir = { 1, 0, 0 };
+	DirectX::XMVECTOR up = { 0, 1, 0 };
+	auto t = DirectX::XMMatrixLookToLH(pos, dir, up);
+
+
+	return;
 }
-DWORD lastTime{};
 
 void ApplicationDX::Run()
 {
 	while (true)
 	{
-		/*DWORD curTime = GetTickCount64();
-		deltaTime = float(curTime - lastTime) / 1000;
-		lastTime = curTime;*/
 		deltaTime = fpsTimer.frameTimeElapsed() * fpsTimer.milliToSec;
 		fpsTimer.resetClock();
 		if (!ProcessInputs())
@@ -267,32 +271,32 @@ bool ApplicationDX::ProcessInputs()
 
 void ApplicationDX::AddCameraDirection()
 {
-	//if (cameraMovingDirections[MoveDirection::FORWARD])
-	//	cameraDirection += engine.getCameraForward();
-	//if (cameraMovingDirections[MoveDirection::BACK])
-	//	cameraDirection -= engine.getCameraForward();
-	//if (cameraMovingDirections[MoveDirection::LEFT])
-	//	cameraDirection -= engine.getCameraRight();
-	//if (cameraMovingDirections[MoveDirection::RIGHT])
-	//	cameraDirection += engine.getCameraRight();
-	//if (cameraMovingDirections[MoveDirection::UP])
-	//	cameraDirection += engine.getCameraUp();
-	//if (cameraMovingDirections[MoveDirection::DOWN])
-	//	cameraDirection -= engine.getCameraUp();
-
-
 	if (cameraMovingDirections[MoveDirection::FORWARD])
-		cameraDirection += {0,0,1};
+		cameraDirection += engine.getCameraForward();
 	if (cameraMovingDirections[MoveDirection::BACK])
-		cameraDirection -= {0,0,1};
+		cameraDirection -= engine.getCameraForward();
 	if (cameraMovingDirections[MoveDirection::LEFT])
-		cameraDirection -= {1,0,0};
+		cameraDirection -= engine.getCameraRight();
 	if (cameraMovingDirections[MoveDirection::RIGHT])
-		cameraDirection += {1,0,0};
+		cameraDirection += engine.getCameraRight();
 	if (cameraMovingDirections[MoveDirection::UP])
-		cameraDirection += {0,1,0};
+		cameraDirection += engine.getCameraUp();
 	if (cameraMovingDirections[MoveDirection::DOWN])
-		cameraDirection -= {0,1,0};
+		cameraDirection -= engine.getCameraUp();
+
+
+	//if (cameraMovingDirections[MoveDirection::FORWARD])
+	//	cameraDirection += {0,0,1};
+	//if (cameraMovingDirections[MoveDirection::BACK])
+	//	cameraDirection -= {0,0,1};
+	//if (cameraMovingDirections[MoveDirection::LEFT])
+	//	cameraDirection -= {1,0,0};
+	//if (cameraMovingDirections[MoveDirection::RIGHT])
+	//	cameraDirection += {1,0,0};
+	//if (cameraMovingDirections[MoveDirection::UP])
+	//	cameraDirection += {0,1,0};
+	//if (cameraMovingDirections[MoveDirection::DOWN])
+	//	cameraDirection -= {0,1,0};
 
 }
 	

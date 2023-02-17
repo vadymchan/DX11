@@ -58,10 +58,12 @@ namespace engine::DX
 		{
 			{1,0,0,0},
 			{0,1,0,0},
-			{0,0,-1,0},
+			{0,0,-1,1},
 			{0,0,0,1},
 
 		};
+
+		
 
 	public:
 
@@ -105,7 +107,7 @@ namespace engine::DX
 
 		const float3& right()		const { return view.Right(); }
 		const float3& up() 		const { return view.Up(); }
-		const float3& forward() 	const { return view.Forward(); } //because SimpleMath uses right-handed coordinate system
+		const float3& forward() 	const { return -view.Forward(); } //because SimpleMath uses right-handed coordinate system
 		const float3& position()	const { return cameraPos; }
 		float getFov() const { return fov; }
 		float getAspectRatio() const { return aspect; }
@@ -121,13 +123,19 @@ namespace engine::DX
 			this->aspect = aspect;
 			this->zNear = zNear;
 			this->zFar = zFar;
+			//proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
+			//proj = reverseDepthMatrix * DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
 			proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
+			//proj = proj * reverseDepthMatrix;
 			bufferUpdated = false;
 		}
 
 		void changeAspectRatio(float aspect)
 		{
+			//proj = reverseDepthMatrix * DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
 			proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
+			//proj = proj * reverseDepthMatrix;
+
 			bufferUpdated = false;
 		}
 
@@ -135,8 +143,9 @@ namespace engine::DX
 		{
 			cameraPos = position;
 
-
-			view = DirectX::XMMatrixLookAtLH(position, position + direction, cameraUp);
+			auto dir{ position - direction };
+			auto t = DirectX::XMMatrixLookToLH(position, dir, cameraUp);
+			//view = DirectX::XMMatrixLookAtLH(position, direction - position, cameraUp);
 			bufferUpdated = false;
 		}
 
@@ -187,6 +196,8 @@ namespace engine::DX
 			matricesUpdated = false;
 			bufferUpdated = false;
 
+			updateBasis();
+
 
 			view._41 -= offset.x;
 			view._42 -= offset.y;
@@ -215,11 +226,10 @@ namespace engine::DX
 
 			//view.Translation(view.Translation() - relativeOffset);
 
-			//view._43 -= 0.25;
 
-			/*view._41 -= relativeOffset.x;
-			view._42 -= relativeOffset.y;
-			view._43 -= relativeOffset.z;*/
+			/*view._41 -= view._41 * relativeOffset.x;
+			view._42 -= view._42 * relativeOffset.y;
+			view._43 -= view._43 * relativeOffset.z;*/
 
 			view._41 -= offset.x;
 			view._42 -= offset.y;

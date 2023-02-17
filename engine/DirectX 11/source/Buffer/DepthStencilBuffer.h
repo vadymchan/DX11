@@ -12,7 +12,7 @@ namespace engine::DX
 			DXGI_FORMAT depthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT,
 			UINT arraySize = 1, UINT mipLevels = 1, UINT CPUAccessFlags = 0,
 			UINT miscFlags = 0, UINT sampleQuantity = 1, UINT sampleQuality = 0,
-			bool depthEnabled = true, D3D11_COMPARISON_FUNC depthComparison = D3D11_COMPARISON_GREATER,
+			bool depthEnabled = true, D3D11_COMPARISON_FUNC depthComparison = D3D11_COMPARISON_LESS,
 			D3D11_DEPTH_WRITE_MASK depthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL,
 			bool stencilEnabled = false)
 		{
