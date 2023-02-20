@@ -18,4 +18,6 @@ namespace engine::general
 		lastTime = std::chrono::high_resolution_clock::now();
 	}
 
+	
+
 }

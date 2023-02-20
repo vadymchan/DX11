@@ -7,10 +7,18 @@
 #include <thread>
 #include <DirectX 11/EngineDX.h>
 
-
+using Instance = engine::DX::OpaqueInstances::Instance;
+using Material = engine::DX::OpaqueInstances::Material;
+using engine::DX::Model;
+using engine::DX::Mesh;
+using engine::DX::MeshSystem;
+using engine::DX::ModelManager;
+using engine::DX::ShaderManager;
 
 class ApplicationDX
 {
+
+	
 
 public:
 
@@ -33,6 +41,7 @@ public:
 	void AddCameraDirection();
 	void MoveCamera();
 	void RotateCamera(float xPos, float yPos);
+	std::vector<Instance> generateRandomInstances(size_t numInstances);
 	~ApplicationDX()
 	{
 		engine::DX::D3D::Deinit();
@@ -57,6 +66,7 @@ private:
 	float cameraSpeed{};
 	bool pitchYawRotation{};
 	bool firstOccurence{true};
+	bool increasedSpeed{ false };
 	float deltaTime{};
 
 };

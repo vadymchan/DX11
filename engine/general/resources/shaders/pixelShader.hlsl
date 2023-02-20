@@ -3,10 +3,15 @@
 #define TRIANGLE
 //#define SHADERTOY
 
-cbuffer ConstBuffer : register(b0)
+cbuffer ConstBuffer : register(b1)
 {
     float2 resolution; 
     float2 time;
+};
+
+cbuffer Material : register(b0)
+{
+    float4 color;
 };
 
 float saw(float4 x)
@@ -47,9 +52,13 @@ float3 duv(float2 uv)
     return float3(v, 0, (v * 4.0 + a));
 }
 
+struct Input
+{
+    float4 position : SV_Position;
+    float3 normal : NORMAL;
+};
 
-
-float4 main(float4 position : SV_POSITION, float4 color : COLOR, float4x4 instance : INSTANCE) : SV_TARGET
+float3 main(Input input) : SV_TARGET
 {
     
 #ifdef SHADERTOY
@@ -61,9 +70,9 @@ float4 main(float4 position : SV_POSITION, float4 color : COLOR, float4x4 instan
 #endif
 
 #ifdef TRIANGLE
-    return color;
+    return color.xyz;
 #endif
     
-    return float4(1,0,0,0);
+    return float3(1,0,0);
     
 }

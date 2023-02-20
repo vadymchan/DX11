@@ -14,10 +14,12 @@ namespace engine::DX
 			window.clearWindow();
 			window.setViews();
 			camera.setCameraBuffer();
-			MeshSystem::getInstance().render();
+			MeshSystem::getInstance().render(camera.position());
 			window.flush();
 			window.clearDepthStencil();
 		}
+
+
 	private:
 
 	};

@@ -24,40 +24,40 @@ namespace engine::DX
 
 		}
 
-		Model(const std::vector<Mesh>& meshes, const std::vector<MeshRange>& meshRanges )
-			: meshes{meshes}
-			, meshRanges {meshRanges}
-		{
+		//Model(const std::vector<Mesh>& meshes, const std::vector<MeshRange>& meshRanges )
+		//	: meshes{meshes}
+		//	, meshRanges {meshRanges}
+		//{
 
-		}
+		//}
 
-		void addMesh(const Mesh& mesh, const MeshRange& meshRange)
-		{
-			meshes.emplace_back(mesh);
-			meshRanges.emplace_back(meshRange);
-			indices.addElements(mesh.getIndices());
-		}
+		//void addMesh(const Mesh& mesh, const MeshRange& meshRange)
+		//{
+		//	meshes.emplace_back(mesh);
+		//	meshRanges.emplace_back(meshRange);
+		//}
 
 		UINT getMeshesCount()
 		{
 			return meshes.size();
 		}
 
-		void initVertexBuffer(UINT startSlot, UINT stride, UINT offset, D3D11_USAGE bufferUsage, const std::vector<Mesh::Vertex>& bufferData,
+		void initVertexBuffer(UINT startSlot, const std::vector<UINT>& strides, const std::vector<UINT>& offsets, D3D11_USAGE bufferUsage,
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)
 		{
 
-			UINT vertexNum{};
-			for (auto& meshRange : meshRanges)
+			
+			std::vector<Mesh::Vertex> modelVertices{};
+			for (size_t i = 0; i < meshes.size(); i++)
 			{
-				vertexNum += meshRange.vertexNum;
+				auto& meshVertices{ meshes.at(i).vertices };
+				modelVertices.reserve(modelVertices.size() + meshVertices.size());
+				modelVertices.insert(end(modelVertices), begin(meshVertices), end(meshVertices));
 			}
 
-			//several strides and offsets
-			// pData
-
-			vertices.initBuffer(startSlot, stride, offset, bufferUsage, bufferData, CPUAccessFlags, miscFlags, structureByteStride, sysMemPitch, sysMemSlicePitch);
+			
+			vertices.initBuffer(startSlot, strides, offsets, bufferUsage, modelVertices, CPUAccessFlags, miscFlags, structureByteStride, sysMemPitch, sysMemSlicePitch);
 		}
 
 		void initIndexBuffer(D3D11_USAGE bufferUsage,
@@ -67,6 +67,14 @@ namespace engine::DX
 			//free indices
 			//add indices
 
+			std::vector<uint32_t> modelIndices{};
+			for (size_t i = 0; i < meshes.size(); i++)
+			{
+				auto& meshIndices{ meshes.at(i).indices };
+				modelIndices.reserve(modelIndices.size() + meshIndices.size());
+				modelIndices.insert(end(modelIndices), begin(meshIndices), end(meshIndices));
+			}
+			indices.addElements(modelIndices);
 			indices.initBuffer(bufferUsage, CPUAccessFlags, miscFlags, structureByteStride, sysMemPitch, sysMemSlicePitch);
 		}
 
@@ -79,25 +87,37 @@ namespace engine::DX
 			indices.setBuffer();
 		}
 
-		const Mesh& operator[](size_t index) // getMesh(size_t meshIndex)
+
+		
+		//Mesh& operator[](size_t index) 
+		//{
+		//	return meshes.at(index);
+		//}
+
+		
+		const Mesh& getMesh(size_t index) const
 		{
 			return meshes.at(index);
 		}
 
-		const Mesh& getMesh(size_t index)
-		{
-			return meshes.at(index);
-		}
 
-		const MeshRange& operator()(size_t index)
-		{
-			return meshRanges.at(index);
-		}
+
+		//const MeshRange& operator()(size_t index)
+		//{
+		//	return meshRanges.at(index);
+		//}
 
 		const MeshRange& getMeshRange(size_t index)
 		{
 			return meshRanges.at(index);
 		}
+
+		//void changeMeshSize(uint32_t newSize)
+		//{
+		//	meshes.resize(newSize);
+		//}
+
+		
 
 		
 	protected:
@@ -106,5 +126,6 @@ namespace engine::DX
 		VertexBuffer<Mesh::Vertex> vertices;
 		IndexBuffer indices;
 
+		friend class ModelManager;
 	};
 }

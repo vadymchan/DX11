@@ -1,27 +1,32 @@
 
 cbuffer PerView : register(b0)
 {
-    //row_major float4x4 ViewMatrix;
-    //row_major float4x4 PerspectiveMatrix;
     float4x4 VP;
 };
 
-struct VOut
+struct vertexInput
 {
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
+
+    float3 position : POSITION;
+    float3 normal : NORMAL;
     float4x4 instance : INSTANCE;
 };
 
-
-VOut main(float4 position : POSITION, /*float4 color : COLOR,*/ float4x4 instance : INSTANCE)
+struct vertexOutput
 {
-    VOut output;
+    float4 position : SV_POSITION;
+    float3 normal : NORMAL;
+
+};
 
 
-    output.position = mul(mul(position, instance), VP);
-    output.color = position;
-    output.instance = instance;
+vertexOutput main(vertexInput input)
+{
+    vertexOutput output;
+
+    
+    output.position = mul(mul(float4(input.position, 1), input.instance), VP);
+
    
     return output;
 }

@@ -8,22 +8,22 @@ namespace engine::DX
 	{
 	public:
 
-		void initBuffer(UINT startSlot, UINT stride, UINT offset, D3D11_USAGE bufferUsage,
+		void initBuffer(UINT startSlot, const std::vector<UINT>& strides, const std::vector<UINT>& offsets, D3D11_USAGE bufferUsage,
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)
 		{
 			this->startSlot = startSlot;
-			this->stride = stride;
-			this->offset = offset;
+			this->strides = strides;
+			this->offsets = offsets;
 			Buffer<T>::initBuffer(bufferUsage, D3D11_BIND_VERTEX_BUFFER, CPUAccessFlags, miscFlags, structureByteStride, sysMemPitch, sysMemSlicePitch);
 		}
 
-		void initBuffer(UINT startSlot, UINT stride, UINT offset, D3D11_USAGE bufferUsage, const std::vector<T>& bufferData,
+		void initBuffer(UINT startSlot, const std::vector<UINT>& strides, const std::vector<UINT>& offsets, D3D11_USAGE bufferUsage, const std::vector<T>& bufferData,
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)
 		{
 			this->bufferData = bufferData;
-			initBuffer(startSlot, stride, offset, bufferUsage, CPUAccessFlags, miscFlags, structureByteStride, sysMemPitch, sysMemSlicePitch);
+			initBuffer(startSlot, strides, offsets, bufferUsage, CPUAccessFlags, miscFlags, structureByteStride, sysMemPitch, sysMemSlicePitch);
 		}
 
 		//temporary here. May be deleted later
@@ -41,7 +41,7 @@ namespace engine::DX
 		void setBuffer() override
 		{
 			Buffer<T>::setBuffer();
-			g_devcon->IASetVertexBuffers(startSlot, 1, Buffer<T>::buffer.GetAddressOf(), &stride, &offset);
+			g_devcon->IASetVertexBuffers(startSlot, 1, Buffer<T>::buffer.GetAddressOf(), strides.data(), offsets.data());
 		}
 		//---------------------------------------
 
@@ -53,7 +53,7 @@ namespace engine::DX
 			{
 				Buffer<T>::createBuffer();
 			}
-			g_devcon->IASetVertexBuffers(inputSlot, 1, Buffer<T>::buffer.GetAddressOf(), &stride, &offset);
+			g_devcon->IASetVertexBuffers(inputSlot, 1, Buffer<T>::buffer.GetAddressOf(), strides.data(), offsets.data());
 		}
 
 		static void setBuffers(UINT startSlot, UINT bufferNum, ID3D11Buffer*const* vertexBuffers, const UINT* strides, const UINT* offsets)
@@ -63,7 +63,7 @@ namespace engine::DX
 
 	private:
 		UINT startSlot{};
-		UINT stride{};
-		UINT offset{};
+		std::vector<UINT> strides{};
+		std::vector<UINT> offsets{};
 	};
 }

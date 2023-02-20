@@ -243,5 +243,7 @@
   <ItemGroup>
     <FxCompile Include="general\resources\shaders\pixelShader.hlsl" />
     <FxCompile Include="general\resources\shaders\vertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
   </ItemGroup>
 </Project>

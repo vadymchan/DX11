@@ -20,7 +20,7 @@ namespace engine::DX
 
 		//vertex shader
 		//---------------------------------------------------------------------------------------------------------------------------------------------------
-		void addVertexShader(const std::wstring& fileName, const std::vector<D3D11_INPUT_ELEMENT_DESC>& inputElementDesc, const std::string& entrancePoint = "main", const std::string& shaderVersion = "vs_4_0")
+		void addVertexShader(const std::wstring& fileName, const std::vector<D3D11_INPUT_ELEMENT_DESC>& inputElementDesc, const std::string& entrancePoint = "main", const std::string& shaderVersion = "vs_5_0")
 		{
 			VertexShader vertexShader = VertexShader(shaderDirectory + fileName , entrancePoint, shaderVersion);
 			vertexShader.setInputElementDesc(inputElementDesc);
@@ -55,7 +55,7 @@ namespace engine::DX
 
 		//pixel shader
 		//---------------------------------------------------------------------------------------------------------------------------------------------------
-		void addPixelShader(const std::wstring& fileName, const std::string& entrancePoint = "main", const std::string& shaderVersion = "ps_4_0")
+		void addPixelShader(const std::wstring& fileName, const std::string& entrancePoint = "main", const std::string& shaderVersion = "ps_5_0")
 		{
 			pixelShaders[fileName] = std::make_shared<PixelShader>(std::move(PixelShader(shaderDirectory + fileName, entrancePoint, shaderVersion)));
 		}

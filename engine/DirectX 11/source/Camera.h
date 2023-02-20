@@ -143,9 +143,9 @@ namespace engine::DX
 		{
 			cameraPos = position;
 
-			auto dir{ position - direction };
-			auto t = DirectX::XMMatrixLookToLH(position, dir, cameraUp);
-			//view = DirectX::XMMatrixLookAtLH(position, direction - position, cameraUp);
+			//auto dir{ position - direction };
+			//auto t = DirectX::XMMatrixLookToLH(position, dir, cameraUp);
+			view = DirectX::XMMatrixLookToLH(position, direction, cameraUp);
 			bufferUpdated = false;
 		}
 
@@ -195,7 +195,6 @@ namespace engine::DX
 		{
 			matricesUpdated = false;
 			bufferUpdated = false;
-
 			updateBasis();
 
 
@@ -219,7 +218,7 @@ namespace engine::DX
 			updateBasis();
 
 
-			float3 relativeOffset{ offset.x * right() + offset.y * up() + offset.z * forward() };
+			//float3 relativeOffset{ offset.x * right() + offset.y * up() + offset.z * forward() };
 
 			//std::cout << relativeOffset.x << '\t' << relativeOffset.y << '\t' << relativeOffset.z << std::endl;
 

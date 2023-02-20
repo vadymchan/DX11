@@ -88,11 +88,7 @@ namespace engine::DX
 		initBackbuffer();
 		initRenderTargetView();
 		initViewport();
-		
-		//refactor - mv to depthstencil
-		D3D11_TEXTURE2D_DESC backBufferDesc;
 		backBuffer.Get()->GetDesc(&backBufferDesc);
-		// 
 		depthStencilBuffer.initDepthStencil(backBufferDesc.Width, backBufferDesc.Height);
 	}
 
@@ -186,10 +182,7 @@ namespace engine::DX
 		initBackbuffer();
 		initRenderTargetView();
 		initViewport();
-		//refactor - mv to depthstencil
-		D3D11_TEXTURE2D_DESC backBufferDesc;
 		backBuffer.Get()->GetDesc(&backBufferDesc);
-		// 
 		depthStencilBuffer.initDepthStencil(backBufferDesc.Width, backBufferDesc.Height);
 
 	}

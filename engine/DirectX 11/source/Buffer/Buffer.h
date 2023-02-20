@@ -53,7 +53,12 @@ namespace engine::DX
 				HRESULT result = g_device->CreateBuffer(&bufferDescription, &bufferSubresourceData, buffer.ReleaseAndGetAddressOf());
 				if (FAILED(result))
 				{
-					std::cerr << "Buffer " << buffer.Get() << " was not initialized\n";
+					LPSTR messageBuffer = nullptr;
+					size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+						nullptr, result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, nullptr);
+					std::cerr << "Buffer " << buffer.Get() << " was not initialized: " 
+						<< std::string(messageBuffer, size) <<"\n";
+					LocalFree(messageBuffer);
 				}
 				updateBuffer = false;
 			}

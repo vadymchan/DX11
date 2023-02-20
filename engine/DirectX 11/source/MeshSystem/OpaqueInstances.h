@@ -8,6 +8,7 @@
 #include "../Controller/ShaderManager.h"
 #include "../Controller/BufferManager.h"
 
+
 namespace engine::DX
 {
 	class OpaqueInstances
@@ -15,7 +16,7 @@ namespace engine::DX
 	public:
 		struct Material
 		{
-			DirectX::XMFLOAT4 color;
+			DirectX::SimpleMath::Vector4 color;
 		};
 
 		struct Instance
@@ -44,11 +45,13 @@ namespace engine::DX
 		std::vector<PerModel> perModel{};
 		VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		//ConstantBuffer<> meshData; // e.g. mesh to model transformation matrix
-		//ConstantBuffer<Material> materialData; // e.g. time that needed to change material effect
+		ConstantBuffer<Material> materialData; 
 		std::shared_ptr<VertexShader> vertexShader;
 		std::shared_ptr<PixelShader> pixelShader;
+		std::wstring vertexShaderPath;
+		std::wstring pixelShaderPath;
 		bool instanceBufferUpdated{};
-		
+
 	public:
 		void updateInstanceBuffer()
 		{
@@ -99,23 +102,31 @@ namespace engine::DX
 			/*instanceBuffer.setBufferData(instances);
 			instanceBuffer.setSizeOfBuffer(instances.size());*/
 			//instanceBuffer.initBuffer(INSTANCE_INPUT_SLOT_1, sizeof(Instance), 0, instances.size() * sizeof(Instance), D3D11_USAGE_IMMUTABLE, instances.data());
-			instanceBuffer.initBuffer(INSTANCE_INPUT_SLOT_1, sizeof(Instance), 0, D3D11_USAGE_IMMUTABLE, instances);
+			instanceBuffer.initBuffer(INSTANCE_INPUT_SLOT_1, std::vector<UINT>{sizeof(Instance)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE, instances);
 			instanceBufferUpdated = true;
 		}
 
-		void setVertexShader(const std::wstring& path)
+		void setVertexShader(const std::wstring& vertexShaderFileName)
 		{
-			vertexShader = ShaderManager::getInstance().getVertexShader(path);
+			vertexShader = ShaderManager::getInstance().getVertexShader(vertexShaderFileName);
+			vertexShaderPath = vertexShaderFileName;
+		}
+
+		void setPixelShader(const std::wstring& pixelShaderFileName)
+		{
+			pixelShader = ShaderManager::getInstance().getPixelShader(pixelShaderFileName);
+			pixelShaderPath = pixelShaderFileName;
+
 		}
 		
-		void setPixelShader(const std::wstring& path)
+		const std::wstring& getVertexShaderFileName() const
 		{
-			pixelShader = ShaderManager::getInstance().getPixelShader(path);
+			return vertexShaderPath;
 		}
 
-		void updateMaterialData()
+		const std::wstring& getPixelShaderFileName() const
 		{
-
+			return pixelShaderPath;
 		}
 
 		void render()
@@ -128,10 +139,10 @@ namespace engine::DX
 			}
 
 
-			vertexShader->bind(); 
+			vertexShader->bind();
 			pixelShader->bind();
-			instanceBuffer.setBuffer();	
-
+			instanceBuffer.setBuffer();
+			int renderedInstance = 0;
 			for (const auto& model : perModel)
 			{
 				if (model.perMesh.empty())
@@ -139,13 +150,14 @@ namespace engine::DX
 
 
 				model.model->bindBuffers(MODEL_DATA_INPUT_SLOT_0);
-
+				int renderedModelIndexes = 0;
+				int renderedModelVertexes = 0;
 				for (size_t meshIndex = 0; meshIndex < model.perMesh.size(); ++meshIndex)
 				{
 					const Mesh& mesh = model.model->getMesh(meshIndex);
 					const Model::MeshRange& meshRange = model.model->getMeshRange(meshIndex);
-					int renderedModelIndexes = 0;
 					
+
 					//meshData.update(mesh.meshToModel); // ... update shader local per-mesh uniform buffer
 
 					for (const auto& perMaterial : model.perMesh.at(meshIndex).perMaterial)
@@ -153,22 +165,25 @@ namespace engine::DX
 						if (perMaterial.instances.empty())
 							continue;
 
-						/*const std::shared_ptr<Material>& material = perMaterial.material;
-						materialData.update();*/
 
+						if (getVertexShaderFileName().find(L"hologram") == std::wstring::npos)
+						{
+							materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
+							materialData.setPixelShaderBuffer();
+						}
 
-						int renderedInstance = 0;
 
 
 						//g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), meshRange.indexOffset, meshRange.vertexOffset, renderedInstance);
-						
+
 						g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-						g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size() * 3, renderedModelIndexes, meshRange.vertexOffset, renderedInstance);
+						g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedModelIndexes, renderedModelVertexes, renderedInstance);
 
 
-						renderedModelIndexes += meshRange.indexNum;
 						renderedInstance += perMaterial.instances.size();
 					}
+					renderedModelIndexes += meshRange.indexNum;
+					renderedModelVertexes += meshRange.vertexNum;
 				}
 			}
 
@@ -180,11 +195,12 @@ namespace engine::DX
 		/// adds new instances to the current opaque instance.
 		/// Attention: add instances to certain material in one batch. Otherwise the same material will be created but with new instances
 		/// </summary>
-		void addInstances(const std::shared_ptr<Model>& model, size_t meshIndex,  const std::shared_ptr<Material>& material, const std::vector<Instance>& instances)
+		void addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<Instance>& instances)
 		{
-		
+
 			//bool meshNumberDiscrepancy{ model->getMeshesCount() < obj.perMesh.size() };
 			//assert(meshNumberDiscrepancy && "Number of meshes in mesh system are more than in the given model");
+			instanceBufferUpdated = false;
 
 			for (auto& obj : perModel)
 			{
@@ -222,11 +238,14 @@ namespace engine::DX
 			newPerMaterial.material = material;
 			newPerMesh.perMaterial.emplace_back(std::move(newPerMaterial));
 			perModel.emplace_back(std::move(newPerModel));
-			
+
 		}
+
+
 
 		OpaqueInstances()
 		{
+			materialData.initBuffer(MATERIAL_NORMAL_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 		}
 
 	};

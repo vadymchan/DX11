@@ -9,8 +9,8 @@ namespace engine::DX
 	public:
 		struct Vertex
 		{
-			DirectX::XMFLOAT4 position;
-			//DirectX::XMFLOAT4 color;
+			DirectX::SimpleMath::Vector3 position;
+			DirectX::SimpleMath::Vector3 normal;
 			const static std::vector<UINT> alignedByteOffsets;
 		};
 		//bounding box
@@ -41,10 +41,7 @@ namespace engine::DX
 			return vertices;
 		}
 
-		/*const std::vector<UINT>& GetAlignedByteOffset() const
-		{
-			return alignedByteOffset;
-		}*/
+
 
 		void addVertices(const std::vector<Vertex>& newVertices)
 		{
@@ -62,7 +59,9 @@ namespace engine::DX
 	private:
 		std::vector<uint32_t> indices{};
 		std::vector<Vertex> vertices{}; 
-	
+		std::string name;
+		friend class Model;
+		friend class ModelManager;
 	};
 
 	

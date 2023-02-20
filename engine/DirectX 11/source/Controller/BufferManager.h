@@ -10,7 +10,10 @@
 
 namespace engine::DX
 {
-#define CONSTANT_REGISTER_0 0
+#define PER_VIEW_SHADER 0 //in vertex shader
+#define MATERIAL_NORMAL_SHADER 0 //in pixel shader
+#define PER_VIEW_PIXEL_HOLOGRAM_SHADER 0 //in pixel shader
+#define PER_DRAW_HOLOGRAM_SHADER 1 //in pixel and vertex shader
 #define MODEL_DATA_INPUT_SLOT_0 0
 #define INSTANCE_INPUT_SLOT_1 1
 

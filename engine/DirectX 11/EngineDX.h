@@ -31,27 +31,32 @@ namespace engine::DX
 		{
 			camera.setView(position, direction, cameraUp);
 			camera.setPerspective(DirectX::XMConvertToRadians(fov), aspect, zNear, zFar);
-			camera.initBuffer(CONSTANT_REGISTER_0, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
+			camera.initBuffer(PER_VIEW_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
 		}
 
-		void addInstancedModel(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<OpaqueInstances::Instance>& instances)
+		void addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<OpaqueInstances::Instance>& instances)
 		{
-			MeshSystem::getInstance().addOpaqueInstances(model, meshIndex, material, instances);
+			MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndex, material, instances);
 		}
 
-		void setVertexShader(const std::wstring& fileName)
+		uint32_t createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName)
 		{
-			MeshSystem::getInstance().setVertexShader(fileName);
+			return MeshSystem::getInstance().createOpaqueInstance(vertexShaderFileName, pixelShaderFileName);
 		}
 
-		void setPixelShader(const std::wstring& fileName)
-		{
-			MeshSystem::getInstance().setPixelShader(fileName);
-		}
+		//void setVertexShader(const std::wstring& fileName)
+		//{
+		//	MeshSystem::getInstance().setVertexShader(fileName);
+		//}
+
+		//void setPixelShader(const std::wstring& fileName)
+		//{
+		//	MeshSystem::getInstance().setPixelShader(fileName);
+		//}
 
 		void moveCamera(const float3& offset)
 		{
-			camera.addRelativeOffset(offset);
+			camera.addWorldOffset(offset);
 		}
 
 		void rotateCamera(const Angles& angles)
@@ -101,5 +106,6 @@ namespace engine::DX
 		}
 	};
 }
+
 
 

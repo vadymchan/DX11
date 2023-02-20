@@ -15,12 +15,31 @@ namespace engine::DX
 
 		}
 
-		virtual void compileShader() = 0;
+		void compileShader()
+		{
+			
+
+			HRESULT result = D3DCompileFromFile((pathToShader).c_str(), 0, 0, entryPoint.c_str(), shaderVersion.c_str(), 0, 0, &shaderBinary, errorMessage.ReleaseAndGetAddressOf());
+			if (FAILED(result))
+			{
+				if (errorMessage.Get() != nullptr)
+				{
+					char* pErrorMessage = (char*)errorMessage->GetBufferPointer();
+					std::cerr << "Shader compilation failed with error message: " 
+						<< std::string(pErrorMessage, pErrorMessage + errorMessage->GetBufferSize()) << std::endl;
+				}
+				else
+				{
+					std::cerr << "Shader compilation failed with unknown error" << std::endl;
+				}
+			}
+		};
 		virtual void bind() = 0;
 		virtual void createShader() = 0;
 
 	protected:
-		ComPtr<ID3DBlob> shaderBinary;
+		ComPtr<ID3DBlob> shaderBinary; 
+		ComPtr<ID3D10Blob> errorMessage;
 		std::wstring pathToShader;
 		std::string entryPoint;
 		std::string shaderVersion;
