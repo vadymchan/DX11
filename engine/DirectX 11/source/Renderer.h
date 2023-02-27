@@ -1,6 +1,6 @@
 #pragma once
 #include "../window/WindowDX.h"
-#include "Camera.h"
+#include "Utils/Camera.h"
 #include "MeshSystem/MeshSystem.h"
 
 namespace engine::DX

@@ -183,10 +183,22 @@
     <ClInclude Include="DirectX 11\source\Buffer\DepthStencilBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\Camera.h">
+    <ClInclude Include="DirectX 11\source\Utils\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectX 11\source\Renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="general\include\SimpleMathToHLSL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Math\Colision\boxDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Math\Movement\MeshMover.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -237,6 +249,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DirectX 11\source\MeshSystem\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\source\Math\Colision\boxDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

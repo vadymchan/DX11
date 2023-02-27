@@ -174,11 +174,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DirectX 11\source\Math\Colision\boxDX.h" />
     <ClInclude Include="DirectX 11\source\D3D\D3D.h" />
     <ClInclude Include="DirectX 11\source\Buffer\Buffer.h" />
     <ClInclude Include="DirectX 11\source\Buffer\ConstantBuffer.h" />
     <ClInclude Include="DirectX 11\source\Buffer\DepthStencilBuffer.h" />
-    <ClInclude Include="DirectX 11\source\Camera.h" />
+    <ClInclude Include="DirectX 11\source\Math\Movement\MeshMover.h" />
+    <ClInclude Include="DirectX 11\source\Utils\Camera.h" />
     <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
     <ClInclude Include="DirectX 11\source\ConstBufferType.h" />
     <ClInclude Include="DirectX 11\source\Controller\BufferManager.h" />
@@ -192,12 +194,14 @@
     <ClInclude Include="DirectX 11\source\Renderer.h" />
     <ClInclude Include="DirectX 11\source\Shader\PixelShader.h" />
     <ClInclude Include="DirectX 11\source\Shader\Shader.h" />
+    <ClInclude Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.h" />
     <ClInclude Include="DirectX 11\source\Vertex.h" />
     <ClInclude Include="DirectX 11\source\Buffer\VertexBuffer.h" />
     <ClInclude Include="DirectX 11\source\Shader\VertexShader.h" />
     <ClInclude Include="DirectX 11\source\VertexType.h" />
     <ClInclude Include="DirectX 11\window\WindowDX.h" />
     <ClInclude Include="DirectX 11\EngineDX.h" />
+    <ClInclude Include="general\include\SimpleMathToHLSL.h" />
     <ClInclude Include="Ray Casting\utils\Camera.h" />
     <ClInclude Include="general\include\win.h" />
     <ClInclude Include="general\include\win_def.h" />
@@ -234,8 +238,10 @@
     <ClInclude Include="DirectX 11\render\SceneDX.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX 11\source\Math\Colision\boxDX.cpp" />
     <ClCompile Include="DirectX 11\source\D3D\D3D.cpp" />
     <ClCompile Include="DirectX 11\source\MeshSystem\Mesh.cpp" />
+    <ClCompile Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.cpp" />
     <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="general\utils\console\Console.cpp" />
     <ClCompile Include="Ray Casting\render\SceneRC.cpp" />

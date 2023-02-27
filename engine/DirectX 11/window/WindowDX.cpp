@@ -144,7 +144,7 @@ namespace engine::DX
 		bgColorRGBA[3] = 1.0f;
 
 
-
+		
 		g_device->CreateRenderTargetView(backBuffer.Get(), nullptr, renderTargetView.ReleaseAndGetAddressOf());
 		g_devcon->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
 	}
@@ -157,7 +157,7 @@ namespace engine::DX
 		viewport.Height = height;
 		viewport.MinDepth = 0.0;
 		viewport.MaxDepth = 1.0;
-
+		
 		g_devcon->RSSetViewports(1, &viewport);
 	}
 

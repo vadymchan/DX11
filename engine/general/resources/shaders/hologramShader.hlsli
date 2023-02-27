@@ -1,36 +1,8 @@
 
-
-cbuffer PerView : register(b0)
-{
-    float4x4 VP;
-};
-
 cbuffer PerDraw : register(b1)
 {
     float4 time;
-};
-
-cbuffer PerMesh : register(b2)
-{
-    float4x4 meshToModel;
-};
-
-
-struct vertexInput
-{
-
-    float3 position : POSITION;
-    float3 normal : NORMAL;
-    float4x4 instance : INSTANCE;
-};
-
-struct vertexOutput
-{
-    float4 position : SV_POSITION;
-    float3 normal : NORMAL;
-
-};
-
+}
 
 // BEGIN ShaderToy https://www.shadertoy.com/view/WttcRB
 float hash4d(in float4 p)
@@ -157,24 +129,4 @@ float3 vertexDistortion(float3 pos, float3 normal)
     offset += normal * 0.05 * wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
     return offset;
 }
-
-
-
-
-vertexOutput main(vertexInput input)
-{
-    vertexOutput output;
-
-
-    //output.position = mul(VP, mul(input.instance, mul(meshToModel, float4(input.position + vertexDistortion(input.position.xyz, input.normal), 1))));
-    
-    output.position = mul(mul(mul(float4(input.position + vertexDistortion(input.position.xzy, input.normal), 1),
-    meshToModel), input.instance), VP);
-    //output.position = mul(mul(mul(float4(input.position, 1)), input.instance), VP);
-    output.normal = input.normal;
-   
-    return output;
-}
-
-
 

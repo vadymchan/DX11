@@ -118,7 +118,7 @@ void ApplicationRC::Init(const HINSTANCE& appHandle, int windowShowParams)
 	};
 
 	//mesh box
-	std::shared_ptr<engine::RC::Box> box = std::make_shared<engine::RC::Box>(engine::RC::Box()); // needs to make an shared_ptr
+	std::shared_ptr<engine::RC::Box> box = std::make_shared<engine::RC::Box>(engine::RC::Box()); 
 	box->min = glm::vec3(-1, -1, -1);
 	box->max = glm::vec3(1, 1, 1);
 

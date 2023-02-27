@@ -7,7 +7,7 @@
 void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 {
 	const int windowWidth{ 1000 };
-	const int windowHeight{ 800 };
+	const int windowHeight{ 1000 };
 	const int windowStartX{ 0 };
 	const int windowStartY{ 0 };
 	const std::wstring normalVertexShaderFileName{ L"vertexShader.hlsl" };
@@ -38,7 +38,25 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
+	/*ID3D10Blob* buffer, *errorbuffer;
+	HRESULT result = D3DCompileFromFile(L"C:/Users/vadym/source/repos/vchan/engine/general/resources/shaders/hologramShader.hlsl", 0, 0, "main", "vs_5_0", 0, 0, &buffer, &errorbuffer);
+	if (FAILED(result))
+	{
+		if (errorbuffer != nullptr)
+		{
+			char* pErrorMessage = (char*)errorbuffer->GetBufferPointer();
+			std::cerr << "Shader compilation failed with error message: "
+				<< std::string(pErrorMessage, pErrorMessage + errorbuffer->GetBufferSize()) << std::endl;
+		}
+		else
+		{
+			std::cerr << "Shader compilation failed with unknown error" << std::endl;
+		}
+	}
+	ID3D11VertexShader* shader;
+	engine::DX::g_device->CreateVertexShader(buffer->GetBufferPointer(), buffer->GetBufferSize(), nullptr, &shader);*/
 
+	//ShaderManager::getInstance().addVertexShader(L"hologramShader.hlsl", {});
 	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addPixelShader(normalPixelShaderFileName);
@@ -54,10 +72,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	// models
 	//---------------------------------------------------------------------------------------------------
 	std::shared_ptr<Model> cube = ModelManager::getInstance().loadCube();
-	std::shared_ptr<Model> samurai = ModelManager::getInstance().loadAssimp("Samurai/Samurai.fbx");
+	//std::shared_ptr<Model> samurai = ModelManager::getInstance().loadAssimp("Samurai/Samurai.fbx");
 	std::shared_ptr<Model> eastTower = ModelManager::getInstance().loadAssimp("EastTower/EastTower.fbx");
-	std::shared_ptr<Model> knight = ModelManager::getInstance().loadAssimp("Knight/Knight.fbx");
-	std::shared_ptr<Model> knightHorse = ModelManager::getInstance().loadAssimp("KnightHorse/KnightHorse.fbx");
+	//std::shared_ptr<Model> knight = ModelManager::getInstance().loadAssimp("Knight/Knight.fbx");
+	//std::shared_ptr<Model> knightHorse = ModelManager::getInstance().loadAssimp("KnightHorse/KnightHorse.fbx");
 
 
 	std::vector<std::shared_ptr<Material>> materials(8);
@@ -65,14 +83,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		material = std::make_shared<Material>();
 	}
-	materials.at(0)->color = { 1,0,0,0};
-	materials.at(1)->color = { 0,1,0,0};
-	materials.at(2)->color = { 0,0,1,0};
-	materials.at(3)->color = { 1,1,0,0};
-	materials.at(4)->color = { 0,1,1,0};
-	materials.at(5)->color = { 1,0,1,0};
-	materials.at(6)->color = { 1,1,1,0};
-	materials.at(7)->color = { 0,0,0,0};
+	materials.at(0)->color = { 1,0,0,0 };
+	materials.at(1)->color = { 0,1,0,0 };
+	materials.at(2)->color = { 0,0,1,0 };
+	materials.at(3)->color = { 1,1,0,0 };
+	materials.at(4)->color = { 0,1,1,0 };
+	materials.at(5)->color = { 1,0,1,0 };
+	materials.at(6)->color = { 1,1,1,0 };
+	materials.at(7)->color = { 0,0,0,0 };
 
 	std::vector<std::vector<Instance>> cubeInstances(8);
 
@@ -83,34 +101,35 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<Instance> samuraiInstances
-	{
-		Instance
-		{
-			{{1,0,0,0},
-			{0,1,0,0},
-			{0,0,1,0},
-			{0,0,0,1},}
-		},
+	std::vector<Instance> samuraiInstances = generateRandomInstances(1'000);
+	//{
+	//	Instance
+	//	{
+	//		{{1,0,0,0},
+	//		{0,1,0,0},
+	//		{0,0,1,0},
+	//		{0,0,0,1},}
+	//	},
 
-		Instance
-		{
-			{{1,0,0,0},
-			{0,0,-1,0},
-			{0,1,0,5},
-			{0,0,0,1},}
-		},
-	};
+	//	/*Instance
+	//	{
+	//		{{1,0,0,0},
+	//		{0,0,-1,0},
+	//		{0,1,0,5},
+	//		{0,0,0,1},}
+	//	},*/
+	//};
 
 	std::vector<Instance> eastTowerInstances
 	{
-		
+
 		Instance
 		{
-			{{1,0,0,-4},
-			{0,0,-1,0},
-			{0,1,0,5},
-			{0,0,0,1},}
+			engine::DX::float4x4
+			{{{1,0,0,-10},
+			{0,1,0,0},
+			{0,0,1,0},
+			{0,0,0,1},}}
 		},
 	};
 
@@ -119,57 +138,118 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 		Instance
 		{
-			{{1,0,0,4},
-			{0,0,-1,0},
-			{0,1,0,5},
-			{0,0,0,1},}
+			engine::DX::float4x4
+			{{{1,0,0,10},
+			{0,1,0,0},
+			{0,0,1,0},
+			{0,0,0,1},}}
 		},
 	};
-
+	DirectX::SimpleMath::Matrix::Identity;
 	std::vector<Instance> knightHorseInstances
 	{
-
 		Instance
+		{
+			engine::DX::float4x4
+			{{{1,0,0,5},
+			{0,1,0,0},
+			{0,0,1,0},
+			{0,0,0,1},}}
+		},
+		/*Instance
 		{
 			{{1,0,0,6},
 			{0,0,-1,0},
 			{0,1,0,5},
 			{0,0,0,1},}
-		},
+		},*/
 	};
-	for (size_t i = 0; i < samurai.get()->getMeshesCount(); i++)
+
+
+	//for (size_t i = 0; i < samurai.get()->getMeshesCount(); i++)
 	{
-		engine.addInstancedModel(normalOpaqueInstance, samurai, i, materials.at(4), samuraiInstances);
+
+		/*engine.addInstancedModel(normalOpaqueInstance, samurai, 5, materials.at(7), { Instance
+		{
+				
+				engine::DX::float4x4
+				{{{1,0,0,0},
+				{0,1,0,0},
+				{0,0,1,5},
+				{0,0,0,1},}}
+			} });*/
+
+		//engine.addInstancedModel(hologramOpaqueInstance, samurai, i, materials.at(1), samuraiInstances);
 	}
 	for (size_t i = 0; i < eastTower.get()->getMeshesCount(); i++)
 	{
-		engine.addInstancedModel(normalOpaqueInstance, eastTower, i, materials.at(4), eastTowerInstances);
+
+		/*	engine.addInstancedModel(normalOpaqueInstance, eastTower, i, materials.at(7), { Instance
+{
+
+	engine::DX::float4x4
+	{{{1,0,0,0},
+	{0,1,0,0},
+	{0,0,1,5},
+	{0,0,0,1},}}
 	}
-	for (size_t i = 0; i < knight.get()->getMeshesCount(); i++)
-	{
-		engine.addInstancedModel(normalOpaqueInstance, knight, i, materials.at(4), knightInstances);
+		});*/
+
+		//engine.addInstancedModel(hologramOpaqueInstance, eastTower, i, materials.at(1), eastTowerInstances);
 	}
-	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); i++)
-	{
-		engine.addInstancedModel(normalOpaqueInstance, knightHorse, i, materials.at(4), knightHorseInstances);
-	}
+	//for (size_t i = 0; i < knight.get()->getMeshesCount(); i++)
+	//{
+	//	//engine.addInstancedModel(hologramOpaqueInstance, knight, i, materials.at(2), knightInstances);
+	//}
+	//for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); i++)
+	//{
+	//	//engine.addInstancedModel(hologramOpaqueInstance, knightHorse, i, materials.at(3), knightHorseInstances);
+	//}
+
+	engine.addInstancedModel(normalOpaqueInstance, cube, 0, materials.at(7), { Instance
+		{
+			/*engine::DX::float4x4
+			{{{0.707,-0.707,0,0},
+			{0.707,0.707,0,0},
+			{0,0,1,5},
+			{0,0,0,1},}}*/
+			engine::DX::float4x4
+			{{{1,0,0,0},
+			{0,1,0,0},
+			{0,0,1,5},
+			{0,0,0,1},}}
+		} });
+
+//	engine.addInstancedModel(normalOpaqueInstance, eastTower, 1, materials.at(7), { Instance
+//{
+//
+//	engine::DX::float4x4
+//	{{{1,0,0,0},
+//	{0,1,0,0},
+//	{0,0,1,5},
+//	{0,0,0,1},}}
+//	}
+//		});
+
+
 	for (size_t i = 0; i < cubeInstances.size(); ++i)
 	{
+
 		//engine.addInstancedModel(normalOpaqueInstance, cube, 0, materials.at(i), cubeInstances.at(i));
 	}
 
-	engine.addInstancedModel(hologramOpaqueInstance, cube, 0, materials.at(6), cubeInstances.at(0));
+	//engine.addInstancedModel(hologramOpaqueInstance, cube, 0, materials.at(6), cubeInstances.at(0));
 
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3& position{ 0,0,0 };
+	const engine::DX::float3& position{ 0.2,0,0 };
 	const engine::DX::float3& direction{ 0,0,1 };
 	const engine::DX::float3& cameraUp{ 0,1,0 };
 
 	float fov{ 45 };
 	float aspect{ (float)windowWidth / windowHeight };
-	float zNear{ 0.01 };
+	float zNear{ 1 };
 	float zFar{ 100 };
 
 	engine.initCamera(position, direction, cameraUp, fov, aspect, zNear, zFar);
@@ -190,7 +270,6 @@ void ApplicationDX::Run()
 		{
 			return;
 		}
-		//scene.render(window);
 		engine.render();
 	}
 }
@@ -206,7 +285,7 @@ bool ApplicationDX::ProcessInputs()
 		switch (msg.message)
 		{
 		case WM_MOUSEMOVE:
-			if (pitchYawRotation)
+			if (pitchYawRotation || rayCasted)
 			{
 				xPos = static_cast<float>(GET_X_LPARAM(msg.lParam));
 				yPos = static_cast<float>(GET_Y_LPARAM(msg.lParam));
@@ -219,6 +298,15 @@ bool ApplicationDX::ProcessInputs()
 			break;
 		case WM_LBUTTONUP:
 			pitchYawRotation = false;
+			break;
+		case WM_RBUTTONDOWN:
+			rayCasted = true;
+			lastMousePos.x = xPos = static_cast<float>(GET_X_LPARAM(msg.lParam));
+			lastMousePos.y = yPos = static_cast<float>(GET_Y_LPARAM(msg.lParam));
+			break;
+		case WM_RBUTTONUP:
+			rayCasted = objectCaptured = false;
+
 			break;
 		case WM_MOUSEWHEEL:
 			if (GET_WHEEL_DELTA_WPARAM(msg.wParam) > 0)
@@ -299,12 +387,35 @@ bool ApplicationDX::ProcessInputs()
 		DispatchMessageW(&msg);
 	}
 
+
+	
+
+	if (!objectCaptured && rayCasted)
+	{
+		//objectCaptured = engine.castRay(xPos, yPos);
+		engine.castRay();
+		//objectCaptured = engine.castRay(982/2.0f, 953/2.0f);
+		//objectCaptured = engine.castRay(0, 0);
+		if(objectCaptured)
+		std::cout << "obj captured\n";
+	}
+	if (objectCaptured)
+	{
+		MoveObject(xPos, yPos);
+		//std::cout << "obj moved\n";
+	}
+	else if(!(objectCaptured && rayCasted))
+	{
+
+		//std::cout << "obj not moved\n";
+	}
+
 	if (pitchYawRotation)
 	{
 		RotateCamera(xPos, yPos);
 	}
 	MoveCamera();
-
+	lastMousePos = { xPos, yPos };
 	return true;
 }
 
@@ -371,23 +482,27 @@ void ApplicationDX::MoveCamera()
 
 }
 
+void ApplicationDX::MoveObject(float xPos, float yPos)
+{
+	if (objectCaptured)
+	{
+		engine::DX::float3 offset{ xPos - lastMousePos.x, lastMousePos.y - yPos, 0 };
+		engine.moveCapturedObject(offset);
+		//engine.moveCapturedObject(engine::DX::float3(xPos,yPos,0));
+	}
+}
+
 void ApplicationDX::RotateCamera(float xPos, float yPos)
 {
-	/*if (lastMousePos != engine::DX::float2{ xPos, yPos })
-	{
-		std::cout << xPos << '\t' << yPos << std::endl;
-		std::cout << lastMousePos.x << '\t' << lastMousePos.y << std::endl << std::endl;
-	}*/
-
 	engine::DX::float2 offset{ lastMousePos.x - xPos, lastMousePos.y - yPos };
 	if (std::abs(offset.x) > FLT_EPSILON || std::abs(offset.y) > FLT_EPSILON)
 	{
-		//std::cout << offset.x << '\t' << offset.y << std::endl;
+
 		engine.rotateCamera({ offset.y * 0.005f, offset.x * 0.005f, 0 });
-		//lastMousePos = { xPos, 0 };
+
 	}
 
-	lastMousePos = { xPos, yPos };
+	
 }
 
 std::vector<Instance> ApplicationDX::generateRandomInstances(size_t numInstances)
@@ -410,10 +525,11 @@ std::vector<Instance> ApplicationDX::generateRandomInstances(size_t numInstances
 
 		instances.at(j) = Instance
 		{
-			{{1,0,0,x},
+			engine::DX::float4x4
+			{{{1,0,0,x},
 			{0,1,0,y},
 			{0,0,1,z},
-			{0,0,0,1},}
+			{0,0,0,1},}}
 		};
 
 	}

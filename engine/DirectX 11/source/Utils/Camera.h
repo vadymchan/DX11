@@ -1,6 +1,6 @@
 #pragma once
 
-#include "D3D/D3D.h"
+#include "../D3D/D3D.h"
 
 
 
@@ -8,13 +8,7 @@
 
 namespace engine::DX
 {
-	//using variables as in HLSL
-	using float2 = DirectX::SimpleMath::Vector2;
-	using float3 = DirectX::SimpleMath::Vector3;
-	using float4 = DirectX::SimpleMath::Vector4;
-	using float4x4 = DirectX::SimpleMath::Matrix;
-
-	using quat = DirectX::SimpleMath::Quaternion;
+	
 
 	struct Transform
 	{
@@ -58,8 +52,8 @@ namespace engine::DX
 		{
 			{1,0,0,0},
 			{0,1,0,0},
-			{0,0,-1,1},
-			{0,0,0,1},
+			{0,0,-1,0},
+			{0,0,1,1},
 
 		};
 
@@ -69,8 +63,6 @@ namespace engine::DX
 
 		struct ViewProjectionMatrix
 		{
-			//float4x4 view;
-			//float4x4 proj;
 			float4x4 viewProj;
 		};
 
@@ -97,17 +89,14 @@ namespace engine::DX
 			cameraBuffer.setVertexShaderBuffer();
 		}
 
-		//const float3& right()		const { return float3{ view._11, view._21, view._31 }; }
-		//const float3& up() 			const { return float3{ view._12, view._22, view._32 }; }
-		//const float3& forward() 	const { return float3{ view._13, view._23, view._33 }; }
+		const float3& right()		const { return float3{ view._11, view._21, view._31 }; }
+		const float3& up() 			const { return float3{ view._12, view._22, view._32 }; }
+		const float3& forward() 	const { return float3{ view._13, view._23, view._33 }; }
 
-		//const float3& right()		const { return float3{ view._11, view._12, view._13 }; }
-		//const float3& up() 		const { return float3{ view._21, view._22, view._23 }; }
-		//const float3& forward() 	const { return float3{ view._31, view._32, view._33 }; }
 
-		const float3& right()		const { return view.Right(); }
-		const float3& up() 		const { return view.Up(); }
-		const float3& forward() 	const { return -view.Forward(); } //because SimpleMath uses right-handed coordinate system
+		/*float3 right()		const { return view.Right(); }
+		float3 up() 		const { return view.Up(); }
+		float3 forward() 	const { return -view.Forward(); }*/ //because SimpleMath uses right-handed coordinate system
 		const float3& position()	const { return cameraPos; }
 		float getFov() const { return fov; }
 		float getAspectRatio() const { return aspect; }
@@ -125,15 +114,16 @@ namespace engine::DX
 			this->zFar = zFar;
 			//proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
 			//proj = reverseDepthMatrix * DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
-			proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
+			proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zFar, zNear);
 			//proj = proj * reverseDepthMatrix;
 			bufferUpdated = false;
 		}
 
 		void changeAspectRatio(float aspect)
 		{
-			//proj = reverseDepthMatrix * DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
-			proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
+			proj = float4x4(DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar)) * reverseDepthMatrix;
+
+			//proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
 			//proj = proj * reverseDepthMatrix;
 
 			bufferUpdated = false;
@@ -149,7 +139,7 @@ namespace engine::DX
 			bufferUpdated = false;
 		}
 
-		DirectX::XMMATRIX getIPV()
+		const float4x4& getIPV()
 		{
 			if (!matricesUpdated)
 			{
@@ -157,10 +147,10 @@ namespace engine::DX
 			}
 
 
-			return (proj * view).Invert();;
+			return (view * proj).Invert();;
 		}
 
-		DirectX::XMMATRIX getViewMatrix()
+		const float4x4& getViewMatrix()
 		{
 			if (!matricesUpdated)
 			{
@@ -169,7 +159,7 @@ namespace engine::DX
 			return view;
 		}
 
-		DirectX::XMMATRIX getPerspectiveMatrix()
+		const float4x4& getPerspectiveMatrix()
 		{
 			if (!matricesUpdated)
 			{
@@ -299,9 +289,9 @@ namespace engine::DX
 
 			view *= float4x4::CreateFromQuaternion(transform.rotation);
 
-			std::cout << "right\t" << right().x << '\t' << right().y << '\t' << right().z << std::endl;
+			/*std::cout << "right\t" << right().x << '\t' << right().y << '\t' << right().z << std::endl;
 			std::cout << "up\t" << up().x << '\t' << up().y << '\t' << up().z << std::endl;
-			std::cout << "forward\t" << forward().x << '\t' << forward().y << '\t' << forward().z << std::endl << std::endl;
+			std::cout << "forward\t" << forward().x << '\t' << forward().y << '\t' << forward().z << std::endl << std::endl;*/
 		}
 
 		void updateMatrices()

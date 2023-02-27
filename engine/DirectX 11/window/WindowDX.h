@@ -16,7 +16,7 @@ namespace engine::DX
 	public:
 		void initWindow(const LPCWSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 		void clearWindow();
-		void clearDepthStencil() { g_devcon->ClearDepthStencilView(depthStencilBuffer.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0.0f); }
+		void clearDepthStencil() { g_devcon->ClearDepthStencilView(depthStencilBuffer.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0.0f); }
 		void windowResize(float width, float height);
 		void setBackgroundColor(float r, float g, float b, float a);
 		void setVSync(bool value) { vsync = value; }

@@ -1,4 +1,5 @@
 
+
 cbuffer PerView : register(b0)
 {
     float4 cameraPos;
@@ -117,6 +118,7 @@ float wave(float3 pos, float waveInterval, float waveYSpeed, float waveThickness
     return intensity;
 }
 
+
 // Note: in HLSL global constant is marked with "static const".
 // One "const" is not enough, because it will be considered to be a uniform from a constant buffer.
 // In HLSL const means that the value can not be changed by the shader.
@@ -136,13 +138,13 @@ static const float RED_WAVE_THICKNESS = 0.2;
 // called in pixel shader
 float3 main(Input input) : SV_TARGET
 {
-    return float3(1, 0, 0);
+
     
     float blueWave = wave(input.position.xyz, BLUE_WAVE_INTERVAL, BLUE_WAVE_SPEED, BLUE_WAVE_THICKNESS, true);
     float redWave = wave(input.position.xyz, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
 
     float3 toCamera = normalize(cameraPos.xyz - input.position.xyz);
-    float contourGlow = pow(1.0 - abs(dot(input.normal, toCamera)), 2);
+    float contourGlow = pow(1.0 - abs(dot(input.normal.xyz, toCamera)), 2);
 
     // when contourInterference is 0, ripple effect contourWave is added to contourGlow, otherwise contourWave is 1
     float contourWave = wave(input.position.xyz, 0.1, 0.1, 0.05, false);
@@ -151,10 +153,11 @@ float3 main(Input input) : SV_TARGET
     // when contourWave is 0.0, contourGlow becomes darker, otherwise contourGlow color is plain, without ripple
     contourGlow = lerp(contourGlow / 10, contourGlow, contourWave);
 
-    float3 color = float3(0, 1.0, 1.0) * min(1, contourGlow + blueWave * 0.5);
+    float3 color = float3(0, 0.3, 0.3) * min(1, contourGlow + blueWave * 0.5);
     float colorNoise = sqrt(noise4d(float4(input.position.xyz, frac(time.x)) * 100, 1));
     color *= lerp(colorNoise, 1.0, contourInterference);
     
     color = lerp(color, float3(1.0, 0.0, 0.0), redWave * 0.25);
     return color;
+
 }

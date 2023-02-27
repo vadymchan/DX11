@@ -100,7 +100,10 @@ namespace engine::DX
 			return meshes.at(index);
 		}
 
-
+		Mesh& getMesh(size_t index)
+		{
+			return meshes.at(index);
+		}
 
 		//const MeshRange& operator()(size_t index)
 		//{

@@ -40,6 +40,7 @@ public:
 	bool ProcessInputs();
 	void AddCameraDirection();
 	void MoveCamera();
+	void MoveObject(float xPos, float yPos);
 	void RotateCamera(float xPos, float yPos);
 	std::vector<Instance> generateRandomInstances(size_t numInstances);
 	~ApplicationDX()
@@ -64,10 +65,11 @@ private:
 	engine::DX::Engine engine;
 	MSG msg;
 	float cameraSpeed{};
-	bool pitchYawRotation{};
-	bool firstOccurence{true};
-	bool increasedSpeed{ false };
 	float deltaTime{};
+	bool pitchYawRotation{};
+	bool increasedSpeed{};
+	bool rayCasted{};
+	bool objectCaptured{};
 
 };
 

@@ -37,6 +37,7 @@ namespace engine::RC
 
 			bool inserted = addTriangle(i, V1, V2, V3, P);
 		}
+		
 	}
 	//for recursive call
 	void TriangleOctree::initialize(ColorMesh& mesh, const Box& parentBox, const glm::vec3& parentCenter, int octetIndex)
@@ -160,9 +161,8 @@ namespace engine::RC
 	{
 
 		//check for nullptr
-		auto test1{ m_mesh->getMathMesh().tMat };
-		auto test{ glm::inverse(test1) };
-		ray *= test;
+
+		ray *= glm::inverse(m_mesh->getMathMesh().tMat);
 
 		float boxT = nearest.t;
 		if (!m_box.hit(ray, boxT))

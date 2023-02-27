@@ -11,11 +11,11 @@
 
 #include <d3d11_4.h>
 #include <d3dcompiler.h>
-#include <SimpleMath.h>
 #include <wrl/client.h>
 #include <cstdint>
 #include <iostream>
 
+#include "../../../general/include/SimpleMathToHLSL.h"
 #include "../../../general/include/win_undef.h"
 
 #pragma comment( lib, "d3d11.lib" )

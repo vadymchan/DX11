@@ -27,7 +27,7 @@ namespace engine::DX
 
 		std::shared_ptr<Model> loadAssimp(std::string modelFileName)
 		{
-			uint32_t flags = uint32_t(aiProcess_Triangulate | aiProcess_GenBoundingBoxes | aiProcess_ConvertToLeftHanded | aiProcess_CalcTangentSpace);
+			uint32_t flags = uint32_t(aiProcess_Triangulate | aiProcess_GenBoundingBoxes | aiProcess_ConvertToLeftHanded |aiProcess_CalcTangentSpace);
 
 			Assimp::Importer importer;
 			const aiScene* assimpScene = importer.ReadFile(modelDirectory + modelFileName, flags);
@@ -62,8 +62,8 @@ namespace engine::DX
 
 
 				dstMesh.name = srcMesh->mName.C_Str();
-				//dstMesh.box.min = reinterpret_cast<float3&>(srcMesh->mAABB.mMin);
-				//dstMesh.box.max = reinterpret_cast<float3&>(srcMesh->mAABB.mMax);
+				dstMesh.box.min = reinterpret_cast<float3&>(srcMesh->mAABB.mMin);
+				dstMesh.box.max = reinterpret_cast<float3&>(srcMesh->mAABB.mMax);
 
 
 
@@ -81,20 +81,15 @@ namespace engine::DX
 
 				for (uint32_t v = 0; v < srcMesh->mNumVertices; ++v)
 				{
-					DirectX::SimpleMath::Vector3 t = reinterpret_cast<DirectX::SimpleMath::Vector3&>(srcMesh->mVertices[v]);
+					//DirectX::SimpleMath::Vector3 t = reinterpret_cast<DirectX::SimpleMath::Vector3&>(srcMesh->mVertices[v]);
 					//dstMesh.vertices.at(v).position = float4(t.x, t.y, t.z, 1);
 					dstMesh.vertices.at(v).position = reinterpret_cast<DirectX::SimpleMath::Vector3&>(srcMesh->mVertices[v]);
-
-
-				//vertex.tc = reinterpret_cast<engine::Vec2f&>(srcMesh->mTextureCoords[0][v]);
-
-
-				//need to add sooner or later
 					dstMesh.vertices.at(v).normal = reinterpret_cast<DirectX::SimpleMath::Vector3&>(srcMesh->mNormals[v]);
 
 
-				//vertex.tangent = reinterpret_cast<engine::float3&>(srcMesh->mTangents[v]);
-				//vertex.bitangent = reinterpret_cast<engine::float3&>(srcMesh->mBitangents[v]) * -1.f; // Flip V
+					//vertex.tc = reinterpret_cast<engine::Vec2f&>(srcMesh->mTextureCoords[0][v]);
+					//vertex.tangent = reinterpret_cast<engine::float3&>(srcMesh->mTangents[v]);
+					//vertex.bitangent = reinterpret_cast<engine::float3&>(srcMesh->mBitangents[v]) * -1.f; // Flip V
 				}
 
 				//meshes.at(i).addVertices(meshVertices);
@@ -113,30 +108,31 @@ namespace engine::DX
 			}
 
 			// Recursively load mesh instances (meshToModel transformation matrices)
-
-			//std::function<void(aiNode*)> loadInstances;
-			//loadInstances = [&loadInstances, &model](aiNode* node)
-			//{
-			//	const DirectX::SimpleMath::Matrix nodeToParent = reinterpret_cast<const DirectX::SimpleMath::Matrix&>(node->mTransformation.Transpose());
-			//	const DirectX::SimpleMath::Matrix parentToNode = nodeToParent.Invert();;
-
-			//	// The same node may contain multiple meshes in its space, referring to them by indices
-			//	for (uint32_t i = 0; i < node->mNumMeshes; ++i)
-			//	{
-			//		uint32_t meshIndex = node->mMeshes[i];
-			//		/*model.meshes[meshIndex].instances.push_back(nodeToParent);
-			//		model.meshes[meshIndex].instancesInv.push_back(parentToNode);*/
-			//	}
-
-			//	for (uint32_t i = 0; i < node->mNumChildren; ++i)
-			//		loadInstances(node->mChildren[i]);
-			//};
-
-			//loadInstances(assimpScene->mRootNode);
-			/*for (size_t i = 0; i < meshes.size(); i++)
+			
+			std::function<void(aiNode*)> loadInstances;
+			loadInstances = [&loadInstances, &model](aiNode* node)
 			{
-				model.addMesh(meshes.at(i), meshRanges.at(i));
-			}*/
+				const float4x4 nodeToParent = reinterpret_cast<const float4x4&>(node->mTransformation);
+				const float4x4 parentToNode = nodeToParent.Invert();
+
+				/*const float4x4 nodeToParent = DirectX::SimpleMath::Matrix::Identity;
+				const float4x4 parentToNode = DirectX::SimpleMath::Matrix::Identity;*/
+
+				// The same node may contain multiple meshes in its space, referring to them by indices
+				for (uint32_t i = 0; i < node->mNumMeshes; ++i)
+				{
+					
+					uint32_t meshIndex = node->mMeshes[i];
+					model.meshes[meshIndex].meshToModelMat.push_back(nodeToParent);
+					model.meshes[meshIndex].invMeshToModelMat.push_back(parentToNode);
+				}
+
+				for (uint32_t i = 0; i < node->mNumChildren; ++i)
+					loadInstances(node->mChildren[i]);
+			};
+
+			loadInstances(assimpScene->mRootNode);
+
 
 
 
@@ -160,6 +156,109 @@ namespace engine::DX
 			return models[cubeTag];
 		}
 
+		std::shared_ptr<Model> loadCube1()
+		{
+			auto pair = models.find("cube1");
+			if (pair != models.end()) // cube is already created
+			{
+				return pair->second;
+			}
+			createCube1();
+			return models["cube1"];
+		}
+
+		void createCube1()
+		{
+			Model cube;
+			cube.meshes.resize(1);
+			cube.meshRanges.resize(1);
+
+			auto& mesh = cube.meshes.at(0);
+
+			//cube data
+			//----------------------------------------------------------------------
+
+			std::vector<Mesh::Vertex> cubeVerticesSeparateNormal = {
+				{ {-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f} }, // Front Face - Bottom Left
+				{ {-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, -1.0f} }, // Front Face - Top Left
+				{ { 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, -1.0f} }, // Front Face - Top Right
+				{ { 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f} }, // Front Face - Bottom Right
+
+				{ {-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f} }, // Back Face - Bottom Left
+				{ {-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f} }, // Back Face - Top Left
+				{ { 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f} }, // Back Face - Top Right
+				{ { 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f} }, // Back Face - Bottom Right
+
+				{ {-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Top Left
+				{ {-0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Bottom Left
+				{ { 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Bottom Right
+				{ { 0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Top Right
+
+				{ {-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Top Left
+				{ {-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Bottom Left
+				{ { 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Bottom Right
+				{ { 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Top Right
+
+				{ { 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Top Left
+				{ { 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Top Right
+				{ { 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Bottom Left
+				{ { 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Bottom Right
+
+				{ {-0.5f,  0.5f,  0.5f }, {-1.0f, 0.0f, 0.0f} }, // Left Face - Top Left
+				{ {-0.5f,  0.5f, -0.5f }, {-1.0f, 0.0f, 0.0f} }, // Left Face - Top Right
+				{ {-0.5f, -0.5f,  0.5f }, {-1.0f, 0.0f, 0.0f} }, // Left Face - Bottom Left
+				{ {-0.5f, -0.5f, -0.5f }, {-1.0f, 0.0f, 0.0f} }, // Left Face - Bottom Right
+
+
+			};
+
+			std::vector<unsigned int> cubeIndicesSeparateNormal = {
+				0, 1, 2,
+				2, 3, 0, // Front Face
+
+				4, 6, 5,
+				6, 4, 7, // Back Face
+
+				8,  10, 9,
+				10, 8,  11, // Bottom Face
+
+				12, 13, 14,
+				14, 15, 12, // Top Face
+
+				16, 17, 18,
+				18, 17, 19, // Right Face
+
+				20, 21, 22,
+				22, 21, 23, // left face
+			};
+
+
+
+			//mesh range
+			auto& meshRange = cube.meshRanges.at(0);
+			meshRange.vertexOffset = 0;
+			meshRange.indexOffset = 0;
+			meshRange.indexNum = cubeIndicesSeparateNormal.size();
+			meshRange.vertexNum = cubeVerticesSeparateNormal.size();
+			mesh.box.min = { -0.5f, -0.5f, -0.5f };
+			mesh.box.max = { 0.5f, 0.5f, 0.5f };
+			mesh.name = "cube1";
+
+			mesh.vertices = cubeVerticesSeparateNormal;
+			mesh.indices = cubeIndicesSeparateNormal;
+			mesh.meshToModelMat = { float4x4::Identity };
+			mesh.invMeshToModelMat = { float4x4::Identity };
+
+			//buffers
+			cube.initVertexBuffer(MODEL_DATA_INPUT_SLOT_0, std::vector<UINT>{sizeof(Mesh::Vertex)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE);
+			cube.initIndexBuffer(D3D11_USAGE_DEFAULT);
+
+
+			models["cube1"] = std::make_shared<Model>(std::move(cube));
+
+			//----------------------------------------------------------------------
+
+		}
 
 
 	protected:
@@ -176,19 +275,6 @@ namespace engine::DX
 
 			//cube data
 			//----------------------------------------------------------------------
-			//std::vector<Mesh::Vertex> cubeVertices
-			//{
-			//	Mesh::Vertex{{-0.5f,  0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 0.0f}},  // upper left  front
-			//	Mesh::Vertex{{-0.5f, -0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 0.0f}},  // lower left  front
-			//	Mesh::Vertex{{ 0.5f, -0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 0.0f}},  // lower right front
-			//	Mesh::Vertex{{ 0.5f,  0.5f, -0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 0.0f}},  // upper right front
-			//	Mesh::Vertex{{-0.5f,  0.5f,  0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 0.0f}},  // upper left  back
-			//	Mesh::Vertex{{-0.5f, -0.5f,  0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 0.0f}},	// lower left  back
-			//	Mesh::Vertex{{ 0.5f, -0.5f,  0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 0.0f}},	// lower right back
-			//	Mesh::Vertex{{ 0.5f,  0.5f,  0.5f, 1.0f}, {1.0f, 1.0f, 1.0f, 0.0f}},	// upper right back
-
-			//};
-
 
 			std::vector<Mesh::Vertex> cubeVerticesSeparateNormal = {
 				{ {-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f} }, // Front Face - Bottom Left
@@ -201,27 +287,47 @@ namespace engine::DX
 				{ { 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f} }, // Back Face - Top Right
 				{ { 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f} }, // Back Face - Bottom Right
 
-				{ {-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Front Left
-				{ {-0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Back Left
-				{ { 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Back Right
-				{ { 0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Front Right
+				{ {-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Top Left
+				{ {-0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Bottom Left
+				{ { 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Bottom Right
+				{ { 0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f} }, // Bottom Face - Top Right
 
-				{ {-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Front Left
-				{ {-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Back Left
-				{ { 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Back Right
-				{ { 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Front Right
+				{ {-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Top Left
+				{ {-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Bottom Left
+				{ { 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Bottom Right
+				{ { 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f} }, // Top Face - Top Right
 
-				{ { 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Front Left
-				{ { 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Back Left
-				{ { 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Back Right
-				{ { 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Front Right
+				{ { 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Top Left
+				{ { 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Top Right
+				{ { 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Bottom Left
+				{ { 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f} }, // Right Face - Bottom Right
 
-				{ {-0.5f,  0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f} }, // Left Face - Top Left
-				{ {-0.5f,  0.5f,  0.5f}, {-1.0f, 0.0f, 0.0f} }, // Left Face - Bottom Left
-				{ {-0.5f,  0.5f,  0.5f}, {-1.0f, 0.0f, 0.0f} }, // Left Face - Bottom Right
-				{ {-0.5f,  0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f} }, // Left Face - Top Right
+				{ {-0.5f,  0.5f,  0.5f }, {-1.0f, 0.0f, 0.0f} }, // Left Face - Top Left
+				{ {-0.5f,  0.5f, -0.5f }, {-1.0f, 0.0f, 0.0f} }, // Left Face - Top Right
+				{ {-0.5f, -0.5f,  0.5f }, {-1.0f, 0.0f, 0.0f} }, // Left Face - Bottom Left
+				{ {-0.5f, -0.5f, -0.5f }, {-1.0f, 0.0f, 0.0f} }, // Left Face - Bottom Right
 
 
+			};
+
+			std::vector<unsigned int> cubeIndicesSeparateNormal = {
+				0, 1, 2,
+				2, 3, 0, // Front Face
+
+				4, 6, 5,
+				6, 4, 7, // Back Face
+
+				8,  10, 9,
+				10, 8,  11, // Bottom Face
+
+				12, 13, 14,
+				14, 15, 12, // Top Face
+
+				16, 17, 18, 
+				18, 17, 19, // Right Face
+
+				20, 21, 22,
+				22, 21, 23, // left face
 			};
 
 
@@ -264,11 +370,21 @@ namespace engine::DX
 			auto& meshRange = cube.meshRanges.at(0);
 			meshRange.vertexOffset = 0;
 			meshRange.indexOffset = 0;
-			meshRange.indexNum = cubeIndices.size();
-			meshRange.vertexNum = cubeVertices.size();
+			meshRange.indexNum = cubeIndicesSeparateNormal.size();
+			meshRange.vertexNum = cubeVerticesSeparateNormal.size();
+			mesh.box.min = { -0.5f, -0.5f, -0.5f };
+			mesh.box.max = { 0.5f, 0.5f, 0.5f };
+			mesh.name = "cube";
 
-			mesh.vertices = cubeVertices;
-			mesh.indices = cubeIndices;
+			mesh.vertices = cubeVerticesSeparateNormal;
+			mesh.indices = cubeIndicesSeparateNormal;
+			mesh.meshToModelMat = { float4x4::Identity };
+	/*		mesh.meshToModelMat = { engine::DX::float4x4
+					{{{1,0,0,5},
+					{0,1,0,-5},
+					{0,0,1,0},
+					{0,0,0,1},}} };*/
+			mesh.invMeshToModelMat = { float4x4::Identity };
 
 			//buffers
 			cube.initVertexBuffer(MODEL_DATA_INPUT_SLOT_0, std::vector<UINT>{sizeof(Mesh::Vertex)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE);
