@@ -10,12 +10,6 @@ namespace engine::DX
 	{
 	public:
 
-		//void addElement(T value)
-		//{
-		//	bufferData.push_back(value);
-		//	updateBuffer = true;
-		//}
-
 		void addElements(const std::vector<T>& bufferData)
 		{
 			this->bufferData.reserve(this->bufferData.size() + bufferData.size());
@@ -33,18 +27,6 @@ namespace engine::DX
 		{
 			return bufferData;
 		}
-
-		/*void setSizeOfBuffer(UINT value)
-		{
-			bufferDescription.ByteWidth = value;
-			updateBuffer = true;
-		}*/
-
-		//void setBufferData(const void* pData)
-		//{
-		//	bufferSubresourceData.pSysMem = pData;
-		//	updateBuffer = true;
-		//}
 
 		void createBuffer()
 		{
@@ -75,17 +57,8 @@ namespace engine::DX
 			}
 
 		};
-		//virtual void setBuffers(UINT startSlot, UINT bufferNum, ID3D11Buffer* const* vertexBuffers, const UINT* strides, const UINT* offsets) = 0;
-
+		
 	protected:
-
-		//void initBuffer(/*UINT sizeOfBuffer,*/ D3D11_USAGE bufferUsage, const std::vector<T>& bufferData, /*const void* pData,*/
-		//	UINT bindFlags = 0, UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
-		//	UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)
-		//{
-		//	this->bufferData = bufferData;
-		//	initBuffer(bufferUsage, bindFlags, CPUAccessFlags, miscFlags, structureByteStride, sysMemPitch, sysMemSlicePitch);
-		//}
 
 		void initBuffer(D3D11_USAGE bufferUsage,
 			UINT bindFlags = 0, UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
@@ -114,8 +87,6 @@ namespace engine::DX
 			bufferSubresourceData.SysMemSlicePitch = sysMemSlicePitch;
 
 		}
-
-
 
 		D3D11_BUFFER_DESC bufferDescription{};
 		D3D11_SUBRESOURCE_DATA bufferSubresourceData{};

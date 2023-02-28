@@ -10,8 +10,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const int windowHeight{ 1000 };
 	const int windowStartX{ 0 };
 	const int windowStartY{ 0 };
-	const std::wstring normalVertexShaderFileName{ L"vertexShader.hlsl" };
-	const std::wstring normalPixelShaderFileName{ L"pixelShader.hlsl" };
+	const std::wstring normalVertexShaderFileName{ L"normalVertexShader.hlsl" };
+	const std::wstring normalPixelShaderFileName{ L"normalPixelShader.hlsl" };
 	const std::wstring hologramVertexShaderFileName{ L"hologramVertexShader.hlsl" };
 	const std::wstring hologramPixelShaderFileName{ L"hologramPixelShader.hlsl" };
 	cameraSpeed = 2.f;
@@ -38,25 +38,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
-	/*ID3D10Blob* buffer, *errorbuffer;
-	HRESULT result = D3DCompileFromFile(L"C:/Users/vadym/source/repos/vchan/engine/general/resources/shaders/hologramShader.hlsl", 0, 0, "main", "vs_5_0", 0, 0, &buffer, &errorbuffer);
-	if (FAILED(result))
-	{
-		if (errorbuffer != nullptr)
-		{
-			char* pErrorMessage = (char*)errorbuffer->GetBufferPointer();
-			std::cerr << "Shader compilation failed with error message: "
-				<< std::string(pErrorMessage, pErrorMessage + errorbuffer->GetBufferSize()) << std::endl;
-		}
-		else
-		{
-			std::cerr << "Shader compilation failed with unknown error" << std::endl;
-		}
-	}
-	ID3D11VertexShader* shader;
-	engine::DX::g_device->CreateVertexShader(buffer->GetBufferPointer(), buffer->GetBufferSize(), nullptr, &shader);*/
-
-	//ShaderManager::getInstance().addVertexShader(L"hologramShader.hlsl", {});
+	
 	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addPixelShader(normalPixelShaderFileName);
@@ -72,10 +54,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	// models
 	//---------------------------------------------------------------------------------------------------
 	std::shared_ptr<Model> cube = ModelManager::getInstance().loadCube();
-	//std::shared_ptr<Model> samurai = ModelManager::getInstance().loadAssimp("Samurai/Samurai.fbx");
+	std::shared_ptr<Model> samurai = ModelManager::getInstance().loadAssimp("Samurai/Samurai.fbx");
 	std::shared_ptr<Model> eastTower = ModelManager::getInstance().loadAssimp("EastTower/EastTower.fbx");
-	//std::shared_ptr<Model> knight = ModelManager::getInstance().loadAssimp("Knight/Knight.fbx");
-	//std::shared_ptr<Model> knightHorse = ModelManager::getInstance().loadAssimp("KnightHorse/KnightHorse.fbx");
+	std::shared_ptr<Model> knight = ModelManager::getInstance().loadAssimp("Knight/Knight.fbx");
+	std::shared_ptr<Model> knightHorse = ModelManager::getInstance().loadAssimp("KnightHorse/KnightHorse.fbx");
 
 
 	std::vector<std::shared_ptr<Material>> materials(8);
@@ -102,23 +84,6 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 	std::vector<Instance> samuraiInstances = generateRandomInstances(1'000);
-	//{
-	//	Instance
-	//	{
-	//		{{1,0,0,0},
-	//		{0,1,0,0},
-	//		{0,0,1,0},
-	//		{0,0,0,1},}
-	//	},
-
-	//	/*Instance
-	//	{
-	//		{{1,0,0,0},
-	//		{0,0,-1,0},
-	//		{0,1,0,5},
-	//		{0,0,0,1},}
-	//	},*/
-	//};
 
 	std::vector<Instance> eastTowerInstances
 	{
@@ -156,31 +121,27 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 			{0,0,1,0},
 			{0,0,0,1},}}
 		},
-		/*Instance
-		{
-			{{1,0,0,6},
-			{0,0,-1,0},
-			{0,1,0,5},
-			{0,0,0,1},}
-		},*/
 	};
 
 
-	//for (size_t i = 0; i < samurai.get()->getMeshesCount(); i++)
+	for (size_t i = 0; i < samurai.get()->getMeshesCount(); i++)
 	{
 
-		/*engine.addInstancedModel(normalOpaqueInstance, samurai, 5, materials.at(7), { Instance
+		engine.addInstancedModel(normalOpaqueInstance, samurai, i, materials.at(7), { Instance
 		{
-				
+
 				engine::DX::float4x4
 				{{{1,0,0,0},
 				{0,1,0,0},
 				{0,0,1,5},
 				{0,0,0,1},}}
-			} });*/
+			} });
 
-		//engine.addInstancedModel(hologramOpaqueInstance, samurai, i, materials.at(1), samuraiInstances);
+			//engine.addInstancedModel(hologramOpaqueInstance, samurai, i, materials.at(1), samuraiInstances);
 	}
+
+
+
 	for (size_t i = 0; i < eastTower.get()->getMeshesCount(); i++)
 	{
 
@@ -189,7 +150,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	engine::DX::float4x4
 	{{{1,0,0,0},
-	{0,1,0,0},
+	{0,1,0,5},
 	{0,0,1,5},
 	{0,0,0,1},}}
 	}
@@ -197,39 +158,30 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 		//engine.addInstancedModel(hologramOpaqueInstance, eastTower, i, materials.at(1), eastTowerInstances);
 	}
-	//for (size_t i = 0; i < knight.get()->getMeshesCount(); i++)
-	//{
-	//	//engine.addInstancedModel(hologramOpaqueInstance, knight, i, materials.at(2), knightInstances);
-	//}
-	//for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); i++)
-	//{
-	//	//engine.addInstancedModel(hologramOpaqueInstance, knightHorse, i, materials.at(3), knightHorseInstances);
-	//}
+	for (size_t i = 0; i < knight.get()->getMeshesCount(); i++)
+	{
 
-	engine.addInstancedModel(normalOpaqueInstance, cube, 0, materials.at(7), { Instance
-		{
-			/*engine::DX::float4x4
-			{{{0.707,-0.707,0,0},
-			{0.707,0.707,0,0},
-			{0,0,1,5},
-			{0,0,0,1},}}*/
-			engine::DX::float4x4
-			{{{1,0,0,0},
-			{0,1,0,0},
-			{0,0,1,5},
-			{0,0,0,1},}}
-		} });
+		//engine.addInstancedModel(hologramOpaqueInstance, knight, i, materials.at(2), knightInstances);
+	}
+	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); i++)
+	{
+		//engine.addInstancedModel(hologramOpaqueInstance, knightHorse, i, materials.at(3), knightHorseInstances);
+	}
 
-//	engine.addInstancedModel(normalOpaqueInstance, eastTower, 1, materials.at(7), { Instance
-//{
-//
-//	engine::DX::float4x4
-//	{{{1,0,0,0},
-//	{0,1,0,0},
-//	{0,0,1,5},
-//	{0,0,0,1},}}
-//	}
-//		});
+	//engine.addInstancedModel(normalOpaqueInstance, cube, 0, materials.at(7), { Instance
+	//	{
+	//		/*engine::DX::float4x4
+	//		{{{0.707,-0.707,0,0},
+	//		{0.707,0.707,0,0},
+	//		{0,0,1,5},
+	//		{0,0,0,1},}}*/
+	//		engine::DX::float4x4
+	//		{{{1,0,0,0},
+	//		{0,1,0,0},
+	//		{0,0,1,5},
+	//		{0,0,0,1},}}
+	//	}
+	//});
 
 
 	for (size_t i = 0; i < cubeInstances.size(); ++i)
@@ -238,18 +190,16 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		//engine.addInstancedModel(normalOpaqueInstance, cube, 0, materials.at(i), cubeInstances.at(i));
 	}
 
-	//engine.addInstancedModel(hologramOpaqueInstance, cube, 0, materials.at(6), cubeInstances.at(0));
-
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3& position{ 0.2,0,0 };
+	const engine::DX::float3& position{ 0,0,0 };
 	const engine::DX::float3& direction{ 0,0,1 };
 	const engine::DX::float3& cameraUp{ 0,1,0 };
 
 	float fov{ 45 };
 	float aspect{ (float)windowWidth / windowHeight };
-	float zNear{ 1 };
+	float zNear{ 0.01 };
 	float zFar{ 100 };
 
 	engine.initCamera(position, direction, cameraUp, fov, aspect, zNear, zFar);
@@ -388,23 +338,24 @@ bool ApplicationDX::ProcessInputs()
 	}
 
 
-	
+
 
 	if (!objectCaptured && rayCasted)
 	{
-		//objectCaptured = engine.castRay(xPos, yPos);
-		engine.castRay();
+		objectCaptured = engine.castRay(xPos, yPos);
+		//engine.castRay(xPos, yPos);
+		//engine.castRay();
 		//objectCaptured = engine.castRay(982/2.0f, 953/2.0f);
 		//objectCaptured = engine.castRay(0, 0);
-		if(objectCaptured)
-		std::cout << "obj captured\n";
+		if (objectCaptured)
+			std::cout << "obj captured\n";
 	}
 	if (objectCaptured)
 	{
 		MoveObject(xPos, yPos);
 		//std::cout << "obj moved\n";
 	}
-	else if(!(objectCaptured && rayCasted))
+	else if (!(objectCaptured && rayCasted))
 	{
 
 		//std::cout << "obj not moved\n";
@@ -457,24 +408,13 @@ void ApplicationDX::MoveCamera()
 
 	AddCameraDirection();
 
-	//std::cout << cameraDirection.x << '\t' << cameraDirection.y << '\t' << cameraDirection.z << std::endl;
-	//std::cout << engine.getCameraPosition().x << '\t' << engine.getCameraPosition().y << '\t' << engine.getCameraPosition().z << std::endl;
-	//std::cout << cameraSpeed << std::endl;
-	//engine::DX::float4 isCameraMoveVector{ DirectX::XMVectorEqual(cameraDirection, engine::DX::float4{0}) };
-
 	bool isCameraMove{ cameraDirection != engine::DX::float3() };
 
 
 
 	if (isCameraMove)
 	{
-
-
-		//engine::DX::float3 moveOffset{ cameraDirection * cameraSpeed * fpsTimer.frameTimeElapsed() * 1000};
 		engine::DX::float3 moveOffset{ cameraDirection * cameraSpeed * deltaTime };
-
-		//std::cout << fpsTimer.frameTimeElapsed() << std::endl;
-		//std::cout << deltaTime << std::endl;
 		engine.moveCamera(moveOffset);
 	}
 
@@ -488,7 +428,6 @@ void ApplicationDX::MoveObject(float xPos, float yPos)
 	{
 		engine::DX::float3 offset{ xPos - lastMousePos.x, lastMousePos.y - yPos, 0 };
 		engine.moveCapturedObject(offset);
-		//engine.moveCapturedObject(engine::DX::float3(xPos,yPos,0));
 	}
 }
 
@@ -502,7 +441,7 @@ void ApplicationDX::RotateCamera(float xPos, float yPos)
 
 	}
 
-	
+
 }
 
 std::vector<Instance> ApplicationDX::generateRandomInstances(size_t numInstances)

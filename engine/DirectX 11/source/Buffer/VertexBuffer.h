@@ -26,24 +26,12 @@ namespace engine::DX
 			initBuffer(startSlot, strides, offsets, bufferUsage, CPUAccessFlags, miscFlags, structureByteStride, sysMemPitch, sysMemSlicePitch);
 		}
 
-		//temporary here. May be deleted later
-		//---------------------------------------
-		UINT GetInputSlot() const
-		{
-			return startSlot;
-		}
-
-		void SetInputSlot(UINT value)
-		{
-			startSlot = value;
-		}
-
 		void setBuffer() override
 		{
 			Buffer<T>::setBuffer();
 			g_devcon->IASetVertexBuffers(startSlot, 1, Buffer<T>::buffer.GetAddressOf(), strides.data(), offsets.data());
 		}
-		//---------------------------------------
+
 
 
 		/// <param name="inputSlot">slot in which buffer binds in Input Assembler</param>
@@ -56,7 +44,7 @@ namespace engine::DX
 			g_devcon->IASetVertexBuffers(inputSlot, 1, Buffer<T>::buffer.GetAddressOf(), strides.data(), offsets.data());
 		}
 
-		static void setBuffers(UINT startSlot, UINT bufferNum, ID3D11Buffer*const* vertexBuffers, const UINT* strides, const UINT* offsets)
+		static void setBuffers(UINT startSlot, UINT bufferNum, ID3D11Buffer* const* vertexBuffers, const UINT* strides, const UINT* offsets)
 		{
 			g_devcon->IASetVertexBuffers(startSlot, bufferNum, vertexBuffers, strides, offsets);
 		}

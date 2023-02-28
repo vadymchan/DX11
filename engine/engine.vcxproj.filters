@@ -105,9 +105,6 @@
     <ClInclude Include="DirectX 11\window\WindowDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\render\SceneDX.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="general\include\win_def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -121,12 +118,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectX 11\EngineDX.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX 11\source\ConstBufferType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX 11\source\VertexType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectX 11\source\ConstBuffer.h">
@@ -239,9 +230,6 @@
     <ClCompile Include="DirectX 11\window\WindowDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX 11\render\SceneDX.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DirectX 11\source\D3D\D3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -257,10 +245,31 @@
     <ClCompile Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DirectX 11\source\Controller\ModelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\source\Controller\ShaderManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\source\MeshSystem\MeshSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\source\MeshSystem\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\source\MeshSystem\OpaqueInstances.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\EngineDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectX 11\source\Utils\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="general\resources\shaders\pixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\vertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalPixelShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalVertexShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
   </ItemGroup>

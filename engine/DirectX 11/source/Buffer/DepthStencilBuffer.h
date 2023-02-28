@@ -32,7 +32,7 @@ namespace engine::DX
 
 			//depth
 			depthStencilDesc.DepthEnable = depthEnabled;
-			depthStencilDesc.DepthFunc = depthComparison; //in our case GREATER
+			depthStencilDesc.DepthFunc = depthComparison; 
 			depthStencilDesc.DepthWriteMask = depthWriteMask;
 
 			//stencil
@@ -55,8 +55,6 @@ namespace engine::DX
 			{
 				std::cerr << "Depth Stencil View was not created!\n";
 			}
-
-			//bind depth-stencil view (we need to do it in window.h omsetrenderTarget)
 		}
 
 		ID3D11DepthStencilView* getPDepthStencilView() { return depthStencilView.Get(); }

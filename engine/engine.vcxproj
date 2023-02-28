@@ -182,7 +182,6 @@
     <ClInclude Include="DirectX 11\source\Math\Movement\MeshMover.h" />
     <ClInclude Include="DirectX 11\source\Utils\Camera.h" />
     <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
-    <ClInclude Include="DirectX 11\source\ConstBufferType.h" />
     <ClInclude Include="DirectX 11\source\Controller\BufferManager.h" />
     <ClInclude Include="DirectX 11\source\Controller\ModelManager.h" />
     <ClInclude Include="DirectX 11\source\Buffer\IndexBuffer.h" />
@@ -198,7 +197,6 @@
     <ClInclude Include="DirectX 11\source\Vertex.h" />
     <ClInclude Include="DirectX 11\source\Buffer\VertexBuffer.h" />
     <ClInclude Include="DirectX 11\source\Shader\VertexShader.h" />
-    <ClInclude Include="DirectX 11\source\VertexType.h" />
     <ClInclude Include="DirectX 11\window\WindowDX.h" />
     <ClInclude Include="DirectX 11\EngineDX.h" />
     <ClInclude Include="general\include\SimpleMathToHLSL.h" />
@@ -235,13 +233,19 @@
     <ClInclude Include="Ray Casting\utils\parallel\parallel_executorRC.h" />
     <ClInclude Include="general\utils\timer\FPSTimerRC.h" />
     <ClInclude Include="Ray Casting\window\WindowRC.h" />
-    <ClInclude Include="DirectX 11\render\SceneDX.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DirectX 11\EngineDX.cpp" />
+    <ClCompile Include="DirectX 11\source\Controller\ModelManager.cpp" />
+    <ClCompile Include="DirectX 11\source\Controller\ShaderManager.cpp" />
     <ClCompile Include="DirectX 11\source\Math\Colision\boxDX.cpp" />
     <ClCompile Include="DirectX 11\source\D3D\D3D.cpp" />
     <ClCompile Include="DirectX 11\source\MeshSystem\Mesh.cpp" />
     <ClCompile Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.cpp" />
+    <ClCompile Include="DirectX 11\source\MeshSystem\MeshSystem.cpp" />
+    <ClCompile Include="DirectX 11\source\MeshSystem\Model.cpp" />
+    <ClCompile Include="DirectX 11\source\MeshSystem\OpaqueInstances.cpp" />
+    <ClCompile Include="DirectX 11\source\Utils\Camera.cpp" />
     <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="general\utils\console\Console.cpp" />
     <ClCompile Include="Ray Casting\render\SceneRC.cpp" />
@@ -255,13 +259,12 @@
     <ClCompile Include="Ray Casting\utils\parallel\parallel_executorRC.cpp" />
     <ClCompile Include="general\utils\timer\FPSTimerRC.cpp" />
     <ClCompile Include="Ray Casting\window\WindowRC.cpp" />
-    <ClCompile Include="DirectX 11\render\SceneDX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\pixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\vertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalPixelShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalVertexShader.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

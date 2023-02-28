@@ -2,7 +2,6 @@
 
 #include "DirectX 11/window/WindowDX.h"
 #include "general/utils/timer/FPSTimerRC.h"
-#include "DirectX 11/render/SceneDX.h"
 #include "general/utils/console/Console.h"
 #include <thread>
 #include <DirectX 11/EngineDX.h>
@@ -56,10 +55,6 @@ private:
 
 	engine::general::FPSTimer fpsTimer;
 
-	//need to delete
-	engine::DX::Scene scene;
-	engine::DX::Window window;
-	//
 
 
 	engine::DX::Engine engine;

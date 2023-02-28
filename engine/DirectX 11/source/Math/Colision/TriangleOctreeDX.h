@@ -46,19 +46,14 @@ namespace engine::DX
 		Instance* m_instance = nullptr;
 	protected:
 		std::vector<size_t> m_triangles;
-		//std::vector<uint32_t> m_indices;
-
-
+		std::unique_ptr<std::array<TriangleOctree, 8>> m_children;
 		Box m_box;
 		Box m_initialBox;
 
-		std::unique_ptr<std::array<TriangleOctree, 8>> m_children;
-
+		void countTriangles(TriangleOctree* tri, int& count, std::vector<int>& triangles);
+		const float3& getPos(const Mesh& mesh, size_t triangleIndex, size_t vertexIndex) const;
 		void initialize(Mesh& mesh, Instance& instance, const Box& parentBox, const float3& parentCenter, int octetIndex);
-
 		bool addTriangle(size_t triangleIndex, const float3& V1, const float3& V2, const float3& V3, const float3& center);
-
-
 		bool intersectInternal(const ray& ray, Intersection& nearest) const;
 	};
 }

@@ -8,18 +8,6 @@ namespace engine::DX
 	{
 	public:
 
-		/*void initBuffer(UINT registerSlot, D3D11_USAGE bufferUsage, const std::vector<T>& bufferData,
-			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
-			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)
-		{
-			this->registerSlot = registerSlot;
-			Buffer<T>::initBuffer(bufferUsage, bufferData,
-				D3D11_BIND_CONSTANT_BUFFER, CPUAccessFlags,
-				miscFlags, structureByteStride,
-				sysMemPitch, sysMemSlicePitch);
-		}*/
-
-
 		void initBuffer(UINT registerSlot, D3D11_USAGE bufferUsage,
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)

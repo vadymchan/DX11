@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../D3D/D3D.h"
-
+#include "../Buffer/ConstantBuffer.h"
 
 
 
@@ -70,33 +70,14 @@ namespace engine::DX
 
 		void initBuffer(UINT registerNumber, D3D11_USAGE bufferUsage,
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
-			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)
-		{
-			cameraBuffer.initBuffer(registerNumber, bufferUsage,
-				CPUAccessFlags, miscFlags, structureByteStride,
-				sysMemPitch, sysMemSlicePitch);
+			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0);
 
-		}
-
-		void setCameraBuffer()
-		{
-			updateMatrices();
-			if (!bufferUpdated)
-			{
-				cameraBuffer.setBufferData(std::vector<ViewProjectionMatrix>{ {(view * proj).Transpose()} });
-				bufferUpdated = true;
-			}
-			cameraBuffer.setVertexShaderBuffer();
-		}
+		void setCameraBuffer();
 
 		const float3& right()		const { return float3{ view._11, view._21, view._31 }; }
 		const float3& up() 			const { return float3{ view._12, view._22, view._32 }; }
 		const float3& forward() 	const { return float3{ view._13, view._23, view._33 }; }
 
-
-		/*float3 right()		const { return view.Right(); }
-		float3 up() 		const { return view.Up(); }
-		float3 forward() 	const { return -view.Forward(); }*/ //because SimpleMath uses right-handed coordinate system
 		const float3& position()	const { return cameraPos; }
 		float getFov() const { return fov; }
 		float getAspectRatio() const { return aspect; }
@@ -105,202 +86,33 @@ namespace engine::DX
 
 
 		/// <param name="fov">in radians</param>
-		void setPerspective(float fov, float aspect, float zNear, float zFar)
-		{
+		void setPerspective(float fov, float aspect, float zNear, float zFar);
 
-			this->fov = fov;
-			this->aspect = aspect;
-			this->zNear = zNear;
-			this->zFar = zFar;
-			//proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
-			//proj = reverseDepthMatrix * DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
-			proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zFar, zNear);
-			//proj = proj * reverseDepthMatrix;
-			bufferUpdated = false;
-		}
+		void changeAspectRatio(float aspect);
 
-		void changeAspectRatio(float aspect)
-		{
-			proj = float4x4(DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar)) * reverseDepthMatrix;
+		void setView(const float3& position, const float3& direction, const float3& cameraUp);
 
-			//proj = DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar);
-			//proj = proj * reverseDepthMatrix;
+		const float4x4& getIPV();
 
-			bufferUpdated = false;
-		}
+		const float4x4& getViewMatrix();
 
-		void setView(const float3& position, const float3& direction, const float3& cameraUp)
-		{
-			cameraPos = position;
+		const float4x4& getPerspectiveMatrix();
 
-			//auto dir{ position - direction };
-			//auto t = DirectX::XMMatrixLookToLH(position, dir, cameraUp);
-			view = DirectX::XMMatrixLookToLH(position, direction, cameraUp);
-			bufferUpdated = false;
-		}
+		void setWorldOffset(const float3& offset);
 
-		const float4x4& getIPV()
-		{
-			if (!matricesUpdated)
-			{
-				updateMatrices();
-			}
+		void addWorldOffset(const float3& offset);
 
+		void addRelativeOffset(const float3& offset);
 
-			return (view * proj).Invert();;
-		}
+		void setWorldAngles(const Angles& angles);
 
-		const float4x4& getViewMatrix()
-		{
-			if (!matricesUpdated)
-			{
-				updateMatrices();
-			}
-			return view;
-		}
+		void addWorldAngles(const Angles& angles);
 
-		const float4x4& getPerspectiveMatrix()
-		{
-			if (!matricesUpdated)
-			{
-				updateMatrices();
-			}
-			return proj;
-		}
+		void addRelativeAngles(const Angles& angles);
 
-		void setWorldOffset(const float3& offset)
-		{
-			matricesUpdated = false;
-			bufferUpdated = false;
+		void updateBasis();
 
-
-			view._41 = -offset.x;
-			view._42 = -offset.y;
-			view._43 = -offset.z;
-			cameraPos = offset;
-
-		}
-
-		void addWorldOffset(const float3& offset)
-		{
-			matricesUpdated = false;
-			bufferUpdated = false;
-			updateBasis();
-
-
-			view._41 -= offset.x;
-			view._42 -= offset.y;
-			view._43 -= offset.z;
-
-
-			cameraPos += offset;
-
-
-		}
-
-		void addRelativeOffset(const float3& offset) // relative to camera axis
-		{
-
-
-			matricesUpdated = false;
-			bufferUpdated = false;
-
-			updateBasis();
-
-
-			//float3 relativeOffset{ offset.x * right() + offset.y * up() + offset.z * forward() };
-
-			//std::cout << relativeOffset.x << '\t' << relativeOffset.y << '\t' << relativeOffset.z << std::endl;
-
-
-			//view.Translation(view.Translation() - relativeOffset);
-
-
-			/*view._41 -= view._41 * relativeOffset.x;
-			view._42 -= view._42 * relativeOffset.y;
-			view._43 -= view._43 * relativeOffset.z;*/
-
-			view._41 -= offset.x;
-			view._42 -= offset.y;
-			view._43 -= offset.z;
-
-
-			cameraPos += offset;
-
-		}
-
-		void setWorldAngles(const Angles& angles)
-		{
-			basisUpdated = false;
-			matricesUpdated = false;
-			bufferUpdated = false;
-
-			transform.rotation = quat::CreateFromAxisAngle({ 0.f, 0.f, 1.f }, angles.roll);
-			transform.rotation = quat::CreateFromAxisAngle({ 1.f, 0.f, 0.f }, angles.pitch) * transform.rotation;
-			transform.rotation = quat::CreateFromAxisAngle({ 0.f, 1.f, 0.f }, angles.yaw) * transform.rotation;
-
-			//transform.rotation = quat::CreateFromAxisAngle(forward(), angles.roll);
-			//transform.rotation *= quat::CreateFromAxisAngle(right(), angles.pitch);
-			//transform.rotation *= quat::CreateFromAxisAngle(up(), angles.yaw);
-
-			transform.rotation.Normalize();
-
-
-			transform.position = { angles.pitch, angles.yaw, angles.roll };
-
-		}
-
-		void addWorldAngles(const Angles& angles)
-		{
-			basisUpdated = false;
-			matricesUpdated = false;
-			bufferUpdated = false;
-
-			transform.rotation *= quat::CreateFromAxisAngle({ 0.f, 0.f, 1.f }, angles.roll);
-			transform.rotation *= quat::CreateFromAxisAngle({ 1.f, 0.f, 0.f }, angles.pitch);
-			transform.rotation *= quat::CreateFromAxisAngle({ 0.f, 1.f, 0.f }, angles.yaw);
-
-			transform.rotation.Normalize();
-
-		}
-
-		void addRelativeAngles(const Angles& angles)
-		{
-			basisUpdated = false;
-			matricesUpdated = false;
-			bufferUpdated = false;
-
-			transform.rotation *= quat::CreateFromAxisAngle(forward(), angles.roll);
-			transform.rotation *= quat::CreateFromAxisAngle(right(), angles.pitch);
-			transform.rotation *= quat::CreateFromAxisAngle(up(), angles.yaw);
-
-
-			transform.rotation.Normalize();
-
-		}
-
-		void updateBasis()
-		{
-			if (basisUpdated) return;
-			basisUpdated = true;
-
-			//view = float4x4::CreateFromYawPitchRoll(transform.position).Transpose() * view;
-			//view *= float4x4::CreateFromYawPitchRoll(transform.position);
-
-			view *= float4x4::CreateFromQuaternion(transform.rotation);
-
-			/*std::cout << "right\t" << right().x << '\t' << right().y << '\t' << right().z << std::endl;
-			std::cout << "up\t" << up().x << '\t' << up().y << '\t' << up().z << std::endl;
-			std::cout << "forward\t" << forward().x << '\t' << forward().y << '\t' << forward().z << std::endl << std::endl;*/
-		}
-
-		void updateMatrices()
-		{
-			if (matricesUpdated) return;
-			matricesUpdated = true;
-			updateBasis();
-
-		}
+		void updateMatrices();
 	};
 
 

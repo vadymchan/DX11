@@ -58,19 +58,30 @@ namespace engine::DX
 			indices.insert(end(indices), begin(newIndices), end(newIndices));
 		}
 
-		const std::vector<float4x4> getMeshToModelMat() const
+		const std::vector<float4x4>& getMeshToModelMat() const
 		{
 			return meshToModelMat;
 		}
 
 		const float4x4& getMeshToModelMat(uint32_t index) const
 		{
-
-			/*std::cerr << "getMeshToModelMat in Mesh: out of bounds. Error!" << std::endl;*/
-			//assert(index >= meshToModelMat.size() && "getMeshToModelMat in Mesh: out of bounds. Error!");
+			assert(index < meshToModelMat.size() && "getMeshToModelMat in Mesh: out of bounds. Error!");
 			return meshToModelMat.at(index);
 
 		}
+
+		const std::vector<float4x4>& getInvMeshToModelMat() const
+		{
+			return invMeshToModelMat;
+		}
+
+		const float4x4& getInvMeshToModelMat(uint32_t index) const
+		{
+			assert(index < invMeshToModelMat.size() && "getInvMeshToModelMat in Mesh: out of bounds. Error!");
+			return invMeshToModelMat.at(index);
+
+		}
+
 
 		const std::string& GetName() const
 		{

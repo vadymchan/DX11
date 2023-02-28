@@ -36,9 +36,6 @@ namespace engine::DX
 			intersectionPoint.y += offset.y;
 			intersectionPoint.z += offset.z;
 
-			//instance->toWorldMatrix._14 = offset.x;
-			//instance->toWorldMatrix._24 = offset.y;
-			//instance->toWorldMatrix._34 = offset.z;
 			MeshSystem::getInstance().updateOpaqueInstanceBuffer(instance);
 		}
 

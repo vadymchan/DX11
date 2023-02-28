@@ -4,22 +4,44 @@
 
 namespace engine::DX
 {
-	
 
-	const float TriangleOctree::PREFFERED_TRIANGLE_COUNT = 32;
-	const float TriangleOctree::MAX_STRETCHING_RATIO = 1.05f;
 
-	inline const float3& getPos(const Mesh& mesh, size_t triangleIndex, size_t vertexIndex)
+	const float TriangleOctree::PREFFERED_TRIANGLE_COUNT = 50;
+	const float TriangleOctree::MAX_STRETCHING_RATIO = 1.01f;
+
+	const float3& TriangleOctree::getPos(const Mesh& mesh, size_t triangleIndex, size_t vertexIndex) const
 	{
-		
 		return mesh.getVertices().at(mesh.getIndices().at(triangleIndex * 3 + vertexIndex)).position;
-		//return (*mesh.getMathMesh().triangles.get())[triangleIndex][vertexIndex];
 	}
 
-	inline const float3& getN(const Mesh& mesh, size_t triangleIndex)
+
+	void TriangleOctree::countTriangles(TriangleOctree* tri, int& count, std::vector<int>& triangles)
 	{
-		return float3();
-		//return (*mesh.getMathMesh().triangles.get())[triangleIndex].getN();
+		if (tri == nullptr)
+		{
+			return;
+		}
+		else 
+		{
+			count += tri->m_triangles.size();
+			for (auto& i : tri->m_triangles)
+			{
+				triangles.push_back(i);
+			}
+		}
+		if (tri->m_children == nullptr)
+		{
+			return;
+		}
+		countTriangles(&tri->m_children->at(0), count, triangles);
+		countTriangles(&tri->m_children->at(1), count, triangles);
+		countTriangles(&tri->m_children->at(2), count, triangles);
+		countTriangles(&tri->m_children->at(3), count, triangles);
+		countTriangles(&tri->m_children->at(4), count, triangles);
+		countTriangles(&tri->m_children->at(5), count, triangles);
+		countTriangles(&tri->m_children->at(6), count, triangles);
+		countTriangles(&tri->m_children->at(7), count, triangles);
+		return;
 	}
 
 	//entypoint to init
@@ -27,29 +49,113 @@ namespace engine::DX
 	{
 		m_triangles.clear();
 		m_triangles.shrink_to_fit();
-
-		//m_indices.clear();
-		//m_indices.shrink_to_fit();
-
 		m_mesh = &mesh;
 		m_instance = instance;
 		m_children = nullptr;
 
-		const float3 eps = { 1e-5f, 1e-5f, 1e-5f };
-		m_box = m_initialBox = { mesh.getBox().min - eps, mesh.getBox().max + eps};
-		auto test{ mesh.getIndices().size() / 3.0f };
-		for (size_t i = 0; i < (mesh.getIndices().size() / 3.0f); ++i)
+		const float3 eps = { 1e-10f, 1e-10f, 1e-10f };
+		m_box = m_initialBox = { mesh.getBox().min - eps, mesh.getBox().max + eps };
+		auto triangleNum{ mesh.getIndices().size() / 3.0f };
+		float remainingTriangles{ triangleNum };
+		for (size_t i = 0; i < triangleNum; ++i)
 		{
+
+			if (triangleNum < PREFFERED_TRIANGLE_COUNT) // only one box
+			{
+				m_triangles.emplace_back(i);
+				continue;
+			}
+
 			const float3& V1 = getPos(mesh, i, 0);
 			const float3& V2 = getPos(mesh, i, 1);
 			const float3& V3 = getPos(mesh, i, 2);
 
+
 			float3 P = (V1 + V2 + V3) / 3.f;
-			//m_triangles.emplace_back(i);
+
 			bool inserted = addTriangle(i, V1, V2, V3, P);
 		}
+
 		return;
 	}
+
+
+
+	bool TriangleOctree::addTriangle(size_t triangleIndex, const float3& V1, const float3& V2, const float3& V3, const float3& center)
+	{
+		if (!m_initialBox.contains(center) ||
+			!m_box.contains(V1) ||
+			!m_box.contains(V2) ||
+			!m_box.contains(V3))
+		{
+			return false;
+		}
+
+		if (m_children == nullptr)
+		{
+			m_triangles.emplace_back(triangleIndex);
+			if (m_triangles.size() < PREFFERED_TRIANGLE_COUNT) // no need to init children nodes
+			{
+				
+				return true;
+			}
+			else
+			{
+				float3 C = (m_initialBox.min + m_initialBox.max) / 2.f; //center
+
+				m_children.reset(new std::array<TriangleOctree, 8>());
+				for (int i = 0; i < 8; ++i)
+				{
+					(*m_children)[i].initialize(*m_mesh, *m_instance, m_initialBox, C, i);
+				}
+
+				//move triangles to children
+				std::vector<size_t> newTriangles;
+
+				for (size_t index : m_triangles)
+				{
+					const float3& P1 = getPos(*m_mesh, index, 0);
+					const float3& P2 = getPos(*m_mesh, index, 1);
+					const float3& P3 = getPos(*m_mesh, index, 2);
+
+					float3 P = (P1 + P2 + P3) / 3.f;
+
+					int i = 0;
+
+					for (; i < 8; ++i)
+					{
+						if ((*m_children)[i].addTriangle(index, P1, P2, P3, P))
+							break;
+					}
+
+					if (i == 8) // between two child boxes
+					{
+						newTriangles.emplace_back(index);
+					}
+				}
+				//m_triangles.clear();
+				m_triangles = std::move(newTriangles);
+
+			}
+		}
+		else
+		{
+			int i = 0;
+			for (; i < 8; ++i)
+			{
+				if ((*m_children)[i].addTriangle(triangleIndex, V1, V2, V3, center))
+					break;
+			}
+
+			if (i == 8) // between two child boxes
+			{
+				m_triangles.emplace_back(triangleIndex);
+			}
+
+			return true;
+		}
+	}
+
 	//for recursive call
 	void TriangleOctree::initialize(Mesh& mesh, Instance& instance, const Box& parentBox, const float3& parentCenter, int octetIndex)
 	{
@@ -57,7 +163,8 @@ namespace engine::DX
 		m_instance = &instance;
 		m_children = nullptr;
 
-		const float eps = 1e-5f;
+		const float eps = 1e-10f;
+
 		if (octetIndex % 2 == 0)
 		{
 			m_initialBox.min.x = parentBox.min.x;
@@ -104,103 +211,34 @@ namespace engine::DX
 		else m_box.min.z -= elongation.z;
 	}
 
-	bool TriangleOctree::addTriangle(size_t triangleIndex, const float3& V1, const float3& V2, const float3& V3, const float3& center)
-	{
-		if (!m_initialBox.contains(center) ||
-			!m_box.contains(V1) ||
-			!m_box.contains(V2) ||
-			!m_box.contains(V3))
-		{
-			return false;
-		}
+	ray oldray; //for debug
 
-		if (m_children == nullptr)
-		{
-
-			//if (m_mesh->getIndices().size() / 3.0f < PREFFERED_TRIANGLE_COUNT) // only one box
-			//{
-			//	return true;
-			//}
-			if (m_triangles.size() < PREFFERED_TRIANGLE_COUNT) // no need to init children nodes
-			{
-				m_triangles.emplace_back(triangleIndex); 
-				return true;
-			}
-			else
-			{
-				float3 C = (m_initialBox.min + m_initialBox.max) / 2.f; //center
-
-				m_children.reset(new std::array<TriangleOctree, 8>());
-				for (int i = 0; i < 8; ++i)
-				{
-					(*m_children)[i].initialize(*m_mesh, *m_instance,  m_initialBox, C, i);
-				}
-
-				std::vector<size_t> newTriangles;
-
-				for (size_t index : m_triangles)
-				{
-					const float3& P1 = getPos(*m_mesh, index, 0);
-					const float3& P2 = getPos(*m_mesh, index, 1);
-					const float3& P3 = getPos(*m_mesh, index, 2);
-
-					float3 P = (P1 + P2 + P3) / 3.f;
-
-					int i = 0;
-					for (; i < 8; ++i)
-					{
-						if ((*m_children)[i].addTriangle(index, P1, P2, P3, P))
-							break;
-					}
-
-					if (i == 8)
-						newTriangles.emplace_back(index);
-				}
-
-				m_triangles = std::move(newTriangles);
-			}
-		}
-
-		int i = 0;
-		for (; i < 8; ++i)
-		{
-			if ((*m_children)[i].addTriangle(triangleIndex, V1, V2, V3, center))
-				break;
-		}
-
-		if (i == 8)
-			m_triangles.emplace_back(triangleIndex);
-
-		return true;
-	}
-
-	bool TriangleOctree::intersect(ray ray, Intersection& nearest) const
+	bool TriangleOctree::intersect(ray r, Intersection& nearest) const
 	{
 
 		//check for nullptr
+		oldray = r;
+		float4x4 meshToWorld{ (m_instance->toWorldMatrix * m_mesh->getMeshToModelMat(0)).Transpose() };
+		auto rayToMesh{ meshToWorld.Invert() };
 
-		float4x4 test1{ (m_mesh->getMeshToModelMat(0).Transpose() * m_instance->toWorldMatrix.Transpose())}; // test it
-		auto test{ test1.Invert()};
-		ray.position = float3::Transform(ray.position, test);
+		r.position = float3::Transform(r.position, rayToMesh);
+		r.direction = (float3::TransformNormal(r.direction, rayToMesh));
+		r.direction.Normalize();
 
 		float boxT = nearest.t;
-		if (!m_box.hit(ray, boxT))
+		if (!m_box.hit(r, boxT))
 		{
 			return false;
 		}
 
-		nearest.point = float3::Transform(ray.position, (m_mesh->getMeshToModelMat(0).Transpose() * m_instance->toWorldMatrix.Transpose())) + ray.direction * boxT;
-		nearest.t = boxT;
-		return true;
-
-		return intersectInternal(ray, nearest);
+		return intersectInternal(r, nearest);
 	}
 
 	bool TriangleOctree::intersectInternal(const ray& ray, Intersection& nearest) const
 	{
 		{
-			float boxT = nearest.t;
-			if (!m_box.hit(ray, boxT))//ray-box intersection
+			float boxt = nearest.t;
+			if (!m_box.hit(ray, boxt))//ray-box intersection
 				return false;
 		}
 
@@ -213,19 +251,16 @@ namespace engine::DX
 			const float3& V2 = getPos(*m_mesh, m_triangles[i], 1);
 			const float3& V3 = getPos(*m_mesh, m_triangles[i], 2);
 
-			
-			//if (hit(ray, nearest.t, V1, V2, V3)) // ray-triangle intersection in current box
 			float t = nearest.t;
 			if (ray.Intersects(V1, V2, V3, t)) // ray-triangle intersection in current box
 			{
 				if (t < nearest.t)
 				{
-
-					nearest.point = float3::Transform(ray.position, (m_mesh->getMeshToModelMat(0).Transpose() * m_instance->toWorldMatrix.Transpose())) +  ray.direction * t;
+					nearest.point = oldray.position + oldray.direction * t;
 					nearest.t = t;
 					found = true;
 				}
-				
+
 			}
 		}
 
@@ -241,23 +276,16 @@ namespace engine::DX
 
 		for (int i = 0; i < 8; ++i)
 		{
-			if ((*m_children)[i].m_box.contains(ray.position))
+
+			float boxT = nearest.t;
+			if ((*m_children)[i].m_box.hit(ray, boxT))
 			{
 				boxIntersections[i].index = i;
-				boxIntersections[i].t = 0.f;
+				boxIntersections[i].t = boxT;
 			}
 			else
 			{
-				float boxT = nearest.t;
-				if ((*m_children)[i].m_box.hit(ray, nearest.t))
-				{
-					boxIntersections[i].index = i;
-					boxIntersections[i].t = boxT;
-				}
-				else
-				{
-					boxIntersections[i].index = -1;
-				}
+				boxIntersections[i].index = -1;
 			}
 		}
 

@@ -13,15 +13,6 @@ namespace engine::DX
 			createShader();
 		}
 
-	/*	void compileShader() override
-		{
-			HRESULT result = D3DCompileFromFile((pathToShader).c_str(), 0, 0, entryPoint.c_str(), shaderVersion.c_str(), 0, 0, &shaderBinary, 0);
-			if (FAILED(result))
-			{
-				std::cerr << "Pixel shader was not initialized\n";
-			}
-		}*/
-
 		void bind() override
 		{
 			if (shaderBinary == nullptr)
