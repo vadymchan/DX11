@@ -40,14 +40,15 @@ namespace engine::DX
 		}
 	}
 
-	//for debugging
-	std::shared_ptr<OpaqueInstances::Material> mat = std::make_shared<OpaqueInstances::Material>(OpaqueInstances::Material{ float4{ 0,1,0,0 } });
 
+#ifdef INTERSECTION_TEST
+	std::shared_ptr<OpaqueInstances::Material> mat = std::make_shared<OpaqueInstances::Material>(OpaqueInstances::Material{ float4{ 0,1,0,0 } });
+#endif // color of intersection point
 
 	bool Engine::castRay(float xPos, float yPos)
 	{
-		Instance* instance = nullptr;
 		ray ray = rayToWorld(xPos, yPos);
+		Instance* instance = nullptr;
 		Intersection intersection;
 		intersection.reset();
 		if (MeshSystem::getInstance().findIntersection(ray, instance, intersection))
@@ -55,7 +56,7 @@ namespace engine::DX
 
 			MeshMover::getInstance().setIntersectionPoint(float4(intersection.point.x, intersection.point.y, intersection.point.z, 1));
 
-
+#ifdef INTERSECTION_TEST
 			addInstancedModel(0, ModelManager::getInstance().loadCube1(), 0, mat,
 				{ Instance{ engine::DX::float4x4
 				{ { { 0.01,0,0,intersection.point.x },
@@ -63,6 +64,9 @@ namespace engine::DX
 				{ 0,0,0.01,intersection.point.z },
 				{ 0,0,0,1 }, } }
 				} });
+#endif // add intersection point
+
+
 
 		}
 		bool returnResult{};
@@ -80,16 +84,24 @@ namespace engine::DX
 	/// <param name="offset">offset in screen space (mouse offset)</param>
 
 
-	void Engine::moveCapturedObject(const float3& offset)
+	void Engine::dragCapturedObject(float xPos, float yPos)
 	{
-		float4 intersectionVec{ MeshMover::getInstance().getIntersectionPoint() - float4(camera.position().x, camera.position().y, camera.position().z, 1) };
-		float nearPlaneOffsetX = 2 * tanf(camera.getFov() / 2) * camera.getZNear() * camera.getAspectRatio() * offset.x / window.GetViewport().Width;
-		float nearPlaneOffsetY = 2 * tanf(camera.getFov() / 2) * camera.getZNear() * offset.y / window.GetViewport().Height;
-		intersectionVec = float4::Transform(intersectionVec, camera.getViewMatrix().Transpose());
-		float worldOffsetX = nearPlaneOffsetX * std::abs(intersectionVec.z) / camera.getZNear();
-		float worldOffsetY = nearPlaneOffsetY * std::abs(intersectionVec.z) / camera.getZNear();
+
+
+		float3 cameraPos = camera.position();
+		float4 intersectionVec{ MeshMover::getInstance().getIntersectionPoint() - float4(cameraPos.x, cameraPos.y, cameraPos.z, 1) };
+		float nearPlaneOffsetX = 2 * tanf(camera.getFov() / 2) * camera.getZNear() * camera.getAspectRatio() * xPos / window.GetViewport().Width;
+		float nearPlaneOffsetY = 2 * tanf(camera.getFov() / 2) * camera.getZNear() * yPos / window.GetViewport().Height;
+		intersectionVec = float4::Transform(intersectionVec, camera.getViewMatrix());
+		float worldOffsetX = nearPlaneOffsetX * intersectionVec.z / camera.getZNear();
+		float worldOffsetY = nearPlaneOffsetY * intersectionVec.z / camera.getZNear();
 		float3 moveOffset = worldOffsetX * camera.right() + worldOffsetY * camera.up();
 		MeshMover::getInstance().moveMesh(moveOffset);
+	}
+
+	void Engine::moveCapturedObject(const float3& offset)
+	{
+		MeshMover::getInstance().moveMesh(offset);
 	}
 
 	void Engine::moveCamera(const float3& offset)

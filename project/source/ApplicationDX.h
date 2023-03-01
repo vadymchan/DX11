@@ -38,7 +38,7 @@ public:
 	void Run();
 	bool ProcessInputs();
 	void AddCameraDirection();
-	void MoveCamera();
+	bool MoveCamera();
 	void MoveObject(float xPos, float yPos);
 	void RotateCamera(float xPos, float yPos);
 	std::vector<Instance> generateRandomInstances(size_t numInstances);
@@ -51,6 +51,7 @@ private:
 	std::array<bool, MoveDirection::COUNT> cameraMovingDirections{};
 	engine::DX::float3 cameraDirection{};
 	engine::DX::float3 cameraRotation{};
+	engine::DX::float3 objMoveDirection{};
 	engine::DX::float2 lastMousePos{};
 
 	engine::general::FPSTimer fpsTimer;

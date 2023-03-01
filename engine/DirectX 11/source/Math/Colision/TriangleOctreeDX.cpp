@@ -21,7 +21,7 @@ namespace engine::DX
 		{
 			return;
 		}
-		else 
+		else
 		{
 			count += tri->m_triangles.size();
 			for (auto& i : tri->m_triangles)
@@ -96,7 +96,7 @@ namespace engine::DX
 			m_triangles.emplace_back(triangleIndex);
 			if (m_triangles.size() < PREFFERED_TRIANGLE_COUNT) // no need to init children nodes
 			{
-				
+
 				return true;
 			}
 			else
@@ -211,13 +211,14 @@ namespace engine::DX
 		else m_box.min.z -= elongation.z;
 	}
 
-	ray oldray; //for debug
+	ray oldray;
+
 
 	bool TriangleOctree::intersect(ray r, Intersection& nearest) const
 	{
 
-		//check for nullptr
 		oldray = r;
+
 		float4x4 meshToWorld{ (m_instance->toWorldMatrix * m_mesh->getMeshToModelMat(0)).Transpose() };
 		auto rayToMesh{ meshToWorld.Invert() };
 

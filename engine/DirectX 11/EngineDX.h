@@ -38,6 +38,7 @@ namespace engine::DX
 		bool castRay(float xPos, float yPos);
 
 		/// <param name="offset">offset in screen space (mouse offset)</param>
+		void dragCapturedObject(float xPos, float yPos);
 		void moveCapturedObject(const float3& offset);
 
 

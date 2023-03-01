@@ -6,8 +6,8 @@
 
 void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 {
-	const int windowWidth{ 1000 };
-	const int windowHeight{ 1000 };
+	const int windowWidth{ 800 };
+	const int windowHeight{ 600 };
 	const int windowStartX{ 0 };
 	const int windowStartY{ 0 };
 	const std::wstring normalVertexShaderFileName{ L"normalVertexShader.hlsl" };
@@ -83,7 +83,17 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<Instance> samuraiInstances = generateRandomInstances(1'000);
+	std::vector<Instance> samuraiInstances
+	{
+		Instance
+		{
+			engine::DX::float4x4
+			{{{1,0,0,0},
+			{0,1,0,0},
+			{0,0,1,0},
+			{0,0,0,1},}}
+		},
+	};
 
 	std::vector<Instance> eastTowerInstances
 	{
@@ -126,69 +136,31 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	for (size_t i = 0; i < samurai.get()->getMeshesCount(); i++)
 	{
-
-		engine.addInstancedModel(normalOpaqueInstance, samurai, i, materials.at(7), { Instance
-		{
-
-				engine::DX::float4x4
-				{{{1,0,0,0},
-				{0,1,0,0},
-				{0,0,1,5},
-				{0,0,0,1},}}
-			} });
-
-			//engine.addInstancedModel(hologramOpaqueInstance, samurai, i, materials.at(1), samuraiInstances);
+		engine.addInstancedModel(hologramOpaqueInstance, samurai, i, materials.at(1), samuraiInstances);
 	}
-
-
 
 	for (size_t i = 0; i < eastTower.get()->getMeshesCount(); i++)
 	{
-
-		/*	engine.addInstancedModel(normalOpaqueInstance, eastTower, i, materials.at(7), { Instance
-{
-
-	engine::DX::float4x4
-	{{{1,0,0,0},
-	{0,1,0,5},
-	{0,0,1,5},
-	{0,0,0,1},}}
-	}
-		});*/
-
-		//engine.addInstancedModel(hologramOpaqueInstance, eastTower, i, materials.at(1), eastTowerInstances);
+		engine.addInstancedModel(hologramOpaqueInstance, eastTower, i, materials.at(1), eastTowerInstances);
 	}
 	for (size_t i = 0; i < knight.get()->getMeshesCount(); i++)
 	{
 
-		//engine.addInstancedModel(hologramOpaqueInstance, knight, i, materials.at(2), knightInstances);
+		engine.addInstancedModel(hologramOpaqueInstance, knight, i, materials.at(1), knightInstances);
 	}
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); i++)
 	{
-		//engine.addInstancedModel(hologramOpaqueInstance, knightHorse, i, materials.at(3), knightHorseInstances);
+		engine.addInstancedModel(hologramOpaqueInstance, knightHorse, i, materials.at(1), knightHorseInstances);
 	}
-
-	//engine.addInstancedModel(normalOpaqueInstance, cube, 0, materials.at(7), { Instance
-	//	{
-	//		/*engine::DX::float4x4
-	//		{{{0.707,-0.707,0,0},
-	//		{0.707,0.707,0,0},
-	//		{0,0,1,5},
-	//		{0,0,0,1},}}*/
-	//		engine::DX::float4x4
-	//		{{{1,0,0,0},
-	//		{0,1,0,0},
-	//		{0,0,1,5},
-	//		{0,0,0,1},}}
-	//	}
-	//});
-
 
 	for (size_t i = 0; i < cubeInstances.size(); ++i)
 	{
-
-		//engine.addInstancedModel(normalOpaqueInstance, cube, 0, materials.at(i), cubeInstances.at(i));
+		engine.addInstancedModel(normalOpaqueInstance, cube, 0, materials.at(i), cubeInstances.at(i));
 	}
+
+
+
+	
 
 
 	//camera
@@ -339,53 +311,30 @@ bool ApplicationDX::ProcessInputs()
 
 
 
-
+	
 	if (!objectCaptured && rayCasted)
 	{
 		objectCaptured = engine.castRay(xPos, yPos);
-		//engine.castRay(xPos, yPos);
-		//engine.castRay();
-		//objectCaptured = engine.castRay(982/2.0f, 953/2.0f);
-		//objectCaptured = engine.castRay(0, 0);
-		if (objectCaptured)
-			std::cout << "obj captured\n";
+#ifdef INTERSECTION_TEST
+		engine.castRay();
+#endif // INTERSECTION_TEST
 	}
 	if (objectCaptured)
 	{
 		MoveObject(xPos, yPos);
-		//std::cout << "obj moved\n";
 	}
-	else if (!(objectCaptured && rayCasted))
-	{
-
-		//std::cout << "obj not moved\n";
-	}
-
 	if (pitchYawRotation)
 	{
 		RotateCamera(xPos, yPos);
 	}
 	MoveCamera();
 	lastMousePos = { xPos, yPos };
+	
 	return true;
 }
 
 void ApplicationDX::AddCameraDirection()
 {
-	//if (cameraMovingDirections[MoveDirection::FORWARD])
-	//	cameraDirection += engine.getCameraForward();
-	//if (cameraMovingDirections[MoveDirection::BACK])
-	//	cameraDirection -= engine.getCameraForward();
-	//if (cameraMovingDirections[MoveDirection::LEFT])
-	//	cameraDirection -= engine.getCameraRight();
-	//if (cameraMovingDirections[MoveDirection::RIGHT])
-	//	cameraDirection += engine.getCameraRight();
-	//if (cameraMovingDirections[MoveDirection::UP])
-	//	cameraDirection += engine.getCameraUp();
-	//if (cameraMovingDirections[MoveDirection::DOWN])
-	//	cameraDirection -= engine.getCameraUp();
-
-
 	if (cameraMovingDirections[MoveDirection::FORWARD])
 		cameraDirection += {0, 0, 1};
 	if (cameraMovingDirections[MoveDirection::BACK])
@@ -403,32 +352,48 @@ void ApplicationDX::AddCameraDirection()
 
 
 
-void ApplicationDX::MoveCamera()
+bool ApplicationDX::MoveCamera()
 {
-
 	AddCameraDirection();
-
 	bool isCameraMove{ cameraDirection != engine::DX::float3() };
-
-
-
 	if (isCameraMove)
 	{
 		engine::DX::float3 moveOffset{ cameraDirection * cameraSpeed * deltaTime };
 		engine.moveCamera(moveOffset);
 	}
-
 	cameraDirection = engine::DX::float3();
-
+	return isCameraMove;
 }
 
 void ApplicationDX::MoveObject(float xPos, float yPos)
 {
-	if (objectCaptured)
+	
+	if (cameraMovingDirections[MoveDirection::FORWARD])
+		objMoveDirection += engine.getCameraForward();
+	if (cameraMovingDirections[MoveDirection::BACK])
+		objMoveDirection -= engine.getCameraForward();
+	if (cameraMovingDirections[MoveDirection::LEFT])
+		objMoveDirection -= engine.getCameraRight();
+	if (cameraMovingDirections[MoveDirection::RIGHT])
+		objMoveDirection += engine.getCameraRight();
+	if (cameraMovingDirections[MoveDirection::UP])
+		objMoveDirection += engine.getCameraUp();
+	if (cameraMovingDirections[MoveDirection::DOWN])
+		objMoveDirection -= engine.getCameraUp();
+
+	bool isObjMove{ objMoveDirection != engine::DX::float3() };
+	if (isObjMove)
 	{
-		engine::DX::float3 offset{ xPos - lastMousePos.x, lastMousePos.y - yPos, 0 };
-		engine.moveCapturedObject(offset);
+		engine::DX::float3 moveOffset{ objMoveDirection * cameraSpeed * deltaTime };
+		engine.moveCapturedObject(moveOffset);
+		objMoveDirection = engine::DX::float3();
 	}
+	else if (objectCaptured)
+	{
+		engine.dragCapturedObject(xPos - lastMousePos.x, lastMousePos.y - yPos);
+	}
+
+
 }
 
 void ApplicationDX::RotateCamera(float xPos, float yPos)

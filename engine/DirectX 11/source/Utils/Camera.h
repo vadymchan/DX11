@@ -38,7 +38,7 @@ namespace engine::DX
 
 		float4x4 proj;
 		float4x4 view;
-		float3 cameraPos;
+		float4x4 invView;
 		float fov;
 		float aspect;
 		float zNear;
@@ -78,7 +78,7 @@ namespace engine::DX
 		const float3& up() 			const { return float3{ view._12, view._22, view._32 }; }
 		const float3& forward() 	const { return float3{ view._13, view._23, view._33 }; }
 
-		const float3& position()	const { return cameraPos; }
+		const float3& position()	const { return float3(invView._41, invView._42, invView._43); }
 		float getFov() const { return fov; }
 		float getAspectRatio() const { return aspect; }
 		float getZNear() const { return zNear; }

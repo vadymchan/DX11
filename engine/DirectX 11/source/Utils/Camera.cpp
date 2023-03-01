@@ -44,8 +44,8 @@ namespace engine::DX
 
 	void Camera::setView(const float3& position, const float3& direction, const float3& cameraUp)
 	{
-		cameraPos = position;
 		view = DirectX::XMMatrixLookToLH(position, direction, cameraUp);
+		invView = view.Invert();
 		bufferUpdated = false;
 	}
 
@@ -84,10 +84,10 @@ namespace engine::DX
 		bufferUpdated = false;
 
 
+
 		view._41 = -offset.x;
 		view._42 = -offset.y;
 		view._43 = -offset.z;
-		cameraPos = offset;
 
 	}
 
@@ -97,13 +97,10 @@ namespace engine::DX
 		bufferUpdated = false;
 		updateBasis();
 
-
 		view._41 -= offset.x;
 		view._42 -= offset.y;
 		view._43 -= offset.z;
 
-
-		cameraPos += offset;
 
 
 	}
@@ -119,9 +116,6 @@ namespace engine::DX
 		view._42 -= offset.y;
 		view._43 -= offset.z;
 
-
-		cameraPos += offset;
-
 	}
 
 	void Camera::setWorldAngles(const Angles& angles)
@@ -136,8 +130,6 @@ namespace engine::DX
 
 		transform.rotation.Normalize();
 
-
-		transform.position = { angles.pitch, angles.yaw, angles.roll };
 
 	}
 
@@ -176,6 +168,7 @@ namespace engine::DX
 		basisUpdated = true;
 
 		view *= float4x4::CreateFromQuaternion(transform.rotation);
+		
 
 	}
 
@@ -184,7 +177,7 @@ namespace engine::DX
 		if (matricesUpdated) return;
 		matricesUpdated = true;
 		updateBasis();
-
+		invView = view.Invert();
 	}
 
 }
