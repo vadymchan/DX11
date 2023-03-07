@@ -1,8 +1,9 @@
 
+
 cbuffer PerDraw : register(b1)
 {
     float4 time;
-}
+};
 
 // BEGIN ShaderToy https://www.shadertoy.com/view/WttcRB
 float hash4d(in float4 p)
@@ -129,4 +130,3 @@ float3 vertexDistortion(float3 pos, float3 normal)
     offset += normal * 0.05 * wave(pos, RED_WAVE_INTERVAL, RED_WAVE_SPEED, RED_WAVE_THICKNESS, false);
     return offset;
 }
-

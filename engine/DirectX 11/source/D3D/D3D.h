@@ -33,6 +33,7 @@ namespace engine::DX
 	extern IDXGIFactory5* g_factory;
 	extern ID3D11Debug* g_debug;
 
+	void PrintError(HRESULT result, const std::wstring& additionalText);
 
 	class D3D //for managing resources
 	{

@@ -14,13 +14,6 @@ namespace engine::DX
 			DirectX::SimpleMath::Vector3 normal;
 			const static std::vector<UINT> alignedByteOffsets;
 		};
-		//bounding box
-		//name
-		//triangles - Mesh::Triangle
-		//vertices - Mesh::Vertex
-		//instances - Mat4 (from mesh to model space)
-		//instances Inv - Mat4
-
 
 
 		Mesh()

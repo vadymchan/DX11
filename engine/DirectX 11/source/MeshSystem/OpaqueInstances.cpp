@@ -16,7 +16,7 @@ namespace engine::DX
 				{
 					for (const auto& instance : material.instances)
 					{
-						instances.push_back(instance);
+						instances.push_back(*instance.get());
 					}
 				}
 			}
@@ -57,7 +57,6 @@ namespace engine::DX
 		{
 			return;
 		}
-
 
 		vertexShader->bind();
 		pixelShader->bind();
@@ -114,9 +113,9 @@ namespace engine::DX
 
 	}
 	
-	std::vector<OpaqueInstances::Instance*> OpaqueInstances::addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<Instance>& instances)
+	std::vector<std::weak_ptr<OpaqueInstances::Instance>> OpaqueInstances::addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances)
 	{
-		std::vector<Instance*> returnInstances(instances.size());
+		std::vector<std::weak_ptr<Instance>> returnInstances;
 		size_t initSize;
 		assert( meshIndex <= model->getMeshesCount() && "Number of meshes in mesh system are more than in the given model");
 		instanceBufferUpdated = false;
@@ -133,7 +132,7 @@ namespace engine::DX
 						initSize = mat.instances.size();
 						mat.instances.reserve(initSize + instances.size());
 						mat.instances.insert(end(mat.instances), begin(instances), end(instances));
-						std::transform(begin(mat.instances) + initSize, end(mat.instances), begin(returnInstances), [](Instance& i) {return &i; });
+						returnInstances.insert(end(returnInstances), begin(mat.instances), end(mat.instances));
 						return returnInstances;
 					}
 				}
@@ -142,9 +141,9 @@ namespace engine::DX
 				initSize = newPerMaterial.instances.size();
 				newPerMaterial.instances.reserve(instances.size());
 				newPerMaterial.instances.insert(end(newPerMaterial.instances), begin(instances), end(instances));
-				std::transform(begin(newPerMaterial.instances) + initSize, end(newPerMaterial.instances), begin(returnInstances), [](Instance& i) {return &i; });
+				returnInstances.insert(end(returnInstances), begin(newPerMaterial.instances), end(newPerMaterial.instances));
 				newPerMaterial.material = material;
-				mesh.perMaterial.emplace_back(std::move(newPerMaterial));
+				mesh.perMaterial.emplace_back(newPerMaterial);
 				return returnInstances;
 			}
 
@@ -159,10 +158,10 @@ namespace engine::DX
 		initSize = newPerMaterial.instances.size();
 		newPerMaterial.instances.reserve(instances.size());
 		newPerMaterial.instances.insert(end(newPerMaterial.instances), begin(instances), end(instances));
-		std::transform(begin(newPerMaterial.instances) + initSize, end(newPerMaterial.instances), begin(returnInstances), [](Instance& i) {return &i; });
+		returnInstances.insert(end(returnInstances), begin(newPerMaterial.instances), end(newPerMaterial.instances));
 		newPerMaterial.material = material;
-		newPerMesh.perMaterial.emplace_back(std::move(newPerMaterial));
-		perModel.emplace_back(std::move(newPerModel));
+		newPerMesh.perMaterial.emplace_back(newPerMaterial);
+		perModel.emplace_back(newPerModel);
 		return returnInstances;
 	}
 }

@@ -53,7 +53,7 @@ namespace engine::DX
 			HRESULT result = g_device->CreateDepthStencilView(depthStencilTexture.Get(), &depthStencilViewDesc, depthStencilView.GetAddressOf());
 			if (FAILED(result))
 			{
-				std::cerr << "Depth Stencil View was not created!\n";
+				PrintError(result, L"Depth Stencil View was not created!\n");
 			}
 		}
 

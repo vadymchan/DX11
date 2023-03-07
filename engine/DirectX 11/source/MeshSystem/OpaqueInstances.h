@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <deque>
 #include "Model.h"
 #include "../Buffer/ConstantBuffer.h"
 #include "../Controller/ShaderManager.h"
@@ -29,7 +30,7 @@ namespace engine::DX
 		struct PerMaterial
 		{
 			std::shared_ptr<Material> material;
-			std::vector<Instance> instances{};
+			std::vector<std::shared_ptr<Instance>> instances{}; //to avoid dangling pointers in triangleOctree while reallocating
 		};
 
 		struct PerMesh
@@ -48,6 +49,7 @@ namespace engine::DX
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
 		std::shared_ptr<VertexShader> vertexShader;
+		std::shared_ptr<GeometryShader> geometryShader;
 		std::shared_ptr<PixelShader> pixelShader;
 		std::wstring vertexShaderFileName;
 		std::wstring pixelShaderFileName;
@@ -74,7 +76,7 @@ namespace engine::DX
 
 
 
-		std::vector<Instance*> addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<Instance>& instances);
+		std::vector<std::weak_ptr<Instance>> addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances);
 
 
 

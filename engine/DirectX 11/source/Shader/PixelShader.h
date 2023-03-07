@@ -29,7 +29,11 @@ namespace engine::DX
 
 		void createShader() override
 		{
-			g_device->CreatePixelShader(shaderBinary->GetBufferPointer(), shaderBinary->GetBufferSize(), nullptr, shader.GetAddressOf());
+			HRESULT result = g_device->CreatePixelShader(shaderBinary->GetBufferPointer(), shaderBinary->GetBufferSize(), nullptr, shader.GetAddressOf());
+			if (FAILED(result))
+			{
+				PrintError(result, L"Pixel shader wasn't created: ");
+			}
 		}
 
 	private:

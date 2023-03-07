@@ -186,10 +186,22 @@
     <ClInclude Include="DirectX 11\source\Math\Colision\boxDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.h">
+    <ClInclude Include="DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectX 11\source\Math\Movement\MeshMover.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Shader\GeometryShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Shader\HullShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Shader\DomainShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -242,7 +254,7 @@
     <ClCompile Include="DirectX 11\source\Math\Colision\boxDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.cpp">
+    <ClCompile Include="DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DirectX 11\source\Controller\ModelManager.cpp">
@@ -266,11 +278,18 @@
     <ClCompile Include="DirectX 11\source\Utils\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="general\resources\shaders\normalPixelShader.hlsl" />
     <FxCompile Include="general\resources\shaders\normalVertexShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalGeometryShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="general\resources\shaders\hologramShader.hlsli" />
   </ItemGroup>
 </Project>

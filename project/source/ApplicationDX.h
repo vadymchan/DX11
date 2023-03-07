@@ -41,7 +41,7 @@ public:
 	bool MoveCamera();
 	void MoveObject(float xPos, float yPos);
 	void RotateCamera(float xPos, float yPos);
-	std::vector<Instance> generateRandomInstances(size_t numInstances);
+	std::vector<std::shared_ptr<Instance>> generateRandomInstances(size_t numInstances);
 	~ApplicationDX()
 	{
 		engine::DX::D3D::Deinit();
@@ -61,11 +61,14 @@ private:
 	engine::DX::Engine engine;
 	MSG msg;
 	float cameraSpeed{};
+	float cameraRotationSpeed{};
+	float cameraMaxPitch{};
+	float cameraMinPitch{};
+	float cameraPitch{};
 	float deltaTime{};
 	bool pitchYawRotation{};
 	bool increasedSpeed{};
 	bool rayCasted{};
 	bool objectCaptured{};
-
 };
 

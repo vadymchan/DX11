@@ -3,6 +3,7 @@
 #include <string>
 #include "../Shader/VertexShader.h"
 #include "../Shader/PixelShader.h"
+#include "../Shader/GeometryShader.h"
 
 namespace engine::DX
 {
@@ -35,12 +36,16 @@ namespace engine::DX
 		std::shared_ptr<PixelShader> getPixelShader(const std::wstring& fileName);
 		//---------------------------------------------------------------------------------------------------------------------------------------------------
 
+
+
+
 	private:
 		ShaderManager() = default;
 		ShaderManager(const ShaderManager&) = delete;
 		ShaderManager& operator=(const ShaderManager&) = delete;
 		std::unordered_map<std::wstring, std::shared_ptr<VertexShader>> vertexShaders{};
 		std::unordered_map<std::wstring, std::shared_ptr<PixelShader>> pixelShaders{};
+		std::unordered_map<std::wstring, std::shared_ptr<GeometryShader>> geometryShaders{};
 
 	};
 }

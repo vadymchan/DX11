@@ -71,7 +71,11 @@ namespace engine::DX
 
 		void createShader()
 		{
-			g_device->CreateVertexShader(shaderBinary->GetBufferPointer(), shaderBinary->GetBufferSize(), nullptr, shader.GetAddressOf());
+			HRESULT result = g_device->CreateVertexShader(shaderBinary->GetBufferPointer(), shaderBinary->GetBufferSize(), nullptr, shader.GetAddressOf());
+			if (FAILED(result))
+			{
+				PrintError(result, L"Vertex shader wasn't created: ");
+			}
 		}
 
 	private:

@@ -16,7 +16,7 @@ namespace engine::DX
 	}
 
 	/// <param name="instance">instance, which is contained in opaqueInstance</param>
-	bool MeshSystem::findIntersection(const ray& r, Instance*& instance, Intersection& intersection)
+	bool MeshSystem::findIntersection(const ray& r, std::weak_ptr<Instance>& instance, Intersection& intersection)
 	{
 		bool returnResult{};
 
@@ -24,7 +24,7 @@ namespace engine::DX
 		{
 			if (triangleOctree->intersect(r, intersection))
 			{
-				instance = triangleOctree->m_instance;
+				instance = triangleOctree->getInstance();
 				returnResult = true;
 			}
 		}
@@ -34,25 +34,45 @@ namespace engine::DX
 	}
 
 	/// <param name="instances">instance may be change during dragging</param>
-	void MeshSystem::updateOpaqueInstanceBuffer(Instance* instance)
+	void MeshSystem::updateOpaqueInstanceBuffer(const std::weak_ptr<Instance>& instance)
 	{
-		triangleOctreeInstances.at(instance)->needToUpdateInstanceBuffer();
+		for (auto& triangleOctreeInstance : triangleOctreeInstances)
+		{
+			if (!triangleOctreeInstance.first.expired() && !instance.expired() &&triangleOctreeInstance.first.lock() == instance.lock())
+			{
+				triangleOctreeInstance.second->needToUpdateInstanceBuffer();
+			}
+		}
 	}
 
-	void MeshSystem::addInstances(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<OpaqueInstances::Instance>& instances)
-	{
-		for (Instance* instance : opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndex, material, instances))
+	void MeshSystem::addInstances(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances)
+	{ 
+		bool debugCubeModel{};
+		for (size_t meshIndex = 0; meshIndex < meshIndices.size(); ++meshIndex)
 		{
-			if (model->getMesh(meshIndex).GetName() != "cube1")
+
+		opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices.at(meshIndex), material, instances);
+		
+		if (model->getMesh(meshIndex).GetName() == ModelManager::debugCubeTag)
+		{
+			debugCubeModel = true;
+		}
+
+		}
+
+		for (auto& instance : instances)
+		{
+
+			if (!debugCubeModel)
 			{
-				TriangleOctree triangleOctree;
-				triangleOctree.initialize(model->getMesh(meshIndex), instance);
-				triangleOctrees.emplace_back(std::make_shared<TriangleOctree>(std::move(triangleOctree)));
-				triangleOctreeInstances[instance] = opaqueInstances.at(opaqueInstanceID).get();
+				triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, std::weak_ptr<Instance>(instance), meshIndices));
+				triangleOctreeInstances.emplace_back(std::make_pair(instance, opaqueInstances.at(opaqueInstanceID).get()));
 			}
 
 
 		}
+
+
 	}
 
 	/// <summary>

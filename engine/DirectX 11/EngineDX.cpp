@@ -8,6 +8,11 @@ namespace engine::DX
 		window.initWindow(title, xStart, yStart, width, height, appHandle, windowShowParams);
 	}
 
+	void Engine::initRenderer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, BOOL frontCounterClockwise, INT depthBias, FLOAT depthBiasClamp, FLOAT slopeScaledDepthBias, BOOL depthClipEnable, BOOL scissorEnable, BOOL multisampleEnable, BOOL antialiasedLineEnable)
+	{
+		renderer.initRasterizator(fillMode, cullMode, frontCounterClockwise, depthBias, depthBiasClamp, slopeScaledDepthBias, depthClipEnable, scissorEnable, multisampleEnable, antialiasedLineEnable);
+	}
+
 	/// <param name="fov">in degrees</param>
 
 
@@ -18,9 +23,9 @@ namespace engine::DX
 		camera.initBuffer(PER_VIEW_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
 	}
 
-	void Engine::addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<OpaqueInstances::Instance>& instances)
+	void Engine::addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances)
 	{
-		MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndex, material, instances);
+		MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndices, material, instances);
 	}
 
 	uint32_t Engine::createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName)
@@ -41,36 +46,39 @@ namespace engine::DX
 	}
 
 
-#ifdef INTERSECTION_TEST
-	std::shared_ptr<OpaqueInstances::Material> mat = std::make_shared<OpaqueInstances::Material>(OpaqueInstances::Material{ float4{ 0,1,0,0 } });
-#endif // color of intersection point
+
 
 	bool Engine::castRay(float xPos, float yPos)
 	{
+#ifdef INTERSECTION_TEST
+		std::shared_ptr<OpaqueInstances::Material> mat = std::make_shared<OpaqueInstances::Material>(OpaqueInstances::Material{ float4{ 0,1,0,0 } });
+#endif // color of intersection point
+
 		ray ray = rayToWorld(xPos, yPos);
-		Instance* instance = nullptr;
+		std::weak_ptr<Instance> instance;
 		Intersection intersection;
 		intersection.reset();
 		if (MeshSystem::getInstance().findIntersection(ray, instance, intersection))
 		{
 
 			MeshMover::getInstance().setIntersectionPoint(float4(intersection.point.x, intersection.point.y, intersection.point.z, 1));
+			std::cout << intersection.point.x << " " << intersection.point.y << " " << intersection.point.z << std::endl;
 
 #ifdef INTERSECTION_TEST
-			addInstancedModel(0, ModelManager::getInstance().loadCube1(), 0, mat,
-				{ Instance{ engine::DX::float4x4
-				{ { { 0.01,0,0,intersection.point.x },
-				{ 0,0.01,0,intersection.point.y },
-				{ 0,0,0.01,intersection.point.z },
+			addInstancedModel(0, ModelManager::getInstance().getModel(ModelManager::debugCubeTag), { 0 }, mat,
+				{ std::make_shared<Instance>(Instance {engine::DX::float4x4
+				{ { { 0.01,0,0,intersection.point.x},
+				{ 0,0.01,0,intersection.point.y},
+				{ 0,0,0.01,intersection.point.z},
 				{ 0,0,0,1 }, } }
-				} });
+				}) });
 #endif // add intersection point
 
 
 
 		}
 		bool returnResult{};
-		if (instance != nullptr)
+		if (!instance.expired())
 		{
 			MeshMover::getInstance().setInstance(instance);
 			returnResult = true;
@@ -111,25 +119,25 @@ namespace engine::DX
 
 	void Engine::rotateCamera(const Angles& angles)
 	{
-		camera.setWorldAngles(angles);
+		camera.addWorldAngles(angles);
 	}
 
-	const float3& Engine::getCameraForward() const
+	const float3& Engine::getCameraForward() 
 	{
 		return camera.forward();
 	}
 
-	const float3& Engine::getCameraRight() const
+	const float3& Engine::getCameraRight() 
 	{
 		return camera.right();
 	}
 
-	const float3& Engine::getCameraUp() const
+	const float3& Engine::getCameraUp() 
 	{
 		return camera.up();
 	}
 
-	const float3& Engine::getCameraPosition() const
+	const float3& Engine::getCameraPosition() 
 	{
 		return camera.position();
 	}
@@ -167,9 +175,10 @@ namespace engine::DX
 		nearPointWorld /= nearPointWorld.w;
 		farPointWorld /= farPointWorld.w;
 
-
+		
 		float4 direction = farPointWorld - nearPointWorld;
 		direction.Normalize();
+
 		ray returnRay{ float3(nearPointWorld.x, nearPointWorld.y, nearPointWorld.z), float3(direction.x, direction.y, direction.z) };
 
 		return returnRay;

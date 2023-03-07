@@ -8,6 +8,7 @@ namespace engine::DX
 
 void engine::DX::ShaderManager::addVertexShader(const std::wstring& fileName, const std::vector<D3D11_INPUT_ELEMENT_DESC>& inputElementDesc, const std::string& entrancePoint, const std::string& shaderVersion)
 {
+	assert(vertexShaders.find(fileName) == vertexShaders.end() && "vertex shader is already created");
 	VertexShader vertexShader = VertexShader(shaderDirectory + fileName, entrancePoint, shaderVersion);
 	vertexShader.setInputElementDesc(inputElementDesc);
 	vertexShaders[fileName] = std::make_shared<VertexShader>(std::move(vertexShader));
@@ -46,6 +47,7 @@ std::shared_ptr<VertexShader> engine::DX::ShaderManager::getVertexShader(const s
 
 void engine::DX::ShaderManager::addPixelShader(const std::wstring& fileName, const std::string& entrancePoint, const std::string& shaderVersion)
 {
+	assert(vertexShaders.find(fileName) == vertexShaders.end() && "Pixel shader is already created");
 	pixelShaders[fileName] = std::make_shared<PixelShader>(std::move(PixelShader(shaderDirectory + fileName, entrancePoint, shaderVersion)));
 }
 
@@ -77,5 +79,7 @@ std::shared_ptr<PixelShader> engine::DX::ShaderManager::getPixelShader(const std
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 }

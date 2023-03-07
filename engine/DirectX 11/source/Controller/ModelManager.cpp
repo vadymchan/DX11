@@ -1,9 +1,11 @@
 #include "ModelManager.h"
 namespace engine::DX
 {
+	const std::string ModelManager::cubeTag = "cube";
+	const std::string ModelManager::debugCubeTag = "cubeDebug";
+	const std::string ModelManager::modelDirectory = "engine/general/resources/models/";
 
-
-	std::shared_ptr<Model> engine::DX::ModelManager::loadAssimp(std::string modelFileName)
+	void engine::DX::ModelManager::createModelAssimp(const std::string& modelFileName)
 	{
 		uint32_t flags = uint32_t(aiProcess_Triangulate | aiProcess_GenBoundingBoxes | aiProcess_ConvertToLeftHanded | aiProcess_CalcTangentSpace);
 
@@ -71,7 +73,6 @@ namespace engine::DX
 			const float4x4 nodeToParent = reinterpret_cast<const float4x4&>(node->mTransformation);
 			const float4x4 parentToNode = nodeToParent.Invert();
 
-
 			// The same node may contain multiple meshes in its space, referring to them by indices
 			for (uint32_t i = 0; i < node->mNumMeshes; ++i)
 			{
@@ -87,30 +88,34 @@ namespace engine::DX
 
 		loadInstances(assimpScene->mRootNode);
 
-
-
-
 		model.initVertexBuffer(MODEL_DATA_INPUT_SLOT_0, std::vector<UINT>{sizeof(Mesh::Vertex)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE);
 		model.initIndexBuffer(D3D11_USAGE_DEFAULT);
 
 
 		models[modelFileName] = std::make_shared<Model>(std::move(model));
-
-		return models[modelFileName];
 	}
 
-	std::shared_ptr<Model> engine::DX::ModelManager::loadCube()
+
+	std::shared_ptr<Model> ModelManager::getModel(const std::string& modelFileName) 
 	{
-		auto pair = models.find(cubeTag);
-		if (pair != models.end()) // cube is already created
+		auto pair = models.find(modelFileName);
+		if (pair != models.end()) // model is already created
 		{
 			return pair->second;
 		}
-		createCube();
-		return models[cubeTag];
+		else if (modelFileName == cubeTag || modelFileName == debugCubeTag)
+		{
+			
+			createCube(modelFileName);
+		}
+		else
+		{
+			createModelAssimp(modelFileName);
+		}
+		return models[modelFileName];
 	}
 
-	void engine::DX::ModelManager::createCube()
+	void engine::DX::ModelManager::createCube(const std::string& modelFileName)
 	{
 		Model cube;
 		cube.meshes.resize(1);
@@ -175,53 +180,15 @@ namespace engine::DX
 			22, 21, 23, // left face
 		};
 
-		// old cube vertices
-		//-------------------------------------------------------------------------------------------
-		//std::vector<Mesh::Vertex> cubeVertices
-		//{
-		//	Mesh::Vertex{{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},  // upper left  front
-		//	Mesh::Vertex{{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},  // lower left  front
-		//	Mesh::Vertex{{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},  // lower right front
-		//	Mesh::Vertex{{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}},  // upper right front
-		//	Mesh::Vertex{{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}},  // upper left  back
-		//	Mesh::Vertex{{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}},	// lower left  back
-		//	Mesh::Vertex{{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}},	// lower right back
-		//	Mesh::Vertex{{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f}},	// upper right back
-
-		//};
-
-		//std::vector<uint32_t> cubeIndices
-		//{
-		//	//front
-		//	0, 3, 1,
-		//	1, 3, 2,
-		//	////back 
-		//	4, 5, 7,
-		//	5, 6, 7,
-		//	//right
-		//	2, 3, 7,
-		//	2, 7, 6,
-		//	//left
-		//	0, 1, 4,
-		//	1, 5, 4,
-		//	//up
-		//	0, 4, 3,
-		//	3, 4, 7,
-		//	//down
-		//	1, 2, 5,
-		//	2, 6, 5,
-		//};
-		//-------------------------------------------------------------------------------------------
-
 		//mesh range
 		auto& meshRange = cube.meshRanges.at(0);
 		meshRange.vertexOffset = 0;
 		meshRange.indexOffset = 0;
 		meshRange.indexNum = cubeIndicesSeparateNormal.size();
 		meshRange.vertexNum = cubeVerticesSeparateNormal.size();
-		mesh.box.min = { -1.f, -1.f, -1.f };
-		mesh.box.max = { 1.f, 1.f, 1.f };
-		mesh.name = "cube";
+		mesh.box.min = { -0.5f, -0.5f, -0.5f };
+		mesh.box.max = { 0.5f, 0.5f, 0.5f };
+		mesh.name = modelFileName;
 
 		mesh.vertices = cubeVerticesSeparateNormal;
 		mesh.indices = cubeIndicesSeparateNormal;
@@ -233,9 +200,8 @@ namespace engine::DX
 		cube.initIndexBuffer(D3D11_USAGE_DEFAULT);
 
 
-		models[cubeTag] = std::make_shared<Model>(std::move(cube));
+		models[modelFileName] = std::make_shared<Model>(std::move(cube));
 
-		//----------------------------------------------------------------------
 
 	}
 

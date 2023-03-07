@@ -120,7 +120,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_FORCE_LEFT_HANDED;_DEBUG;_LIB;GLM_FORCE_LEFT_HANDED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLM_FORCE_LEFT_HANDED;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -180,6 +180,9 @@
     <ClInclude Include="DirectX 11\source\Buffer\ConstantBuffer.h" />
     <ClInclude Include="DirectX 11\source\Buffer\DepthStencilBuffer.h" />
     <ClInclude Include="DirectX 11\source\Math\Movement\MeshMover.h" />
+    <ClInclude Include="DirectX 11\source\Shader\DomainShader.h" />
+    <ClInclude Include="DirectX 11\source\Shader\GeometryShader.h" />
+    <ClInclude Include="DirectX 11\source\Shader\HullShader.h" />
     <ClInclude Include="DirectX 11\source\Utils\Camera.h" />
     <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
     <ClInclude Include="DirectX 11\source\Controller\BufferManager.h" />
@@ -193,13 +196,14 @@
     <ClInclude Include="DirectX 11\source\Renderer.h" />
     <ClInclude Include="DirectX 11\source\Shader\PixelShader.h" />
     <ClInclude Include="DirectX 11\source\Shader\Shader.h" />
-    <ClInclude Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.h" />
+    <ClInclude Include="DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.h" />
     <ClInclude Include="DirectX 11\source\Vertex.h" />
     <ClInclude Include="DirectX 11\source\Buffer\VertexBuffer.h" />
     <ClInclude Include="DirectX 11\source\Shader\VertexShader.h" />
     <ClInclude Include="DirectX 11\window\WindowDX.h" />
     <ClInclude Include="DirectX 11\EngineDX.h" />
     <ClInclude Include="general\include\SimpleMathToHLSL.h" />
+    <ClInclude Include="DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h" />
     <ClInclude Include="Ray Casting\utils\Camera.h" />
     <ClInclude Include="general\include\win.h" />
     <ClInclude Include="general\include\win_def.h" />
@@ -241,13 +245,14 @@
     <ClCompile Include="DirectX 11\source\Math\Colision\boxDX.cpp" />
     <ClCompile Include="DirectX 11\source\D3D\D3D.cpp" />
     <ClCompile Include="DirectX 11\source\MeshSystem\Mesh.cpp" />
-    <ClCompile Include="DirectX 11\source\Math\Colision\TriangleOctreeDX.cpp" />
+    <ClCompile Include="DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.cpp" />
     <ClCompile Include="DirectX 11\source\MeshSystem\MeshSystem.cpp" />
     <ClCompile Include="DirectX 11\source\MeshSystem\Model.cpp" />
     <ClCompile Include="DirectX 11\source\MeshSystem\OpaqueInstances.cpp" />
     <ClCompile Include="DirectX 11\source\Utils\Camera.cpp" />
     <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="general\utils\console\Console.cpp" />
+    <ClCompile Include="DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp" />
     <ClCompile Include="Ray Casting\render\SceneRC.cpp" />
     <ClCompile Include="Ray Casting\source\math\boxRC.cpp" />
     <ClCompile Include="Ray Casting\source\math\meshRC.cpp" />
@@ -263,8 +268,12 @@
   <ItemGroup>
     <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalGeometryShader.hlsl" />
     <FxCompile Include="general\resources\shaders\normalPixelShader.hlsl" />
     <FxCompile Include="general\resources\shaders\normalVertexShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="general\resources\shaders\hologramShader.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

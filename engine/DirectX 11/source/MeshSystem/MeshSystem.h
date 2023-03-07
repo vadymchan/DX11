@@ -1,11 +1,11 @@
 #pragma once
 #include "OpaqueInstances.h"
-#include "../Math/Colision/TriangleOctreeDX.h"
-
+#include "../Math/Colision/ModelTriangleOctreeDX.h"
+#include "../Controller/ModelManager.h"
 
 namespace engine::DX
 {
-	using Intersection = TriangleOctree::Intersection;
+	using Intersection = MeshTriangleOctree::Intersection;
 	class MeshSystem
 	{
 	public:
@@ -20,20 +20,21 @@ namespace engine::DX
 
 		void render(const DirectX::SimpleMath::Vector3& cameraPos = {});
 
-		bool findIntersection(const ray& r, Instance*& instance, Intersection& intersection);
+		bool findIntersection(const ray& r, std::weak_ptr<Instance>& instance, Intersection& intersection);
 
 
 		/// <param name="instance">instance, which is contained in opaqueInstance</param>
-		void updateOpaqueInstanceBuffer(Instance* instance);
+		void updateOpaqueInstanceBuffer(const std::weak_ptr<Instance>& instance);
 
 
 
 
 		/// <param name="instances">instance may be change during dragging</param>
 		void addInstances(uint32_t opaqueInstanceID,
-			const std::shared_ptr<Model>& model, size_t meshIndex,
+			const std::shared_ptr<Model>& model,
+			const std::vector<size_t>& meshIndex,
 			const std::shared_ptr<OpaqueInstances::Material>& material,
-			const std::vector<OpaqueInstances::Instance>& instances);
+			const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances);
 
 		/// <summary>
 		/// creates new Opaque Instance
@@ -53,10 +54,10 @@ namespace engine::DX
 			time.initBuffer(PER_DRAW_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
 		};
 		std::vector<std::shared_ptr<OpaqueInstances>> opaqueInstances{};
-		std::vector<std::shared_ptr<TriangleOctree>> triangleOctrees{};
+		std::vector<std::shared_ptr<ModelTriangleOctree>> triangleOctrees{};
 
 		//used to update instance buffer during dragging
-		std::unordered_map<Instance*, OpaqueInstances*> triangleOctreeInstances{};
+		std::vector<std::pair<std::weak_ptr<Instance>, OpaqueInstances*>> triangleOctreeInstances{};
 
 	};
 

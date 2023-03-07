@@ -34,7 +34,7 @@ namespace engine::DX
 		result = CreateDXGIFactory(_uuidof(IDXGIFactory5), (void**)m_factory5.GetAddressOf());
 		if (FAILED(result))
 		{
-			std::cerr << "Factory creation faied\n";
+			PrintError(result, L"Factory creation faied");
 		}
 
 		{
@@ -53,7 +53,7 @@ namespace engine::DX
 		result = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, D3D11_CREATE_DEVICE_DEBUG, &featureLevelRequested, 1, D3D11_SDK_VERSION, m_device.GetAddressOf(), &featureLevelInitialized, m_devCon.GetAddressOf());
 		if (FAILED(result))
 		{
-			std::cerr << "Device creation failed\n";
+			PrintError(result, L"Device creation failed ");
 		}
 		if (featureLevelInitialized != featureLevelRequested)
 		{
@@ -63,18 +63,17 @@ namespace engine::DX
 		result = m_device.Get()->QueryInterface(__uuidof(ID3D11Device5), (void**)m_device5.GetAddressOf());
 		if (FAILED(result))
 		{
-			std::cerr << "Failed to query ID3D11Device5\n";
-
+			PrintError(result, L"Failed to query ID3D11Device5 ");
 		}
 		result = m_devCon.Get()->QueryInterface(__uuidof(ID3D11DeviceContext4), (void**)m_devCon4.GetAddressOf());
 		if (FAILED(result))
 		{
-			std::cerr << "Failed to query ID3D11DeviceContext4\n";
+			PrintError(result, L"Failed to query ID3D11DeviceContext4 ");
 		}
 		result = m_device.Get()->QueryInterface(__uuidof(ID3D11Debug), (void**)m_devDebug.GetAddressOf());
 		if (FAILED(result))
 		{
-			std::cerr << "Failed to query ID3D11Debug\n";
+			PrintError(result, L"Failed to query ID3D11Debug ");
 		}
 		g_device = m_device5.Get();
 		g_devcon = m_devCon4.Get();
@@ -91,6 +90,16 @@ namespace engine::DX
 		m_devCon.Reset();
 		m_devCon4.Reset();
 		m_devDebug.Reset();
+	}
+
+
+	void PrintError(HRESULT result, const std::wstring& additionalText)
+	{
+		LPWSTR messageBuffer = nullptr;
+		size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+			nullptr, result, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, nullptr);
+		std::wcerr << additionalText << std::wstring(messageBuffer, size) << "\n";
+		LocalFree(messageBuffer);
 	}
 }
 

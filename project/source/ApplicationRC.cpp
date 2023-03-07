@@ -100,7 +100,7 @@ void ApplicationRC::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::shared_ptr<std::vector<engine::RC::Triangle>> ptrCubeTriangles = std::make_shared<std::vector<engine::RC::Triangle>>(cubeTriangles);
 
-	glm::mat4 tMatCube1
+	glm::mat4 tMatCubeDebug
 	{
 		{4,0,0,0},
 		{0,2,0,0},
@@ -124,7 +124,7 @@ void ApplicationRC::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::vector<engine::RC::ColorMesh> meshes
 	{
-		engine::RC::ColorMesh(ptrCubeTriangles, tMatCube1, box, meshMaterial),
+		engine::RC::ColorMesh(ptrCubeTriangles, tMatCubeDebug, box, meshMaterial),
 		engine::RC::ColorMesh(ptrCubeTriangles, tMatCube2, box, meshMaterial),
 	};
 	//----------------------------------------------------------------------------------

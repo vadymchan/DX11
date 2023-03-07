@@ -15,7 +15,7 @@ namespace engine::DX
 			return instance;
 		}
 
-		void setInstance(Instance* instance)
+		void setInstance(std::weak_ptr<Instance> instance)
 		{
 			this->instance = instance;
 		}
@@ -28,9 +28,9 @@ namespace engine::DX
 
 		void moveMesh(const float3& offset)
 		{
-			instance->toWorldMatrix._14 += offset.x;
-			instance->toWorldMatrix._24 += offset.y;
-			instance->toWorldMatrix._34 += offset.z;
+			instance.lock()->toWorldMatrix._14 += offset.x;
+			instance.lock()->toWorldMatrix._24 += offset.y;
+			instance.lock()->toWorldMatrix._34 += offset.z;
 
 			intersectionPoint.x += offset.x;
 			intersectionPoint.y += offset.y;
@@ -40,7 +40,7 @@ namespace engine::DX
 		}
 
 		
-		Instance* getMat()
+		std::weak_ptr<Instance> getMat()
 		{
 			return instance;
 		}
@@ -57,10 +57,9 @@ namespace engine::DX
 	private:
 		MeshMover()
 		{
-			instance = nullptr;
 		}
 
-		Instance* instance;
+		std::weak_ptr<Instance> instance;
 		float4 intersectionPoint;
 
 	};

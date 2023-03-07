@@ -35,7 +35,8 @@ namespace engine::DX
 	{
 
 		Transform transform;
-
+		float3 target;
+		float3 worldUp;
 		float4x4 proj;
 		float4x4 view;
 		float4x4 invView;
@@ -44,7 +45,8 @@ namespace engine::DX
 		float zNear;
 		float zFar;
 
-		bool basisUpdated = false;
+		bool viewUpdated = false;
+		bool projUpdated = false;	
 		bool matricesUpdated = false;
 		bool bufferUpdated = false;
 
@@ -57,10 +59,6 @@ namespace engine::DX
 
 		};
 
-		
-
-	public:
-
 		struct ViewProjectionMatrix
 		{
 			float4x4 viewProj;
@@ -68,17 +66,21 @@ namespace engine::DX
 
 		ConstantBuffer<ViewProjectionMatrix> cameraBuffer;
 
+	public:
+
+		
+
 		void initBuffer(UINT registerNumber, D3D11_USAGE bufferUsage,
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0);
 
 		void setCameraBuffer();
 
-		const float3& right()		const { return float3{ view._11, view._21, view._31 }; }
-		const float3& up() 			const { return float3{ view._12, view._22, view._32 }; }
-		const float3& forward() 	const { return float3{ view._13, view._23, view._33 }; }
+		float3 right()		{ getViewMatrix(); return float3{ view._11, view._21, view._31 }; }
+		float3 up() 		{ getViewMatrix(); return float3{ view._12, view._22, view._32 }; }
+		float3 forward()	{ getViewMatrix(); return float3{ view._13, view._23, view._33 }; }
 
-		const float3& position()	const { return float3(invView._41, invView._42, invView._43); }
+		const float3& position()	const { return transform.position; }
 		float getFov() const { return fov; }
 		float getAspectRatio() const { return aspect; }
 		float getZNear() const { return zNear; }
@@ -110,7 +112,9 @@ namespace engine::DX
 
 		void addRelativeAngles(const Angles& angles);
 
-		void updateBasis();
+		void updateViewMatrix();
+
+		void updatePerspectiveMatrix();
 
 		void updateMatrices();
 	};
