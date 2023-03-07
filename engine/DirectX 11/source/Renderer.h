@@ -20,42 +20,19 @@ namespace engine::DX
 			window.clearDepthStencil();
 		}
 
-		void initRasterizerDesc(D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID
-			, D3D11_CULL_MODE cullMode = D3D11_CULL_BACK
-			, BOOL            frontCounterClockwise = false
-			, INT             depthBias = 0
-			, FLOAT           depthBiasClamp = 0.0f
-			, FLOAT           slopeScaledDepthBias = 0.0f
-			, BOOL            depthClipEnable = true
-			, BOOL            scissorEnable = false
-			, BOOL            multisampleEnable = false
-			, BOOL            antialiasedLineEnable = false)
+		void initRasterizator(const D3D11_RASTERIZER_DESC& rasterizerDesc)
 		{
-			rasterizationDesc.FillMode = fillMode;
-			rasterizationDesc.CullMode = cullMode;
-			rasterizationDesc.FrontCounterClockwise = frontCounterClockwise;
-			rasterizationDesc.DepthBias = depthBias;
-			rasterizationDesc.DepthBiasClamp = depthBiasClamp;
-			rasterizationDesc.SlopeScaledDepthBias = slopeScaledDepthBias;
-			rasterizationDesc.DepthClipEnable = depthClipEnable;
-			rasterizationDesc.ScissorEnable = scissorEnable;
-			rasterizationDesc.MultisampleEnable = multisampleEnable;
-			rasterizationDesc.AntialiasedLineEnable = antialiasedLineEnable;
+			initRasterizerDesc(rasterizerDesc);
+			createRasterizerState();
 		}
 
-		void initRasterizator(D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID
-			, D3D11_CULL_MODE cullMode = D3D11_CULL_BACK
-			, BOOL            frontCounterClockwise = false
-			, INT             depthBias = 0
-			, FLOAT           depthBiasClamp = 0.0f
-			, FLOAT           slopeScaledDepthBias = 0.0f
-			, BOOL            depthClipEnable = true
-			, BOOL            scissorEnable = false
-			, BOOL            multisampleEnable = false
-			, BOOL            antialiasedLineEnable = false)
+		
+
+	private:
+
+		void initRasterizerDesc(const D3D11_RASTERIZER_DESC& rasterizerDesc)
 		{
-			initRasterizerDesc(fillMode, cullMode, frontCounterClockwise, depthBias, depthBiasClamp, slopeScaledDepthBias, depthClipEnable, scissorEnable, multisampleEnable, antialiasedLineEnable);
-			createRasterizerState();
+			rasterizationDesc = rasterizerDesc;
 		}
 
 		void createRasterizerState()
@@ -67,7 +44,6 @@ namespace engine::DX
 			}
 		}
 
-	private:
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
 	};

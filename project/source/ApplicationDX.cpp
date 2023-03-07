@@ -27,7 +27,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 	engine.initWindow(L"DirectX 11 Model", windowStartX, windowStartY, windowWidth, windowHeight, appHandle, windowShowParams);
-	engine.initRenderer();
+	engine.initRenderer({D3D11_FILL_SOLID});
 	//shaders & input layout
 	// -------------------------------------------------------------------------------------------------
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDesc

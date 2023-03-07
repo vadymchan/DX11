@@ -89,7 +89,31 @@ namespace engine::DX
 		initRenderTargetView();
 		initViewport();
 		backBuffer.Get()->GetDesc(&backBufferDesc);
-		depthStencilBuffer.initDepthStencil(backBufferDesc.Width, backBufferDesc.Height);
+		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
+		depthStencilTextureDesc.Width = backBufferDesc.Width;
+		depthStencilTextureDesc.Height = backBufferDesc.Height;
+		depthStencilTextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilTextureDesc.MipLevels = 1;
+		depthStencilTextureDesc.ArraySize = 1;
+		depthStencilTextureDesc.SampleDesc.Count = 1;
+		depthStencilTextureDesc.SampleDesc.Quality = 0;
+		depthStencilTextureDesc.CPUAccessFlags = 0;
+		depthStencilTextureDesc.MiscFlags = 0;
+
+		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+		depthStencilDesc.DepthEnable = true;
+		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+		depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER;
+		depthStencilDesc.StencilEnable = false;
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthStencilViewDesc.Texture2D.MipSlice = 0;
+		depthStencilViewDesc.Flags = 0;
+
+		depthStencilBuffer.initDepthStencil(depthStencilTextureDesc, depthStencilDesc, depthStencilViewDesc);
 	}
 
 	void Window::initSwapchain()
@@ -138,17 +162,13 @@ namespace engine::DX
 
 	void Window::initRenderTargetView()
 	{
-		/*bgColorRGBA[0] = 1.0f;
-		bgColorRGBA[1] = 0.6f;
-		bgColorRGBA[2] = 0.4f;
-		bgColorRGBA[3] = 1.0f;*/
 
 		bgColorRGBA[0] = 0.f;
 		bgColorRGBA[1] = 0.f;
 		bgColorRGBA[2] = 0.f;
 		bgColorRGBA[3] = 0.f;
 
-		
+
 		g_device->CreateRenderTargetView(backBuffer.Get(), nullptr, renderTargetView.ReleaseAndGetAddressOf());
 		g_devcon->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
 	}
@@ -161,7 +181,7 @@ namespace engine::DX
 		viewport.Height = height;
 		viewport.MinDepth = 0.0;
 		viewport.MaxDepth = 1.0;
-		
+
 		g_devcon->RSSetViewports(1, &viewport);
 	}
 
@@ -187,7 +207,7 @@ namespace engine::DX
 		initRenderTargetView();
 		initViewport();
 		backBuffer.Get()->GetDesc(&backBufferDesc);
-		depthStencilBuffer.initDepthStencil(backBufferDesc.Width, backBufferDesc.Height);
+		depthStencilBuffer.resizeDepthStencilTexture(backBufferDesc.Width, backBufferDesc.Height);
 
 	}
 
