@@ -20,11 +20,11 @@ namespace engine::DX
 	{
 		bool returnResult{};
 
-		for (auto& triangleOctree : triangleOctrees)
+		for (auto& modelInterseciton : modelIntersections)
 		{
-			if (triangleOctree->intersect(r, intersection))
+			if (modelInterseciton.triangleOctree.lock()->intersect(r, intersection, modelInterseciton.instance.lock()))
 			{
-				instance = triangleOctree->getInstance();
+				instance = modelInterseciton.instance;
 				returnResult = true;
 			}
 		}
@@ -36,11 +36,11 @@ namespace engine::DX
 	/// <param name="instances">instance may be change during dragging</param>
 	void MeshSystem::updateOpaqueInstanceBuffer(const std::weak_ptr<Instance>& instance)
 	{
-		for (auto& triangleOctreeInstance : triangleOctreeInstances)
+		for (auto& modelIntersection : modelIntersections)
 		{
-			if (!triangleOctreeInstance.first.expired() && !instance.expired() &&triangleOctreeInstance.first.lock() == instance.lock())
+			if (!modelIntersection.instance.expired() && !instance.expired() && modelIntersection.instance.lock() == instance.lock())
 			{
-				triangleOctreeInstance.second->needToUpdateInstanceBuffer();
+				modelIntersection.opaqueInstance.lock()->needToUpdateInstanceBuffer();
 			}
 		}
 	}
@@ -62,14 +62,24 @@ namespace engine::DX
 
 		for (auto& instance : instances)
 		{
-
 			if (!debugCubeModel)
 			{
-				triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, std::weak_ptr<Instance>(instance), meshIndices));
-				triangleOctreeInstances.emplace_back(std::make_pair(instance, opaqueInstances.at(opaqueInstanceID).get()));
+				int triangleOctreeIndex = 0;
+				for (; triangleOctreeIndex < triangleOctrees.size(); ++triangleOctreeIndex)
+				{
+					if (triangleOctrees[triangleOctreeIndex]->alreadyInited(model, meshIndices)) // already created
+					{
+						modelIntersections.emplace_back(ModelIntersection{ triangleOctrees.at(triangleOctreeIndex), instance, opaqueInstances.at(opaqueInstanceID) });
+						break;
+					}
+				}
+
+				if (triangleOctreeIndex == triangleOctrees.size())
+				{
+					triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, meshIndices));
+					modelIntersections.emplace_back(ModelIntersection{ triangleOctrees.at(triangleOctrees.size() - 1), instance, opaqueInstances.at(opaqueInstanceID)});
+				}
 			}
-
-
 		}
 
 
@@ -79,11 +89,15 @@ namespace engine::DX
 	/// creates new Opaque Instance
 	/// </summary>
 	/// <returns>ID to access to created opaque instance</returns>
-	uint32_t MeshSystem::createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName)
+	uint32_t MeshSystem::createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& geometryShaderFileName)
 	{
 		std::shared_ptr<OpaqueInstances> opaqueInstance = std::make_shared<OpaqueInstances>();
 		opaqueInstance->setVertexShader(vertexShaderFileName);
 		opaqueInstance->setPixelShader(pixelShaderFileName);
+		if (!geometryShaderFileName.empty())
+		{
+			opaqueInstance->setGeometryShader(geometryShaderFileName);
+		}
 		opaqueInstances.push_back(opaqueInstance);
 		return opaqueInstances.size() - 1;
 	}

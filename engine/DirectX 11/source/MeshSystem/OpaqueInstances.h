@@ -30,7 +30,7 @@ namespace engine::DX
 		struct PerMaterial
 		{
 			std::shared_ptr<Material> material;
-			std::vector<std::shared_ptr<Instance>> instances{}; //to avoid dangling pointers in triangleOctree while reallocating
+			std::vector<std::shared_ptr<Instance>> instances{}; 
 		};
 
 		struct PerMesh
@@ -41,17 +41,20 @@ namespace engine::DX
 		struct PerModel
 		{
 			std::shared_ptr<Model> model;
-			std::vector<PerMesh> perMesh{}; // for every mesh we have its own materials and instances
+			std::vector<PerMesh> perMesh{}; 
 		};
 
 		std::vector<PerModel> perModel{};
 		VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
+		ConstantBuffer<float4> cameraPosition;
+		ConstantBuffer<float4> time;
 		std::shared_ptr<VertexShader> vertexShader;
 		std::shared_ptr<GeometryShader> geometryShader;
 		std::shared_ptr<PixelShader> pixelShader;
 		std::wstring vertexShaderFileName;
+		std::wstring geometryShaderFileName;
 		std::wstring pixelShaderFileName;
 		bool instanceBufferUpdated{};
 
@@ -62,9 +65,19 @@ namespace engine::DX
 
 		void setVertexShader(const std::wstring& vertexShaderFileName);
 
+		void setGeometryShader(const std::wstring& geometryShaderFileName);
+
 		void setPixelShader(const std::wstring& pixelShaderFileName);
 
-		const std::wstring& getVertexShaderFileName() const;
+		const std::wstring& getVertexShaderFileName() const 
+		{
+			return vertexShaderFileName;
+		}
+
+		const std::wstring& getGeometryShaderFileName() const
+		{
+			return geometryShaderFileName;
+		}
 
 		const std::wstring& getPixelShaderFileName() const
 		{
@@ -73,12 +86,7 @@ namespace engine::DX
 
 		void render(const DirectX::SimpleMath::Vector3& cameraPos = {});
 
-
-
-
 		std::vector<std::weak_ptr<Instance>> addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances);
-
-
 
 		OpaqueInstances()
 		{
@@ -88,8 +96,7 @@ namespace engine::DX
 			meshData.initBuffer(MESH_TO_MODEL_SHADER, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
 		}
 
-		ConstantBuffer<DirectX::SimpleMath::Vector4> cameraPosition;
-		ConstantBuffer<DirectX::SimpleMath::Vector4> time;
+		
 	};
 }
 

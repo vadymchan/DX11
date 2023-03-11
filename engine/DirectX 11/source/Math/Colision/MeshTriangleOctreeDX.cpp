@@ -370,12 +370,12 @@ namespace engine::DX
 	}
 
 	//entypoint to init
-	void MeshTriangleOctree::initialize(Mesh& mesh, std::weak_ptr<Instance> instance)
+	void MeshTriangleOctree::initialize(Mesh& mesh)
 	{
 		m_triangles.clear();
 		m_triangles.shrink_to_fit();
 		m_mesh = &mesh;
-		m_instance = instance;
+		//m_instance = instance;
 		m_children = nullptr;
 
 		const float3 eps = { 1e-10f, 1e-10f, 1e-10f };
@@ -431,7 +431,7 @@ namespace engine::DX
 				m_children.reset(new std::array<MeshTriangleOctree, 8>());
 				for (int i = 0; i < 8; ++i)
 				{
-					(*m_children)[i].initialize(*m_mesh, m_instance, m_initialBox, C, i);
+					(*m_children)[i].initialize(*m_mesh, m_initialBox, C, i);
 				}
 
 				//move triangles to children
@@ -482,10 +482,9 @@ namespace engine::DX
 	}
 
 	//for recursive call
-	void MeshTriangleOctree::initialize(Mesh& mesh, const std::weak_ptr<Instance>& instance, const Box& parentBox, const float3& parentCenter, int octetIndex)
+	void MeshTriangleOctree::initialize(Mesh& mesh, const Box& parentBox, const float3& parentCenter, int octetIndex)
 	{
 		m_mesh = &mesh;
-		m_instance = instance;
 		m_children = nullptr;
 
 		const float eps = 1e-10f;
@@ -539,12 +538,12 @@ namespace engine::DX
 	static ray oldray;
 
 
-	bool MeshTriangleOctree::intersect(ray r, Intersection& nearest) const
+	bool MeshTriangleOctree::intersect(ray r, Intersection& nearest, const std::shared_ptr<Instance>& instance) const
 	{
 
 		oldray = r;
 
-		float4x4 meshToWorld{ (m_instance.lock()->toWorldMatrix * m_mesh->getMeshToModelMat(0)).Transpose() };
+		float4x4 meshToWorld{ (instance.get()->toWorldMatrix * m_mesh->getMeshToModelMat(0)).Transpose()};
 		auto rayToMesh{ meshToWorld.Invert() };
 
 		r.position = float3::Transform(r.position, rayToMesh);

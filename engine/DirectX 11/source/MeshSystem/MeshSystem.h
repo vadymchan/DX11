@@ -26,9 +26,6 @@ namespace engine::DX
 		/// <param name="instance">instance, which is contained in opaqueInstance</param>
 		void updateOpaqueInstanceBuffer(const std::weak_ptr<Instance>& instance);
 
-
-
-
 		/// <param name="instances">instance may be change during dragging</param>
 		void addInstances(uint32_t opaqueInstanceID,
 			const std::shared_ptr<Model>& model,
@@ -40,7 +37,7 @@ namespace engine::DX
 		/// creates new Opaque Instance
 		/// </summary>
 		/// <returns>ID to access to created opaque instance</returns>
-		uint32_t createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName);
+		uint32_t createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& geometryShaderFileName = L"");
 
 	
 
@@ -56,8 +53,17 @@ namespace engine::DX
 		std::vector<std::shared_ptr<OpaqueInstances>> opaqueInstances{};
 		std::vector<std::shared_ptr<ModelTriangleOctree>> triangleOctrees{};
 
-		//used to update instance buffer during dragging
-		std::vector<std::pair<std::weak_ptr<Instance>, OpaqueInstances*>> triangleOctreeInstances{};
+
+		//std::vector<std::pair<std::weak_ptr<Instance>, OpaqueInstances*>> triangleOctreeInstances{};
+
+		struct ModelIntersection
+		{
+			std::weak_ptr<ModelTriangleOctree> triangleOctree;
+			std::weak_ptr<Instance> instance;
+			std::weak_ptr<OpaqueInstances> opaqueInstance; // used to update instance buffer during dragging
+		};
+
+		std::vector<ModelIntersection> modelIntersections{};
 
 	};
 

@@ -55,7 +55,6 @@ float3 duv(float2 uv)
 struct Input
 {
     float4 position : SV_Position;
-    float3 normal : NORMAL;
 };
 
 float3 main(Input input) : SV_TARGET
@@ -72,7 +71,6 @@ float3 main(Input input) : SV_TARGET
 #ifdef TRIANGLE
     return color.xyz;
 #endif
-    
-    return float3(1,0,0);
+
     
 }

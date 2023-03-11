@@ -36,6 +36,12 @@ namespace engine::DX
 		vertexShader = ShaderManager::getInstance().getVertexShader(vertexShaderFileName);
 		this->vertexShaderFileName = vertexShaderFileName;
 	}
+
+	void OpaqueInstances::setGeometryShader(const std::wstring& geometryShaderFileName)
+	{
+		geometryShader = ShaderManager::getInstance().getGeometryShader(geometryShaderFileName);
+		this->geometryShaderFileName = geometryShaderFileName;
+	}
 	
 	void OpaqueInstances::setPixelShader(const std::wstring& pixelShaderFileName)
 	{
@@ -43,12 +49,7 @@ namespace engine::DX
 		this->pixelShaderFileName = pixelShaderFileName;
 
 	}
-	
-	const std::wstring& OpaqueInstances::getVertexShaderFileName() const
-	{
-		return vertexShaderFileName;
-	}
-	
+
 	void OpaqueInstances::render(const DirectX::SimpleMath::Vector3& cameraPos)
 	{
 
@@ -59,6 +60,10 @@ namespace engine::DX
 		}
 
 		vertexShader->bind();
+		if (geometryShader.get() != nullptr)
+		{
+			//geometryShader->bind();
+		}
 		pixelShader->bind();
 		instanceBuffer.setBuffer();
 		int renderedInstance = 0;
@@ -86,7 +91,7 @@ namespace engine::DX
 						continue;
 
 
-					if (getVertexShaderFileName().find(L"hologram") == std::wstring::npos)
+					if (pixelShaderFileName.find(L"hologram") == std::wstring::npos)
 					{
 						materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
 						materialData.setPixelShaderBuffer();

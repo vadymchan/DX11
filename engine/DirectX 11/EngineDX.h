@@ -29,7 +29,7 @@ namespace engine::DX
 
 		void addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndex, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances);
 
-		uint32_t createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName);
+		uint32_t createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& geometryShaderFileName = L"");
 
 		void castRay();
 
@@ -51,6 +51,11 @@ namespace engine::DX
 		const float3& getCameraUp() ;
 
 		const float3& getCameraPosition() ;
+
+		void normalVisualization(bool isVisible)
+		{
+			
+		}
 
 		void render();
 

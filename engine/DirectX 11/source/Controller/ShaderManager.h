@@ -37,6 +37,13 @@ namespace engine::DX
 		//---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+		//geometry shader
+		//---------------------------------------------------------------------------------------------------------------------------------------------------
+		void addGeometryShader(const std::wstring& fileName, const std::string& entrancePoint = "main", const std::string& shaderVersion = "gs_5_0");
+		bool getGeometryShader(const std::wstring& fileName, std::shared_ptr<GeometryShader>& geometryShader);
+		//analog 
+		std::shared_ptr<GeometryShader> getGeometryShader(const std::wstring& fileName);
+		//---------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 	private:

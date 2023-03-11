@@ -28,9 +28,9 @@ namespace engine::DX
 		MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndices, material, instances);
 	}
 
-	uint32_t Engine::createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName)
+	uint32_t Engine::createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& geometryShaderFileName)
 	{
-		return MeshSystem::getInstance().createOpaqueInstance(vertexShaderFileName, pixelShaderFileName);
+		return MeshSystem::getInstance().createOpaqueInstance(vertexShaderFileName, pixelShaderFileName, geometryShaderFileName);
 	}
 
 	void Engine::castRay()

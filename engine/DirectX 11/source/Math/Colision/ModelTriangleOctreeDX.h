@@ -8,9 +8,9 @@ namespace engine::DX
 	class ModelTriangleOctree
 	{
 	public:
-		ModelTriangleOctree(const std::weak_ptr<Model>& model, const std::weak_ptr<Instance>& instance, const std::vector<size_t> meshIndices)
-			: model{model}
-			, instance{instance}
+		ModelTriangleOctree(const std::weak_ptr<Model>& model, const std::vector<size_t>& meshIndices)
+			: m_model{model}
+			, m_meshIndices{meshIndices}
 		{
 			meshTriangleOctrees.resize(meshIndices.size());
 			for (size_t i = 0; i < meshIndices.size(); i++)
@@ -25,28 +25,34 @@ namespace engine::DX
 				meshBox.max = float3::Max(meshBox.min, meshBox.max);
 				meshBox.min = temp;
 				 
-				 
+				 meshTriangleOctrees.at(i).initialize(mesh);
 
 				//---------------------------------
 				box.expand(meshBox);
-				
-
-				meshTriangleOctrees.at(i).initialize(mesh, this->instance);
 			}
 
 
 		}
 
-		
+		bool alreadyInited(const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices) const
+		{
+			if (model.get() != m_model.lock().get()
+				|| meshIndices.size() != m_meshIndices.size() 
+				|| !std::is_permutation(m_meshIndices.begin(), m_meshIndices.end(), meshIndices.begin()))
+			{
+				return false;
+			}
+
+			return true;
+		}
 
 
-		bool intersect(ray r, Intersection& intersection);
+		bool intersect(ray r, Intersection& intersection, const std::shared_ptr<Instance>& instance);
 
-		const std::weak_ptr<Instance>& getInstance() const { return instance; }
 
 	private:
-		std::weak_ptr<Model> model;
-		std::weak_ptr<Instance> instance;
+		std::weak_ptr<Model> m_model;
+		std::vector<size_t> m_meshIndices;
 		std::vector<MeshTriangleOctree> meshTriangleOctrees;
 		Box box = Box::empty();
 	};

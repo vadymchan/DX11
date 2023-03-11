@@ -46,13 +46,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addPixelShader(normalPixelShaderFileName);
+	ShaderManager::getInstance().addGeometryShader(normalGeometryShaderFileName);
 	ShaderManager::getInstance().addPixelShader(hologramPixelShaderFileName);
 
 
 	// opaque instance
 	//---------------------------------------------------------------------------------------------------
 
-	uint32_t normalOpaqueInstance = engine.createOpaqueInstance(normalVertexShaderFileName, normalPixelShaderFileName);
+	uint32_t normalOpaqueInstance = engine.createOpaqueInstance(normalVertexShaderFileName, normalPixelShaderFileName, normalGeometryShaderFileName);
 	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance(hologramVertexShaderFileName, hologramPixelShaderFileName);
 
 	// models
@@ -85,20 +86,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		cubeInstances.at(i) = generateRandomInstances(1000);
 	}
 
-	std::vector<Instance> adamHeadInstances
-	{
-		Instance
-		{
-			engine::DX::float4x4
-			{{{1,0,0,0},
-			{0,1,0,0},
-			{0,0,1,0},
-			{0,0,0,1},}}
-		},
-	};
 
-
-	std::vector<std::shared_ptr<Instance>> samuraiInstances
+	std::vector<std::shared_ptr<Instance>> samuraiInstances 
 	{
 		std::make_shared<Instance>(Instance{
 			engine::DX::float4x4
@@ -107,6 +96,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 			{0,0,1,0},
 			{0,0,0,1},}}
 		}),
+
 	};
 
 	std::vector<std::shared_ptr<Instance>> eastTowerInstances
@@ -152,8 +142,6 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		samuraiMeshIndices.emplace_back(i);
 	}
 	engine.addInstancedModel(hologramOpaqueInstance, samurai, samuraiMeshIndices, materials.at(1), samuraiInstances);
-	/*
-	*/
 
 
 	std::vector<size_t> eastTowerMeshIndices;
@@ -161,7 +149,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		eastTowerMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(hologramOpaqueInstance, eastTower, eastTowerMeshIndices, materials.at(1), eastTowerInstances);
+	//engine.addInstancedModel(hologramOpaqueInstance, eastTower, eastTowerMeshIndices, materials.at(1), eastTowerInstances);
 
 
 	std::vector<size_t> knightMeshIndices;
@@ -169,14 +157,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		knightMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(hologramOpaqueInstance, knight, knightMeshIndices, materials.at(1), knightInstances);
+	//engine.addInstancedModel(hologramOpaqueInstance, knight, knightMeshIndices, materials.at(1), knightInstances);
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)
 	{
 		knightHorseMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(hologramOpaqueInstance, knightHorse, knightHorseMeshIndices, materials.at(1), knightHorseInstances);
+	//engine.addInstancedModel(hologramOpaqueInstance, knightHorse, knightHorseMeshIndices, materials.at(1), knightHorseInstances);
 
 	std::vector<size_t> cubeMeshIndices;
 	for (size_t i = 0; i < cube.get()->getMeshesCount(); ++i)
@@ -188,30 +176,22 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, materials.at(i), cubeInstances.at(i));
 	}
 
-
-	std::vector<std::shared_ptr<Instance>> cubeInstances1
+	std::vector<std::shared_ptr<Instance>> cubeInstance
 	{
-		std::make_shared<Instance>(Instance{
-			engine::DX::float4x4
-			{{{1,0,0,0},
-			{0,1,0,0},
-			{0,0,1,0},
-			{0,0,0,1},}}
-		}),
+		std::make_shared<Instance>(
+			Instance{ engine::DX::float4x4 {
+				{1,0,0,0},
+				{0,1,0,0},
+				{0,0,1,0},
+				{0,0,0,1},
+			} }),
 	};
-
-
-	engine.addInstancedModel(normalOpaqueInstance, cube, { 0 }, materials.at(6), cubeInstances1);
-
-
-
-
-
+	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, materials.at(6), cubeInstance);
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
 	const engine::DX::float3& position{ 0,0,-2 };
-	const engine::DX::float3& direction{ 0,0,-1 };
+	const engine::DX::float3& direction{ 0,0, 1 };
 	const engine::DX::float3& cameraUp{ 0,1,0 };
 
 	float fov{ 90 };
