@@ -28,6 +28,8 @@ namespace engine::DX
 
 		void moveMesh(const float3& offset)
 		{
+			float3 newoffset = DirectX::SimpleMath::Vector3::TransformNormal(offset, instance.lock()->toWorldMatrix);
+
 			instance.lock()->toWorldMatrix._14 += offset.x;
 			instance.lock()->toWorldMatrix._24 += offset.y;
 			instance.lock()->toWorldMatrix._34 += offset.z;

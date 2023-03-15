@@ -102,6 +102,7 @@ namespace engine::DX
 		float worldOffsetX = nearPlaneOffsetX * intersectionVec.z / camera.getZNear();
 		float worldOffsetY = nearPlaneOffsetY * intersectionVec.z / camera.getZNear();
 		float3 moveOffset = worldOffsetX * camera.right() + worldOffsetY * camera.up();
+		moveOffset = engine::DX::float3::TransformNormal(moveOffset, engine::DX::MeshMover::getInstance().getMat().lock()->toWorldMatrix);
 		MeshMover::getInstance().moveMesh(moveOffset);
 	}
 
