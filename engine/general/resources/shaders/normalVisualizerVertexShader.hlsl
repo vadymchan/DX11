@@ -1,4 +1,4 @@
-#include "hologramShader.hlsli"
+
 
 cbuffer PerView : register(b0)
 {
@@ -9,7 +9,8 @@ cbuffer PerView : register(b0)
 cbuffer PerMesh : register(b2)
 {
     float4x4 meshToModel;
-};
+}
+
 
 
 struct vertexInput
@@ -22,29 +23,28 @@ struct vertexInput
 
 struct vertexOutput
 {
-    float4 positionModel : POSITIONMODEL;
-    float4 positionWorld : SV_POSITION;
+    float4 position : SV_POSITION;
     float4 normal : NORMAL;
+
 };
 
-
-
-
+const static float NORMAL_LENGTH = 0.05;
 
 vertexOutput main(vertexInput input)
 {
     vertexOutput output;
 
-    output.positionModel = mul(float4(input.position.xyz, 1),
-    meshToModel);
-    output.positionWorld = mul(output.positionModel, input.instance);
-    output.normal = mul(mul(float4(input.normal, 0),
-    meshToModel), input.instance);
-
-
-    
+    output.position = mul(mul(mul(mul(float4(input.position, 1),
+    meshToModel), 
+    input.instance), 
+    View),
+    Proj);
+  
+    output.normal = mul(mul(mul(mul(float4(input.normal * NORMAL_LENGTH, 0),
+    meshToModel),
+    input.instance),
+    View),
+    Proj);
     return output;
 }
-
-
 

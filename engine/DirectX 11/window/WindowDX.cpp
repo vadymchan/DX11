@@ -138,17 +138,11 @@ namespace engine::DX
 
 	void Window::initRenderTargetView()
 	{
-		/*bgColorRGBA[0] = 1.0f;
+		bgColorRGBA[0] = 1.0f;
 		bgColorRGBA[1] = 0.6f;
 		bgColorRGBA[2] = 0.4f;
-		bgColorRGBA[3] = 1.0f;*/
+		bgColorRGBA[3] = 1.0f;
 
-		bgColorRGBA[0] = 0.f;
-		bgColorRGBA[1] = 0.f;
-		bgColorRGBA[2] = 0.f;
-		bgColorRGBA[3] = 0.f;
-
-		
 		g_device->CreateRenderTargetView(backBuffer.Get(), nullptr, renderTargetView.ReleaseAndGetAddressOf());
 		g_devcon->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
 	}

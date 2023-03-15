@@ -29,7 +29,14 @@ namespace engine::DX
 
 		void addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndex, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances);
 
-		uint32_t createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& geometryShaderFileName = L"");
+		
+		
+		/**
+		* @param shaderFileNames std::array 0 - vertex, 1 - hull shader, 2 - domain shader, 3 - geometry shader, 4 - pixel shader file names
+		*
+		* @return an ID of opaque instance.
+		*/
+		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames);
 
 		void castRay();
 
@@ -40,21 +47,14 @@ namespace engine::DX
 
 		void moveCapturedObject(const float3& offset);
 
-		void moveCamera(const float3& offset);
 
-		void rotateCamera(const Angles& angles);
+		Camera& getCamera()   { return camera; };
 
-		const float3& getCameraForward() ;
-
-		const float3& getCameraRight() ;
-
-		const float3& getCameraUp() ;
-
-		const float3& getCameraPosition() ;
+		Renderer& getRenderer() { return renderer; };
 
 		void normalVisualization(bool isVisible)
 		{
-			
+			renderer.setVisualizeNormal(isVisible);
 		}
 
 		void render();

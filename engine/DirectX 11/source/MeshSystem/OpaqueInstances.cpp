@@ -30,27 +30,19 @@ namespace engine::DX
 	{
 		instanceBufferUpdated = false;
 	}
-	
-	void OpaqueInstances::setVertexShader(const std::wstring& vertexShaderFileName)
+
+	void OpaqueInstances::setShaders(const std::vector<std::array<std::wstring, 5>>& shaderBatches)
 	{
-		vertexShader = ShaderManager::getInstance().getVertexShader(vertexShaderFileName);
-		this->vertexShaderFileName = vertexShaderFileName;
+		shaders = shaderBatches;
 	}
 
-	void OpaqueInstances::setGeometryShader(const std::wstring& geometryShaderFileName)
-	{
-		geometryShader = ShaderManager::getInstance().getGeometryShader(geometryShaderFileName);
-		this->geometryShaderFileName = geometryShaderFileName;
-	}
-	
-	void OpaqueInstances::setPixelShader(const std::wstring& pixelShaderFileName)
-	{
-		pixelShader = ShaderManager::getInstance().getPixelShader(pixelShaderFileName);
-		this->pixelShaderFileName = pixelShaderFileName;
 
+	void OpaqueInstances::hasTexture(bool value)
+	{
+		m_hasTexture = value;
 	}
 
-	void OpaqueInstances::render(const DirectX::SimpleMath::Vector3& cameraPos)
+	void OpaqueInstances::render()
 	{
 
 		updateInstanceBuffer();
@@ -59,12 +51,7 @@ namespace engine::DX
 			return;
 		}
 
-		vertexShader->bind();
-		if (geometryShader.get() != nullptr)
-		{
-			//geometryShader->bind();
-		}
-		pixelShader->bind();
+		
 		instanceBuffer.setBuffer();
 		int renderedInstance = 0;
 		for (const auto& model : perModel)
@@ -84,6 +71,7 @@ namespace engine::DX
 
 				meshData.setBufferData(mesh.getMeshToModelMat());
 				meshData.setVertexShaderBuffer();
+				meshData.setGeometryShaderBuffer(); 
 
 				for (const auto& perMaterial : model.perMesh.at(meshIndex).perMaterial)
 				{
@@ -91,21 +79,15 @@ namespace engine::DX
 						continue;
 
 
-					if (pixelShaderFileName.find(L"hologram") == std::wstring::npos)
+					if (m_hasTexture)
 					{
 						materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
 						materialData.setPixelShaderBuffer();
 					}
 
-					if (vertexShaderFileName.find(L"normal") == std::wstring::npos)
-					{
-						cameraPosition.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {cameraPos.x, cameraPos.y, cameraPos.z, 1.0}});
-						time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {static_cast<float>(GetTickCount64() / 1000.f), 0, 0, 0}});
-						cameraPosition.setPixelShaderBuffer();
-						time.setBuffer();
-					}
-
-					g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+					
+					
+					
 					g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedModelIndexes, renderedModelVertexes, renderedInstance);
 
 
@@ -118,10 +100,8 @@ namespace engine::DX
 
 	}
 	
-	std::vector<std::weak_ptr<OpaqueInstances::Instance>> OpaqueInstances::addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances)
+	void OpaqueInstances::addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances)
 	{
-		std::vector<std::weak_ptr<Instance>> returnInstances;
-		size_t initSize;
 		assert( meshIndex <= model->getMeshesCount() && "Number of meshes in mesh system are more than in the given model");
 		instanceBufferUpdated = false;
 
@@ -134,22 +114,18 @@ namespace engine::DX
 				{
 					if (mat.material.get() == material.get()) // material is already in opaque instance
 					{
-						initSize = mat.instances.size();
-						mat.instances.reserve(initSize + instances.size());
+						mat.instances.reserve(mat.instances.size() + instances.size());
 						mat.instances.insert(end(mat.instances), begin(instances), end(instances));
-						returnInstances.insert(end(returnInstances), begin(mat.instances), end(mat.instances));
-						return returnInstances;
+						return;
 					}
 				}
 				//didn't find such material in opaque instance. Create and add a new one
 				PerMaterial newPerMaterial;
-				initSize = newPerMaterial.instances.size();
 				newPerMaterial.instances.reserve(instances.size());
 				newPerMaterial.instances.insert(end(newPerMaterial.instances), begin(instances), end(instances));
-				returnInstances.insert(end(returnInstances), begin(newPerMaterial.instances), end(newPerMaterial.instances));
 				newPerMaterial.material = material;
 				mesh.perMaterial.emplace_back(newPerMaterial);
-				return returnInstances;
+				return;
 			}
 
 
@@ -160,13 +136,11 @@ namespace engine::DX
 		newPerModel.perMesh.resize(model->getMeshesCount());
 		PerMesh& newPerMesh = newPerModel.perMesh.at(meshIndex);
 		PerMaterial newPerMaterial;
-		initSize = newPerMaterial.instances.size();
 		newPerMaterial.instances.reserve(instances.size());
 		newPerMaterial.instances.insert(end(newPerMaterial.instances), begin(instances), end(instances));
-		returnInstances.insert(end(returnInstances), begin(newPerMaterial.instances), end(newPerMaterial.instances));
 		newPerMaterial.material = material;
 		newPerMesh.perMaterial.emplace_back(newPerMaterial);
 		perModel.emplace_back(newPerModel);
-		return returnInstances;
+		return;
 	}
 }

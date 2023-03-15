@@ -11,36 +11,37 @@ namespace engine::DX
 
 		void render(Window& window, Camera& camera)
 		{
+			updateRasterizer();
 			g_devcon->RSSetState(rasterizerState.Get());
 			window.clearWindow();
 			window.setViews();
-			camera.setCameraBuffer();
-			MeshSystem::getInstance().render(camera.position());
+			camera.setCameraBufferVertexShader();
+			MeshSystem::getInstance().render(camera, visualizeNormal);
 			window.flush();
 			window.clearDepthStencil();
 		}
 
-		void initRasterizerDesc(D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID
-			, D3D11_CULL_MODE cullMode = D3D11_CULL_BACK
-			, BOOL            frontCounterClockwise = false
-			, INT             depthBias = 0
-			, FLOAT           depthBiasClamp = 0.0f
-			, FLOAT           slopeScaledDepthBias = 0.0f
-			, BOOL            depthClipEnable = true
-			, BOOL            scissorEnable = false
-			, BOOL            multisampleEnable = false
-			, BOOL            antialiasedLineEnable = false)
+		
+
+		void changeWireframe(bool wireframeEnabled)
 		{
-			rasterizationDesc.FillMode = fillMode;
-			rasterizationDesc.CullMode = cullMode;
-			rasterizationDesc.FrontCounterClockwise = frontCounterClockwise;
-			rasterizationDesc.DepthBias = depthBias;
-			rasterizationDesc.DepthBiasClamp = depthBiasClamp;
-			rasterizationDesc.SlopeScaledDepthBias = slopeScaledDepthBias;
-			rasterizationDesc.DepthClipEnable = depthClipEnable;
-			rasterizationDesc.ScissorEnable = scissorEnable;
-			rasterizationDesc.MultisampleEnable = multisampleEnable;
-			rasterizationDesc.AntialiasedLineEnable = antialiasedLineEnable;
+			if (wireframeEnabled)
+			{
+				rasterizationDesc.FillMode = D3D11_FILL_WIREFRAME;
+			}
+			else
+			{
+				rasterizationDesc.FillMode = D3D11_FILL_SOLID;
+			}
+			needToUpdateRasterizer = true;
+		}
+
+		void updateRasterizer()
+		{
+			if (needToUpdateRasterizer)
+			{
+				createRasterizerState();
+			}
 		}
 
 		void initRasterizator(D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID
@@ -65,11 +66,43 @@ namespace engine::DX
 			{
 				PrintError(result, L"Raserizer creation failed: ");
 			}
+			needToUpdateRasterizer = false;
+		}
+
+		void setVisualizeNormal(bool value)
+		{
+			visualizeNormal = value;
 		}
 
 	private:
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
+		bool visualizeNormal{};
+		bool needToUpdateRasterizer{};
+
+
+		void initRasterizerDesc(D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID
+			, D3D11_CULL_MODE cullMode = D3D11_CULL_BACK
+			, BOOL            frontCounterClockwise = false
+			, INT             depthBias = 0
+			, FLOAT           depthBiasClamp = 0.0f
+			, FLOAT           slopeScaledDepthBias = 0.0f
+			, BOOL            depthClipEnable = true
+			, BOOL            scissorEnable = false
+			, BOOL            multisampleEnable = false
+			, BOOL            antialiasedLineEnable = false)
+		{
+			rasterizationDesc.FillMode = fillMode;
+			rasterizationDesc.CullMode = cullMode;
+			rasterizationDesc.FrontCounterClockwise = frontCounterClockwise;
+			rasterizationDesc.DepthBias = depthBias;
+			rasterizationDesc.DepthBiasClamp = depthBiasClamp;
+			rasterizationDesc.SlopeScaledDepthBias = slopeScaledDepthBias;
+			rasterizationDesc.DepthClipEnable = depthClipEnable;
+			rasterizationDesc.ScissorEnable = scissorEnable;
+			rasterizationDesc.MultisampleEnable = multisampleEnable;
+			rasterizationDesc.AntialiasedLineEnable = antialiasedLineEnable;
+		}
 	};
 
 }

@@ -28,7 +28,7 @@ namespace engine::DX
 			depthStencilTextureDesc.SampleDesc.Count = sampleQuantity;
 			depthStencilTextureDesc.SampleDesc.Quality = sampleQuality;
 			depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-			g_device->CreateTexture2D(&depthStencilTextureDesc, nullptr, depthStencilTexture.GetAddressOf());
+			g_device->CreateTexture2D(&depthStencilTextureDesc, nullptr, depthStencilTexture.ReleaseAndGetAddressOf());
 
 			//depth
 			depthStencilDesc.DepthEnable = depthEnabled;
@@ -39,7 +39,7 @@ namespace engine::DX
 			depthStencilDesc.StencilEnable = stencilEnabled;
 
 			//create depth stencil-state
-			g_device->CreateDepthStencilState(&depthStencilDesc, depthStencilState.GetAddressOf());
+			g_device->CreateDepthStencilState(&depthStencilDesc, depthStencilState.ReleaseAndGetAddressOf());
 			
 			//bind depthStencilState 
 			g_devcon->OMSetDepthStencilState(depthStencilState.Get(), 1);
@@ -50,7 +50,7 @@ namespace engine::DX
 			depthStencilViewDesc.Texture2D.MipSlice = 0;
 			depthStencilViewDesc.Flags = 0;
 
-			HRESULT result = g_device->CreateDepthStencilView(depthStencilTexture.Get(), &depthStencilViewDesc, depthStencilView.GetAddressOf());
+			HRESULT result = g_device->CreateDepthStencilView(depthStencilTexture.Get(), &depthStencilViewDesc, depthStencilView.ReleaseAndGetAddressOf());
 			if (FAILED(result))
 			{
 				PrintError(result, L"Depth Stencil View was not created!\n");

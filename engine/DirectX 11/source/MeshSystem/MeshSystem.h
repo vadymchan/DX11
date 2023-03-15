@@ -2,6 +2,8 @@
 #include "OpaqueInstances.h"
 #include "../Math/Colision/ModelTriangleOctreeDX.h"
 #include "../Controller/ModelManager.h"
+#include "../../../general/utils/timer/FPSTimerRC.h"	 
+#include "../Utils/Camera.h"
 
 namespace engine::DX
 {
@@ -18,7 +20,7 @@ namespace engine::DX
 			return instance;
 		}
 
-		void render(const DirectX::SimpleMath::Vector3& cameraPos = {});
+		void render(Camera& camera, bool showNormal);
 
 		bool findIntersection(const ray& r, std::weak_ptr<Instance>& instance, Intersection& intersection);
 
@@ -36,8 +38,10 @@ namespace engine::DX
 		/// <summary>
 		/// creates new Opaque Instance
 		/// </summary>
+		/// <param name = "shaderFileNames">0 - vertex, 1 - hull shader, 2 - domain shader, 3 - geometry shader, 4 - pixel shader file names</param>
 		/// <returns>ID to access to created opaque instance</returns>
-		uint32_t createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& geometryShaderFileName = L"");
+		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames);
+		
 
 	
 
@@ -47,14 +51,11 @@ namespace engine::DX
 	private:
 		MeshSystem()
 		{
-			cameraPosition.initBuffer(PER_VIEW_PIXEL_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
-			time.initBuffer(PER_DRAW_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
+			cameraPosition.initBuffer(PER_VIEW_PIXEL_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+			time.initBuffer(PER_DRAW_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 		};
 		std::vector<std::shared_ptr<OpaqueInstances>> opaqueInstances{};
 		std::vector<std::shared_ptr<ModelTriangleOctree>> triangleOctrees{};
-
-
-		//std::vector<std::pair<std::weak_ptr<Instance>, OpaqueInstances*>> triangleOctreeInstances{};
 
 		struct ModelIntersection
 		{
@@ -64,6 +65,8 @@ namespace engine::DX
 		};
 
 		std::vector<ModelIntersection> modelIntersections{};
+
+
 
 	};
 

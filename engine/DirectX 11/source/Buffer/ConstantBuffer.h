@@ -27,6 +27,7 @@ namespace engine::DX
 		{
 			Buffer<T>::setBuffer();
 			g_devcon->VSSetConstantBuffers(registerSlot, 1, Buffer<T>::buffer.GetAddressOf());
+			g_devcon->GSSetConstantBuffers(registerSlot, 1, Buffer<T>::buffer.GetAddressOf());
 			g_devcon->PSSetConstantBuffers(registerSlot, 1, Buffer<T>::buffer.GetAddressOf());
 		}
 
@@ -36,10 +37,17 @@ namespace engine::DX
 			g_devcon->PSSetConstantBuffers(registerSlot, 1, Buffer<T>::buffer.GetAddressOf());
 		}
 
+
 		void setVertexShaderBuffer()
 		{
 			Buffer<T>::setBuffer();
 			g_devcon->VSSetConstantBuffers(registerSlot, 1, Buffer<T>::buffer.GetAddressOf());
+		}
+
+		void setGeometryShaderBuffer()
+		{
+			Buffer<T>::setBuffer();
+			g_devcon->GSSetConstantBuffers(registerSlot, 1, Buffer<T>::buffer.GetAddressOf());
 		}
 
 		void setComputeShaderBuffer()

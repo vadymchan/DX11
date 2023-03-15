@@ -283,11 +283,16 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="general\resources\shaders\normalPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalVertexShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalGeometryShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\colorPixelShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\colorVertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalVisualizerGeometryShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalVisualizerPixelShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\normalVisualizerVertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\hologramGeometryShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\hologramDomainShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\hologramHullShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="general\resources\shaders\hologramShader.hlsli" />

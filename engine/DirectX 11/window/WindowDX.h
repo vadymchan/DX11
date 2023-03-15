@@ -24,7 +24,6 @@ namespace engine::DX
 		/// sets Render Target View and Depth Stencil View to the pipeline
 		/// </summary>
 		void setViews(){ g_devcon->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilBuffer.getPDepthStencilView()); }
-		//ID3D11RenderTargetView* const* GetppRenderTargetView() const { return renderTargetView.GetAddressOf(); } //rm
 		const D3D11_VIEWPORT& GetViewport() const { return viewport; }
 		float GetAspectRatio()
 		{
@@ -32,7 +31,6 @@ namespace engine::DX
 			return float(backBufferDesc.Width) / backBufferDesc.Height;
 		}
 		const HWND& GetHWND() const { return hwnd; }
-		//ID3D11DepthStencilView* GetPDepthStencilView() { return depthStencilBuffer.getPDepthStencilView(); }
 		void flush();
 	private:
 		void initSwapchain();

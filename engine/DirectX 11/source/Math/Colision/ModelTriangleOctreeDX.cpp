@@ -4,7 +4,7 @@
 
 bool engine::DX::ModelTriangleOctree::intersect(ray r, Intersection& intersection, const std::shared_ptr<Instance>& instance)
 {
-	/*ray oldray = r;*/
+	/*ray oldray = r;*/ //for debug
 	ray modelRay = r;
 	float4x4 invModelMatrix = instance.get()->toWorldMatrix.Transpose().Invert();
 	modelRay.position = float3::Transform(modelRay.position, invModelMatrix);

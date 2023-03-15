@@ -48,52 +48,35 @@ namespace engine::DX
 		VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
-		ConstantBuffer<float4> cameraPosition;
-		ConstantBuffer<float4> time;
-		std::shared_ptr<VertexShader> vertexShader;
-		std::shared_ptr<GeometryShader> geometryShader;
-		std::shared_ptr<PixelShader> pixelShader;
-		std::wstring vertexShaderFileName;
+		
+		std::vector<std::array<std::wstring, 5>> shaders;
+		/*std::wstring vertexShaderFileName;
 		std::wstring geometryShaderFileName;
-		std::wstring pixelShaderFileName;
+		std::wstring pixelShaderFileName;*/
 		bool instanceBufferUpdated{};
-
+		bool m_hasTexture{};
 	public:
 		void updateInstanceBuffer();
 
 		void needToUpdateInstanceBuffer();
 
-		void setVertexShader(const std::wstring& vertexShaderFileName);
+		void setShaders(const std::vector<std::array<std::wstring, 5>>& shaderBatches);
 
-		void setGeometryShader(const std::wstring& geometryShaderFileName);
+		void hasTexture(bool value);
 
-		void setPixelShader(const std::wstring& pixelShaderFileName);
-
-		const std::wstring& getVertexShaderFileName() const 
+		const std::vector<std::array<std::wstring, 5>>& getShaders() const
 		{
-			return vertexShaderFileName;
+			return shaders;
 		}
 
-		const std::wstring& getGeometryShaderFileName() const
-		{
-			return geometryShaderFileName;
-		}
+		void render();
 
-		const std::wstring& getPixelShaderFileName() const
-		{
-			return pixelShaderFileName;
-		}
-
-		void render(const DirectX::SimpleMath::Vector3& cameraPos = {});
-
-		std::vector<std::weak_ptr<Instance>> addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances);
+		void addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances);
 
 		OpaqueInstances()
 		{
 			materialData.initBuffer(MATERIAL_NORMAL_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
-			cameraPosition.initBuffer(PER_VIEW_PIXEL_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
-			time.initBuffer(PER_DRAW_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
-			meshData.initBuffer(MESH_TO_MODEL_SHADER, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
+			meshData.initBuffer(MESH_TO_MODEL_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 		}
 
 		

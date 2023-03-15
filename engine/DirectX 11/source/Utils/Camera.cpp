@@ -10,19 +10,19 @@ namespace engine::DX
 
 	}
 
-	void Camera::setCameraBuffer()
+	void Camera::setCameraBufferVertexShader()
 	{
-		updateMatrices();
-		if (!bufferUpdated)
-		{
-			cameraBuffer.setBufferData(std::vector<ViewProjectionMatrix>{ {(getViewMatrix() * getPerspectiveMatrix()).Transpose()} });
-			bufferUpdated = true;
-		}
+		updateCameraBuffer();
 		cameraBuffer.setVertexShaderBuffer();
 	}
 
-	/// <param name="fov">in radians</param>
+	void Camera::setCameraBufferGeometryShader()
+	{
+		updateCameraBuffer();
+		cameraBuffer.setGeometryShaderBuffer();
+	}
 
+	/// <param name="fov">in radians</param>
 	void Camera::setPerspective(float fov, float aspect, float zNear, float zFar)
 	{
 
@@ -135,6 +135,16 @@ namespace engine::DX
 		transform.rotation = transform.rotation * quat::CreateFromAxisAngle({ 1.f, 0.f, 0.f }, angles.pitch);
 		transform.rotation.Normalize();
 
+	}
+
+	void Camera::updateCameraBuffer()
+	{
+		updateMatrices();
+		if (!bufferUpdated)
+		{
+			cameraBuffer.setBufferData(std::vector<ViewProjectionMatrix>{ {getViewMatrix().Transpose(), getPerspectiveMatrix().Transpose()} });
+			bufferUpdated = true;
+		}
 	}
 
 	void Camera::updateViewMatrix()

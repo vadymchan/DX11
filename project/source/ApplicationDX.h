@@ -70,5 +70,7 @@ private:
 	bool increasedSpeed{};
 	bool rayCasted{};
 	bool objectCaptured{};
+	bool nomalVisualized{};
+	bool wireframeMode{};
 };
 

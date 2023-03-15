@@ -28,9 +28,10 @@ namespace engine::DX
 		MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndices, material, instances);
 	}
 
-	uint32_t Engine::createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& geometryShaderFileName)
+
+	uint32_t Engine::createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames)
 	{
-		return MeshSystem::getInstance().createOpaqueInstance(vertexShaderFileName, pixelShaderFileName, geometryShaderFileName);
+		return MeshSystem::getInstance().createOpaqueInstance(shaderFileNames);
 	}
 
 	void Engine::castRay()
@@ -44,9 +45,6 @@ namespace engine::DX
 
 		}
 	}
-
-
-
 
 	bool Engine::castRay(float xPos, float yPos)
 	{
@@ -110,36 +108,6 @@ namespace engine::DX
 	void Engine::moveCapturedObject(const float3& offset)
 	{
 		MeshMover::getInstance().moveMesh(offset);
-	}
-
-	void Engine::moveCamera(const float3& offset)
-	{
-		camera.addWorldOffset(offset);
-	}
-
-	void Engine::rotateCamera(const Angles& angles)
-	{
-		camera.addWorldAngles(angles);
-	}
-
-	const float3& Engine::getCameraForward() 
-	{
-		return camera.forward();
-	}
-
-	const float3& Engine::getCameraRight() 
-	{
-		return camera.right();
-	}
-
-	const float3& Engine::getCameraUp() 
-	{
-		return camera.up();
-	}
-
-	const float3& Engine::getCameraPosition() 
-	{
-		return camera.position();
 	}
 
 	void Engine::render()

@@ -5,7 +5,7 @@ cbuffer PerDraw : register(b1)
     float4 time;
 };
 
-// BEGIN ShaderToy https://www.shadertoy.com/view/WttcRB
+
 float hash4d(in float4 p)
 {
     p = frac(p * 0.1031);
@@ -59,13 +59,13 @@ float noise4d(in float4 p)
                local.w);
 }
 
-float noise4d(in float4 p, uniform in float octaves)
+float noise4d(in float4 p, uniform in uint octaves)
 {
     float nscale = 1.0;
     float tscale = 0.0;
     float value = 0.0;
 
-    for (float octave = 0.0; octave < octaves; octave++)
+    for (uint octave = 0.0; octave < octaves; octave++)
     {
         value += noise4d(p) * nscale;
         tscale += nscale;
@@ -98,21 +98,16 @@ float wave(float3 pos, float waveInterval, float waveYSpeed, float waveThickness
 
         float distortionSign = abs(frac(time.x / WAVE_OSCILLATING_TIME) - 0.5) * 4 - 1;
         float2 distortion = sin(pos.xz / WAVE_DISTORTION_SIZE + time.x * WAVE_XZ_SPEED) * WAVE_DISTORTION_SIZE * distortionSign;
-        pos.y += (distortion.x + distortion.y);
+        pos.y -= (distortion.x + distortion.y);
     }
 
-    pos.y += time.x * waveYSpeed;
+    pos.y -= time.x * waveYSpeed;
 
     float intensity = 1.0 - periodIntensity(pos.y, waveInterval, waveThickness);
     return intensity;
 }
 
-// Note: in HLSL global constant is marked with "static const".
-// One "const" is not enough, because it will be considered to be a uniform from a constant buffer.
-// In HLSL const means that the value can not be changed by the shader.
-// Adding "static" to global variable means that it is not visible to application, so doesn't belong to a constant buffer.
-// A local constant inside a function can be marked just with "const".
-// "static" for locals preserves value during current shader thread execution.
+
 
 static const float BLUE_WAVE_INTERVAL = 0.8;
 static const float BLUE_WAVE_SPEED = 0.25;

@@ -61,10 +61,19 @@ namespace engine::DX
 
 		struct ViewProjectionMatrix
 		{
-			float4x4 viewProj;
+			float4x4 view;
+			float4x4 proj;
 		};
 
 		ConstantBuffer<ViewProjectionMatrix> cameraBuffer;
+
+		void updateCameraBuffer();
+
+		void updateViewMatrix();
+
+		void updatePerspectiveMatrix();
+
+		void updateMatrices();
 
 	public:
 
@@ -74,7 +83,8 @@ namespace engine::DX
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0);
 
-		void setCameraBuffer();
+		void setCameraBufferVertexShader();
+		void setCameraBufferGeometryShader();
 
 		float3 right()		{ getViewMatrix(); return float3{ view._11, view._21, view._31 }; }
 		float3 up() 		{ getViewMatrix(); return float3{ view._12, view._22, view._32 }; }
@@ -112,11 +122,7 @@ namespace engine::DX
 
 		void addRelativeAngles(const Angles& angles);
 
-		void updateViewMatrix();
-
-		void updatePerspectiveMatrix();
-
-		void updateMatrices();
+		
 	};
 
 

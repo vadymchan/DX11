@@ -7,11 +7,80 @@ namespace engine::DX
 
 
 
-	void MeshSystem::render(const DirectX::SimpleMath::Vector3& cameraPos)
+	void MeshSystem::render(Camera& camera, bool showNormal)
 	{
 		for (const auto& opaqueInstance : opaqueInstances)
 		{
-			opaqueInstance->render(cameraPos);
+			//bind shaders (draw several times with different shader)
+			for (auto& shaderGroup : opaqueInstance->getShaders())
+			{
+				if (!showNormal && shaderGroup.at(3).find(L"normalVisualizer") != std::wstring::npos)
+				{
+					continue;
+				}
+
+				//vertex shader
+				ShaderManager::getInstance().getVertexShader(shaderGroup.at(0))->bind();
+
+				//hull shader
+				if (!shaderGroup.at(1).empty())
+				{
+					
+					ShaderManager::getInstance().getHullShader(shaderGroup.at(1))->bind();
+				}
+				else
+				{
+					g_devcon->HSSetShader(nullptr, nullptr, 0);
+				}
+
+				//domain shader
+				if (!shaderGroup.at(2).empty())
+				{
+					ShaderManager::getInstance().getDomainShader(shaderGroup.at(2))->bind();
+				}
+				else
+				{
+					g_devcon->DSSetShader(nullptr, nullptr, 0);
+				}
+
+				//geometry shader
+				if (!shaderGroup.at(3).empty())
+				{
+					ShaderManager::getInstance().getGeometryShader(shaderGroup.at(3))->bind();
+				}
+				else
+				{
+					g_devcon->GSSetShader(nullptr, nullptr, 0);
+				}
+
+				//pixel shader
+				ShaderManager::getInstance().getPixelShader(shaderGroup.at(4))->bind();
+
+
+				if (shaderGroup.at(4).find(L"hologram") != std::wstring::npos)
+				{
+					float3 cameraPos = camera.position();
+					cameraPosition.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {cameraPos.x, cameraPos.y, cameraPos.z, 1.0}});
+
+					time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {general::FPSTimer::getCurrentTick() - general::FPSTimer::initTick, 0, 0, 0}});
+					cameraPosition.setPixelShaderBuffer();
+					camera.setCameraBufferGeometryShader();
+					time.setBuffer();
+				}
+				opaqueInstance->hasTexture(shaderGroup.at(4).find(L"color") != std::wstring::npos);
+
+				//topology
+				if (!shaderGroup.at(1).empty() && !shaderGroup.at(2).empty())
+				{
+					g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+				}
+				else
+				{
+					g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+				}
+
+				opaqueInstance->render();
+			}
 		}
 	}
 
@@ -46,17 +115,17 @@ namespace engine::DX
 	}
 
 	void MeshSystem::addInstances(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances)
-	{ 
+	{
 		bool debugCubeModel{};
 		for (size_t meshIndex = 0; meshIndex < meshIndices.size(); ++meshIndex)
 		{
 
-		opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices.at(meshIndex), material, instances);
-		
-		if (model->getMesh(meshIndex).GetName() == ModelManager::debugCubeTag)
-		{
-			debugCubeModel = true;
-		}
+			opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices.at(meshIndex), material, instances);
+
+			if (model->getMesh(meshIndex).GetName() == ModelManager::debugCubeTag)
+			{
+				debugCubeModel = true;
+			}
 
 		}
 
@@ -77,7 +146,7 @@ namespace engine::DX
 				if (triangleOctreeIndex == triangleOctrees.size())
 				{
 					triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, meshIndices));
-					modelIntersections.emplace_back(ModelIntersection{ triangleOctrees.at(triangleOctrees.size() - 1), instance, opaqueInstances.at(opaqueInstanceID)});
+					modelIntersections.emplace_back(ModelIntersection{ triangleOctrees.at(triangleOctrees.size() - 1), instance, opaqueInstances.at(opaqueInstanceID) });
 				}
 			}
 		}
@@ -89,17 +158,12 @@ namespace engine::DX
 	/// creates new Opaque Instance
 	/// </summary>
 	/// <returns>ID to access to created opaque instance</returns>
-	uint32_t MeshSystem::createOpaqueInstance(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& geometryShaderFileName)
+	uint32_t MeshSystem::createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames)
 	{
 		std::shared_ptr<OpaqueInstances> opaqueInstance = std::make_shared<OpaqueInstances>();
-		opaqueInstance->setVertexShader(vertexShaderFileName);
-		opaqueInstance->setPixelShader(pixelShaderFileName);
-		if (!geometryShaderFileName.empty())
-		{
-			opaqueInstance->setGeometryShader(geometryShaderFileName);
-		}
+		opaqueInstance->setShaders(shaderFileNames);
 		opaqueInstances.push_back(opaqueInstance);
-		return opaqueInstances.size() - 1;
+		return (opaqueInstances.size() - 1);
 	}
 
 }
