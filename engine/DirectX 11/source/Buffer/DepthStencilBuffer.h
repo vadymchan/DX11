@@ -61,8 +61,12 @@ namespace engine::DX
 
 	private:
 		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+
+		// add texture 2d
 		ComPtr<ID3D11Texture2D> depthStencilTexture;
 		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
+		
+		//
 		ComPtr<ID3D11DepthStencilState> depthStencilState;
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 		ComPtr<ID3D11DepthStencilView> depthStencilView;
