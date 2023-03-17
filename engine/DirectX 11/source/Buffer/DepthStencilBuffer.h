@@ -56,11 +56,15 @@ namespace engine::DX
 		ID3D11DepthStencilView* getPDepthStencilView() { return m_depthStencilView.Get(); }
 
 	private:
-		D3D11_DEPTH_STENCIL_DESC m_depthStencilDesc;
-		ComPtr<ID3D11Texture2D> m_depthStencilTexture;
-		D3D11_TEXTURE2D_DESC m_depthStencilTextureDesc;
-		ComPtr<ID3D11DepthStencilState> m_depthStencilState;
-		D3D11_DEPTH_STENCIL_VIEW_DESC m_depthStencilViewDesc;
-		ComPtr<ID3D11DepthStencilView> m_depthStencilView;
+		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+
+		// add texture 2d
+		ComPtr<ID3D11Texture2D> depthStencilTexture;
+		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
+		
+		//
+		ComPtr<ID3D11DepthStencilState> depthStencilState;
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+		ComPtr<ID3D11DepthStencilView> depthStencilView;
 	};
 }
