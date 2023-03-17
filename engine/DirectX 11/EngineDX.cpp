@@ -8,9 +8,9 @@ namespace engine::DX
 		window.initWindow(title, xStart, yStart, width, height, appHandle, windowShowParams);
 	}
 
-	void Engine::initRenderer(D3D11_FILL_MODE fillMode, D3D11_CULL_MODE cullMode, BOOL frontCounterClockwise, INT depthBias, FLOAT depthBiasClamp, FLOAT slopeScaledDepthBias, BOOL depthClipEnable, BOOL scissorEnable, BOOL multisampleEnable, BOOL antialiasedLineEnable)
+	void Engine::initRenderer(const D3D11_RASTERIZER_DESC& rasterizerDesc)
 	{
-		renderer.initRasterizator(fillMode, cullMode, frontCounterClockwise, depthBias, depthBiasClamp, slopeScaledDepthBias, depthClipEnable, scissorEnable, multisampleEnable, antialiasedLineEnable);
+		renderer.initRasterizator(rasterizerDesc);
 	}
 
 	/// <param name="fov">in degrees</param>

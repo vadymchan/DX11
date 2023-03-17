@@ -55,6 +55,7 @@ namespace engine::DX
 		
 	protected:
 
+		
 		void initBuffer(D3D11_USAGE bufferUsage,
 			UINT bindFlags = 0, UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)

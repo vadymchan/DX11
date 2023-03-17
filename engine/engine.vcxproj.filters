@@ -309,4 +309,7 @@
   <ItemGroup>
     <None Include="general\resources\shaders\hologramShader.hlsli" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="general\resources\shaders\hologramShader.hlsli" />
+  </ItemGroup>
 </Project>
