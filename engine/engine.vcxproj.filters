@@ -207,12 +207,6 @@
     <ClInclude Include="DirectX 11\source\Controller\TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\Texture\DDSTextureLoader11.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectX 11\source\Texture\Texture2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Ray Casting\source\math\boxRC.cpp">
@@ -290,9 +284,6 @@
     <ClCompile Include="DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DirectX 11\source\Texture\DDSTextureLoader11.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
@@ -305,6 +296,9 @@
     <FxCompile Include="general\resources\shaders\hologramGeometryShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramDomainShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramHullShader.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="general\resources\shaders\hologramShader.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <None Include="general\resources\shaders\hologramShader.hlsli" />

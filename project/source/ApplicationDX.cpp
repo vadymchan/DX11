@@ -31,9 +31,15 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	engine::DX::D3D::Init();
 
-
+	
 	engine.initWindow(L"DirectX 11 Model", windowStartX, windowStartY, windowWidth, windowHeight, appHandle, windowShowParams);
-	engine.initRenderer(wireframeMode ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID);
+	
+	D3D11_RASTERIZER_DESC rasterizerDesc{};
+	rasterizerDesc.FillMode = wireframeMode ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.DepthClipEnable = true;
+
+	engine.initRenderer(rasterizerDesc);
 	//shaders & input layout
 	// -------------------------------------------------------------------------------------------------
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDesc

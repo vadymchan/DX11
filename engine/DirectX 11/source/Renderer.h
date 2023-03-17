@@ -21,10 +21,17 @@ namespace engine::DX
 			window.clearDepthStencil();
 		}
 
+		void initRasterizator(const D3D11_RASTERIZER_DESC& rasterizerDesc)
+		{
+			initRasterizerDesc(rasterizerDesc);
+			createRasterizerState();
+		}
 		
 
 		void changeWireframe(bool wireframeEnabled)
 		{
+			initRasterizerDesc(rasterizationDesc);
+			createRasterizerState();
 			if (wireframeEnabled)
 			{
 				rasterizationDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -44,19 +51,17 @@ namespace engine::DX
 			}
 		}
 
-		void initRasterizator(D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID
-			, D3D11_CULL_MODE cullMode = D3D11_CULL_BACK
-			, BOOL            frontCounterClockwise = false
-			, INT             depthBias = 0
-			, FLOAT           depthBiasClamp = 0.0f
-			, FLOAT           slopeScaledDepthBias = 0.0f
-			, BOOL            depthClipEnable = true
-			, BOOL            scissorEnable = false
-			, BOOL            multisampleEnable = false
-			, BOOL            antialiasedLineEnable = false)
+		void setVisualizeNormal(bool value)
 		{
-			initRasterizerDesc(fillMode, cullMode, frontCounterClockwise, depthBias, depthBiasClamp, slopeScaledDepthBias, depthClipEnable, scissorEnable, multisampleEnable, antialiasedLineEnable);
-			createRasterizerState();
+			visualizeNormal = value;
+			needToUpdateRasterizer = true;
+		}
+
+	private:
+
+		void initRasterizerDesc(const D3D11_RASTERIZER_DESC& rasterizerDesc)
+		{
+			rasterizationDesc = rasterizerDesc;
 		}
 
 		void createRasterizerState()
@@ -69,40 +74,14 @@ namespace engine::DX
 			needToUpdateRasterizer = false;
 		}
 
-		void setVisualizeNormal(bool value)
-		{
-			visualizeNormal = value;
-		}
+		
 
-	private:
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
 		bool visualizeNormal{};
 		bool needToUpdateRasterizer{};
 
-
-		void initRasterizerDesc(D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID
-			, D3D11_CULL_MODE cullMode = D3D11_CULL_BACK
-			, BOOL            frontCounterClockwise = false
-			, INT             depthBias = 0
-			, FLOAT           depthBiasClamp = 0.0f
-			, FLOAT           slopeScaledDepthBias = 0.0f
-			, BOOL            depthClipEnable = true
-			, BOOL            scissorEnable = false
-			, BOOL            multisampleEnable = false
-			, BOOL            antialiasedLineEnable = false)
-		{
-			rasterizationDesc.FillMode = fillMode;
-			rasterizationDesc.CullMode = cullMode;
-			rasterizationDesc.FrontCounterClockwise = frontCounterClockwise;
-			rasterizationDesc.DepthBias = depthBias;
-			rasterizationDesc.DepthBiasClamp = depthBiasClamp;
-			rasterizationDesc.SlopeScaledDepthBias = slopeScaledDepthBias;
-			rasterizationDesc.DepthClipEnable = depthClipEnable;
-			rasterizationDesc.ScissorEnable = scissorEnable;
-			rasterizationDesc.MultisampleEnable = multisampleEnable;
-			rasterizationDesc.AntialiasedLineEnable = antialiasedLineEnable;
-		}
+		
 	};
 
 }

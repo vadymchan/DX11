@@ -184,8 +184,6 @@
     <ClInclude Include="DirectX 11\source\Shader\DomainShader.h" />
     <ClInclude Include="DirectX 11\source\Shader\GeometryShader.h" />
     <ClInclude Include="DirectX 11\source\Shader\HullShader.h" />
-    <ClInclude Include="DirectX 11\source\Texture\DDSTextureLoader11.h" />
-    <ClInclude Include="DirectX 11\source\Texture\Texture2D.h" />
     <ClInclude Include="DirectX 11\source\Utils\Camera.h" />
     <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
     <ClInclude Include="DirectX 11\source\Controller\BufferManager.h" />
@@ -252,7 +250,6 @@
     <ClCompile Include="DirectX 11\source\MeshSystem\MeshSystem.cpp" />
     <ClCompile Include="DirectX 11\source\MeshSystem\Model.cpp" />
     <ClCompile Include="DirectX 11\source\MeshSystem\OpaqueInstances.cpp" />
-    <ClCompile Include="DirectX 11\source\Texture\DDSTextureLoader11.cpp" />
     <ClCompile Include="DirectX 11\source\Utils\Camera.cpp" />
     <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="general\utils\console\Console.cpp" />

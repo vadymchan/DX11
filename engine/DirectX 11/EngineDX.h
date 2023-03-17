@@ -22,7 +22,7 @@ namespace engine::DX
 
 		void initWindow(const LPCWSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 
-		void initRenderer(D3D11_FILL_MODE fillMode = D3D11_FILL_SOLID, D3D11_CULL_MODE cullMode = D3D11_CULL_BACK, BOOL frontCounterClockwise = false, INT depthBias = 0, FLOAT depthBiasClamp = 0.0f, FLOAT slopeScaledDepthBias = 0.0f, BOOL depthClipEnable = true, BOOL scissorEnable = false, BOOL multisampleEnable = false, BOOL antialiasedLineEnable = false);
+		void initRenderer(const D3D11_RASTERIZER_DESC& rasterizerDesc);
 
 		/// <param name="fov">in degrees</param>
 		void initCamera(const float3& position, const float3& direction, const float3& cameraUp, float fov, float aspect, float zNear, float zFar);
