@@ -3,7 +3,8 @@ namespace engine::DX
 {
 	const std::string ModelManager::cubeTag = "cube";
 	const std::string ModelManager::debugCubeTag = "cubeDebug";
-	const std::string ModelManager::modelDirectory = "engine/general/resources/models/";
+	const std::string ModelManager::modelDirectory = "../engine/general/resources/models/"; // - for executing from Visual Studio
+	//const std::string ModelManager::modelDirectory = "engine/general/resources/models/"; // - for executing from exe
 
 	void engine::DX::ModelManager::createModelAssimp(const std::string& modelFileName)
 	{

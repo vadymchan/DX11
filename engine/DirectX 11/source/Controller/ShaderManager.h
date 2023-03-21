@@ -9,7 +9,8 @@
 
 namespace engine::DX
 {
-	const std::wstring shaderDirectory = L"engine\\general\\resources\\shaders\\";
+	//const std::wstring shaderDirectory = L"engine\\general\\resources\\shaders\\"; - for executing from exe
+	const std::wstring shaderDirectory = L"..\\engine\\general\\resources\\shaders\\"; //for executing from Visual Studio
 
 	class ShaderManager
 	{

@@ -204,9 +204,6 @@
     <ClInclude Include="DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\Controller\TextureManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Ray Casting\source\math\boxRC.cpp">

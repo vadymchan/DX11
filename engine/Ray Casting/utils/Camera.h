@@ -47,9 +47,9 @@ namespace engine::general
 
 	public:
 
-		const glm::vec3& right() 	const { return glm::vec3(view[0][0], view[1][0], view[2][0]); }
-		const glm::vec3& up() 		const { return glm::vec3(view[0][1], view[1][1], view[2][1]); }
-		const glm::vec3& forward() 	const { return glm::vec3(view[0][2], view[1][2], view[2][2]); }
+		glm::vec3 right() 	const { return glm::vec3(view[0][0], view[1][0], view[2][0]); }
+		glm::vec3 up() 		const { return glm::vec3(view[0][1], view[1][1], view[2][1]); }
+		glm::vec3 forward() 	const { return glm::vec3(view[0][2], view[1][2], view[2][2]); }
 		const glm::vec3& position()	const { return cameraPos; }
 
 

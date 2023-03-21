@@ -139,8 +139,8 @@
       <ShaderType>Effect</ShaderType>
     </FxCompile>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)general\dependencies\assimp\lib\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)general\dependencies\assimp\lib\Debug;$(ProjectDir)general\dependencies\static libs</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib; DirectXTK.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -174,7 +174,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX 11\source\Controller\TextureManager.h" />
     <ClInclude Include="DirectX 11\source\Math\Colision\boxDX.h" />
     <ClInclude Include="DirectX 11\source\D3D\D3D.h" />
     <ClInclude Include="DirectX 11\source\Buffer\Buffer.h" />
