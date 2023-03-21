@@ -284,6 +284,10 @@
   <ItemGroup>
     <None Include="general\resources\shaders\hologramShader.hlsli" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="general\resources\textures\diamond.dds" />
+    <Image Include="general\resources\textures\obsidian.dds" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

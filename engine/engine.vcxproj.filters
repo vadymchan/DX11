@@ -312,4 +312,8 @@
   <ItemGroup>
     <None Include="general\resources\shaders\hologramShader.hlsli" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="general\resources\textures\diamond.dds" />
+    <Image Include="general\resources\textures\obsidian.dds" />
+  </ItemGroup>
 </Project>
