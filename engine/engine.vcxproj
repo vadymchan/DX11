@@ -139,8 +139,8 @@
       <ShaderType>Effect</ShaderType>
     </FxCompile>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)general\dependencies\assimp\lib\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)general\dependencies\assimp\lib\Debug;$(ProjectDir)general\dependencies\static libs</AdditionalLibraryDirectories>
+      <AdditionalDependencies>assimp-vc143-mtd.lib; DirectXTK.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -268,7 +268,6 @@
   <ItemGroup>
     <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalGeometryShader.hlsl" />
     <FxCompile Include="general\resources\shaders\normalPixelShader.hlsl" />
     <FxCompile Include="general\resources\shaders\normalVertexShader.hlsl" />
   </ItemGroup>

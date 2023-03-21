@@ -49,7 +49,6 @@ namespace engine::DX
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
 		std::shared_ptr<VertexShader> vertexShader;
-		std::shared_ptr<GeometryShader> geometryShader;
 		std::shared_ptr<PixelShader> pixelShader;
 		std::wstring vertexShaderFileName;
 		std::wstring pixelShaderFileName;

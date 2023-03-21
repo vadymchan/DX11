@@ -287,7 +287,6 @@
     <FxCompile Include="general\resources\shaders\normalVertexShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
     <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalGeometryShader.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="general\resources\shaders\hologramShader.hlsli" />
