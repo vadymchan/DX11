@@ -5,7 +5,8 @@ namespace engine::DX
 	const std::vector<UINT> Mesh::Vertex::alignedByteOffsets =
 	{
 		0,
-		sizeof(Mesh::Vertex::position)
+		sizeof(Mesh::Vertex::position),
+		sizeof(Mesh::Vertex::position) + sizeof(Mesh::Vertex::normal),
 	};
 }
 

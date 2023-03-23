@@ -16,6 +16,7 @@ namespace engine::DX
 			window.clearWindow();
 			window.setViews();
 			camera.setCameraBufferVertexShader();
+			TextureManager::getInstance().getSamplerState(L"modelSampler").bind();
 			MeshSystem::getInstance().render(camera, visualizeNormal);
 			window.flush();
 			window.clearDepthStencil();
@@ -25,8 +26,10 @@ namespace engine::DX
 		{
 			initRasterizerDesc(rasterizerDesc);
 			createRasterizerState();
+
+			TextureManager::getInstance().addSamplerState(L"modelSampler", 0, {});
 		}
-		
+
 
 		void changeWireframe(bool wireframeEnabled)
 		{
@@ -74,14 +77,14 @@ namespace engine::DX
 			needToUpdateRasterizer = false;
 		}
 
-		
+
 
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
 		bool visualizeNormal{};
 		bool needToUpdateRasterizer{};
 
-		
+
 	};
 
 }

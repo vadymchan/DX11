@@ -5,7 +5,7 @@
 namespace engine::RC
 {
 
-	void Window::initWindow(const LPCWSTR& title, int xStart, int yStart,  int width, int height, const HINSTANCE& appHandle, int windowShowParams)
+	void Window::initWindow(const LPCSTR& title, int xStart, int yStart,  int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 	{
 
 
@@ -18,12 +18,12 @@ namespace engine::RC
 		wc.hInstance = appHandle;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hIconSm = LoadIcon(NULL, IDI_SHIELD);
-		wc.lpszClassName = L"Window";
+		wc.lpszClassName = "Window";
 
 
 		RegisterClassEx(&wc);
 		hWnd = CreateWindowEx(NULL,
-			L"Window",
+			"Window",
 			title,
 			WS_OVERLAPPEDWINDOW,
 			xStart,

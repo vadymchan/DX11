@@ -9,6 +9,7 @@
 #include "../Buffer/ConstantBuffer.h"
 #include "../Controller/ShaderManager.h"
 #include "../Controller/BufferManager.h"
+#include "../Controller/TextureManager.h"
 
 
 namespace engine::DX
@@ -18,7 +19,8 @@ namespace engine::DX
 	public:
 		struct Material
 		{
-			DirectX::SimpleMath::Vector4 color;
+			//DirectX::SimpleMath::Vector4 color;
+			std::wstring textureName;
 		};
 
 		struct Instance
@@ -30,7 +32,7 @@ namespace engine::DX
 		struct PerMaterial
 		{
 			std::shared_ptr<Material> material;
-			std::vector<std::shared_ptr<Instance>> instances{}; 
+			std::vector<std::shared_ptr<Instance>> instances{};
 		};
 
 		struct PerMesh
@@ -41,14 +43,14 @@ namespace engine::DX
 		struct PerModel
 		{
 			std::shared_ptr<Model> model;
-			std::vector<PerMesh> perMesh{}; 
+			std::vector<PerMesh> perMesh{};
 		};
 
 		std::vector<PerModel> perModel{};
 		VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
-		
+
 		std::vector<std::array<std::wstring, 5>> shaders;
 		/*std::wstring vertexShaderFileName;
 		std::wstring geometryShaderFileName;
@@ -79,7 +81,7 @@ namespace engine::DX
 			meshData.initBuffer(MESH_TO_MODEL_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 		}
 
-		
+
 	};
 }
 

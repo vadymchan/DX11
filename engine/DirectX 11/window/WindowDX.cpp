@@ -50,7 +50,7 @@ namespace engine::DX
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
 
-	void Window::initWindow(const LPCWSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
+	void Window::initWindow(const LPCSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 	{
 		this->width = width;
 		this->height = height;
@@ -63,12 +63,12 @@ namespace engine::DX
 		wc.hInstance = appHandle;
 		wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 		wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
-		wc.lpszClassName = L"DirectX 11";
+		wc.lpszClassName = "DirectX 11";
 
 		RegisterClassEx(&wc);
 
 		hwnd = CreateWindowEx(NULL
-			, L"DirectX 11"
+			, "DirectX 11"
 			, title
 			, WS_OVERLAPPEDWINDOW
 			, xStart

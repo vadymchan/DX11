@@ -3,6 +3,11 @@
 #define TRIANGLE
 //#define SHADERTOY
 
+
+Texture2D modelTexture : register(t0);
+SamplerState modelSampler : register(s0); // later move it to global.hlsl
+
+
 cbuffer ConstBuffer : register(b1)
 {
     float2 resolution; 
@@ -55,9 +60,10 @@ float3 duv(float2 uv)
 struct Input
 {
     float4 position : SV_Position;
+    float2 texCoord : TEXCOORD0;
 };
 
-float3 main(Input input) : SV_TARGET
+float4 main(Input input) : SV_TARGET
 {
     
 #ifdef SHADERTOY
@@ -69,7 +75,10 @@ float3 main(Input input) : SV_TARGET
 #endif
 
 #ifdef TRIANGLE
-    return color.xyz;
+    
+    float4 color = modelTexture.Sample(modelSampler, input.texCoord);
+    
+    return color;
 #endif
 
     

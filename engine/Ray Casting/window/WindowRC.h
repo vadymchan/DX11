@@ -17,7 +17,7 @@ namespace engine::RC
 	{
 	public:
 
-		void initWindow(const LPCWSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
+		void initWindow(const LPCSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 
 		void initColorBuffer();
 

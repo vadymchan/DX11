@@ -5,7 +5,7 @@
 
 
 
-void ApplicationRC::WindowSetup(const LPCWSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
+void ApplicationRC::WindowSetup(const LPCSTR& title, int yStart, int xStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 {
 
 #ifdef _DEBUG
@@ -172,7 +172,7 @@ void ApplicationRC::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	//window 
 	//----------------------------------------------------------------------------------
-	WindowSetup(L"Ray caster", 300, 300, ScreenWidth, ScreenHeight, appHandle, windowShowParams);
+	WindowSetup("Ray caster", 300, 300, ScreenWidth, ScreenHeight, appHandle, windowShowParams);
 	//----------------------------------------------------------------------------------
 
 

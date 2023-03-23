@@ -25,7 +25,7 @@ namespace engine::DX
 		instanceBuffer.initBuffer(INSTANCE_INPUT_SLOT_1, std::vector<UINT>{sizeof(Instance)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE, instances);
 		instanceBufferUpdated = true;
 	}
-	
+
 	void OpaqueInstances::needToUpdateInstanceBuffer()
 	{
 		instanceBufferUpdated = false;
@@ -51,7 +51,7 @@ namespace engine::DX
 			return;
 		}
 
-		
+
 		instanceBuffer.setBuffer();
 		int renderedInstance = 0;
 		for (const auto& model : perModel)
@@ -71,7 +71,7 @@ namespace engine::DX
 
 				meshData.setBufferData(mesh.getMeshToModelMat());
 				meshData.setVertexShaderBuffer();
-				meshData.setGeometryShaderBuffer(); 
+				meshData.setGeometryShaderBuffer();
 
 				for (const auto& perMaterial : model.perMesh.at(meshIndex).perMaterial)
 				{
@@ -81,13 +81,15 @@ namespace engine::DX
 
 					if (m_hasTexture)
 					{
-						materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
-						materialData.setPixelShaderBuffer();
+						TextureManager::getInstance().getTexture2D(perMaterial.material.get()->textureName).bind();
+
+						/*materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
+						materialData.setPixelShaderBuffer();*/
 					}
 
-					
-					
-					
+
+
+
 					g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedModelIndexes, renderedModelVertexes, renderedInstance);
 
 
@@ -99,10 +101,10 @@ namespace engine::DX
 		}
 
 	}
-	
+
 	void OpaqueInstances::addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances)
 	{
-		assert( meshIndex <= model->getMeshesCount() && "Number of meshes in mesh system are more than in the given model");
+		assert(meshIndex <= model->getMeshesCount() && "Number of meshes in mesh system are more than in the given model");
 		instanceBufferUpdated = false;
 
 		for (auto& obj : perModel)

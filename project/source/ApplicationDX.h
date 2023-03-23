@@ -1,18 +1,12 @@
 #pragma once
 
-#include "DirectX 11/window/WindowDX.h"
-#include "general/utils/timer/FPSTimerRC.h"
-#include "general/utils/console/Console.h"
+#include <DirectX 11/window/WindowDX.h>
+#include <general/utils/timer/FPSTimerRC.h>
+#include <general/utils/console/Console.h>
 #include <thread>
 #include <DirectX 11/EngineDX.h>
 
-using Instance = engine::DX::OpaqueInstances::Instance;
-using Material = engine::DX::OpaqueInstances::Material;
-using engine::DX::Model;
-using engine::DX::Mesh;
-using engine::DX::MeshSystem;
-using engine::DX::ModelManager;
-using engine::DX::ShaderManager;
+
 
 class ApplicationDX
 {
@@ -41,7 +35,7 @@ public:
 	bool MoveCamera();
 	void MoveObject(float xPos, float yPos);
 	void RotateCamera(float xPos, float yPos);
-	std::vector<std::shared_ptr<Instance>> generateRandomInstances(size_t numInstances);
+	std::vector<std::shared_ptr<engine::DX::OpaqueInstances::Instance>> generateRandomInstances(size_t numInstances);
 	~ApplicationDX()
 	{
 		engine::DX::D3D::Deinit();
@@ -55,7 +49,6 @@ private:
 	engine::DX::float2 lastMousePos{};
 
 	engine::general::FPSTimer fpsTimer;
-
 
 
 	engine::DX::Engine engine;

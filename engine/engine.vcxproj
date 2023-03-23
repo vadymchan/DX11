@@ -1,14 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
       <Platform>x64</Platform>
@@ -17,276 +12,424 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{61D00995-60BB-3246-8048-7E5ECD254DE8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{c3c29de7-626f-4939-93ed-9497b41f6e70}</ProjectGuid>
-    <RootNamespace>engine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>engine</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v143</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\vadym\source\repos\vchan playground\engine\Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">engine.dir\Debug\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">engine</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\vadym\source\repos\vchan playground\engine\Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">engine.dir\Release\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">engine</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\vadym\source\repos\vchan playground\engine\MinSizeRel\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">engine.dir\MinSizeRel\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">engine</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.lib</TargetExt>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\vadym\source\repos\vchan playground\engine\RelWithDebInfo\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">engine.dir\RelWithDebInfo\</IntDir>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">engine</TargetName>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.lib</TargetExt>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)general\dependencies\assimp\include;$(ProjectDir)general\dependencies\DirectXTK\Inc;$(ProjectDir)general\dependencies\glm;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(ProjectDir)general\dependencies\assimp\include;$(ProjectDir)general\dependencies\DirectXTK\Inc;$(ProjectDir)general\dependencies\glm;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
-    <Link>
-      <SubSystem>
-      </SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
-    </ClCompile>
-    <Link>
-      <SubSystem>
-      </SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_FORCE_LEFT_HANDED;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/glm/source"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;CMAKE_INTDIR="Debug"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
     </ClCompile>
-    <Link>
-      <SubSystem>
-      </SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
     <PostBuildEvent>
-      <Message>
-      </Message>
+      <Message></Message>
+      <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll" "C:/Users/vadym/source/repos/vchan playground"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
     </PostBuildEvent>
-    <FxCompile>
-      <ShaderModel>5.0</ShaderModel>
-      <ShaderType>Effect</ShaderType>
-    </FxCompile>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)general\dependencies\assimp\lib\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib</AdditionalDependencies>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLM_FORCE_LEFT_HANDED;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/glm/source"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="Release"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
     </ClCompile>
-    <Link>
-      <SubSystem>
-      </SubSystem>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
     <PostBuildEvent>
-      <Message>
-      </Message>
+      <Message></Message>
+      <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll" "C:/Users/vadym/source/repos/vchan playground"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
     </PostBuildEvent>
-    <FxCompile>
-      <ShaderModel>5.0</ShaderModel>
-      <ShaderType>Effect</ShaderType>
-    </FxCompile>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)general\dependencies\assimp\lib\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>assimp-vc143-mtd.lib</AdditionalDependencies>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <ClCompile>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/glm/source"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MinSpace</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="MinSizeRel"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll" "C:/Users/vadym/source/repos/vchan playground"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <ClCompile>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/glm/source"</AdditionalOptions>
+      <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <Optimization>MaxSpeed</Optimization>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <UseFullPaths>false</UseFullPaths>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR="RelWithDebInfo"</PreprocessorDefinitions>
+      <ObjectFileName>$(IntDir)</ObjectFileName>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+    <PostBuildEvent>
+      <Message></Message>
+      <Command>setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E copy "C:/Users/vadym/source/repos/vchan playground/engine/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll" "C:/Users/vadym/source/repos/vchan playground"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DirectX 11\source\Controller\TextureManager.h" />
-    <ClInclude Include="DirectX 11\source\Math\Colision\boxDX.h" />
-    <ClInclude Include="DirectX 11\source\D3D\D3D.h" />
-    <ClInclude Include="DirectX 11\source\Buffer\Buffer.h" />
-    <ClInclude Include="DirectX 11\source\Buffer\ConstantBuffer.h" />
-    <ClInclude Include="DirectX 11\source\Buffer\DepthStencilBuffer.h" />
-    <ClInclude Include="DirectX 11\source\Math\Movement\MeshMover.h" />
-    <ClInclude Include="DirectX 11\source\Shader\DomainShader.h" />
-    <ClInclude Include="DirectX 11\source\Shader\GeometryShader.h" />
-    <ClInclude Include="DirectX 11\source\Shader\HullShader.h" />
-    <ClInclude Include="DirectX 11\source\Texture\DDSTextureLoader11.h" />
-    <ClInclude Include="DirectX 11\source\Texture\Texture2D.h" />
-    <ClInclude Include="DirectX 11\source\Utils\Camera.h" />
-    <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
-    <ClInclude Include="DirectX 11\source\Controller\BufferManager.h" />
-    <ClInclude Include="DirectX 11\source\Controller\ModelManager.h" />
-    <ClInclude Include="DirectX 11\source\Buffer\IndexBuffer.h" />
-    <ClInclude Include="DirectX 11\source\MeshSystem\Mesh.h" />
-    <ClInclude Include="DirectX 11\source\MeshSystem\MeshSystem.h" />
-    <ClInclude Include="DirectX 11\source\MeshSystem\Model.h" />
-    <ClInclude Include="DirectX 11\source\MeshSystem\OpaqueInstances.h" />
-    <ClInclude Include="DirectX 11\source\Controller\ShaderManager.h" />
-    <ClInclude Include="DirectX 11\source\Renderer.h" />
-    <ClInclude Include="DirectX 11\source\Shader\PixelShader.h" />
-    <ClInclude Include="DirectX 11\source\Shader\Shader.h" />
-    <ClInclude Include="DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.h" />
-    <ClInclude Include="DirectX 11\source\Vertex.h" />
-    <ClInclude Include="DirectX 11\source\Buffer\VertexBuffer.h" />
-    <ClInclude Include="DirectX 11\source\Shader\VertexShader.h" />
-    <ClInclude Include="DirectX 11\window\WindowDX.h" />
-    <ClInclude Include="DirectX 11\EngineDX.h" />
-    <ClInclude Include="general\include\SimpleMathToHLSL.h" />
-    <ClInclude Include="DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h" />
-    <ClInclude Include="Ray Casting\utils\Camera.h" />
-    <ClInclude Include="general\include\win.h" />
-    <ClInclude Include="general\include\win_def.h" />
-    <ClInclude Include="general\include\win_undef.h" />
-    <ClInclude Include="general\utils\console\Console.h" />
-    <ClInclude Include="Ray Casting\render\SceneRC.h" />
-    <ClInclude Include="Ray Casting\source\material\coloredDirectionLightRC.h" />
-    <ClInclude Include="Ray Casting\source\material\coloredMeshRC.h" />
-    <ClInclude Include="Ray Casting\source\material\coloredPlaneRC.h" />
-    <ClInclude Include="Ray Casting\source\material\coloredPointLightRC.h" />
-    <ClInclude Include="Ray Casting\source\material\coloredSphereRC.h" />
-    <ClInclude Include="Ray Casting\source\material\coloredSpotLightRC.h" />
-    <ClInclude Include="Ray Casting\source\material\coloredTriangleRC.h" />
-    <ClInclude Include="Ray Casting\source\material\materialRC.h" />
-    <ClInclude Include="Ray Casting\source\math\boxRC.h" />
-    <ClInclude Include="Ray Casting\source\math\directionalLightRC.h" />
-    <ClInclude Include="Ray Casting\source\math\intersectionRC.h" />
-    <ClInclude Include="Ray Casting\source\math\meshRC.h" />
-    <ClInclude Include="Ray Casting\source\math\planeRC.h" />
-    <ClInclude Include="Ray Casting\source\math\pointLightRC.h" />
-    <ClInclude Include="Ray Casting\source\math\rayRC.h" />
-    <ClInclude Include="Ray Casting\source\math\sphereRC.h" />
-    <ClInclude Include="Ray Casting\source\math\spotLightRC.h" />
-    <ClInclude Include="Ray Casting\source\math\triangleRC.h" />
-    <ClInclude Include="Ray Casting\utils\BVH\TriangleOctreeRC.h" />
-    <ClInclude Include="Ray Casting\utils\Dragger\IObjectMoverRC.h" />
-    <ClInclude Include="Ray Casting\utils\Dragger\MeshMoverRC.h" />
-    <ClInclude Include="Ray Casting\utils\Dragger\PlaneMoverRC.h" />
-    <ClInclude Include="Ray Casting\utils\Dragger\SphereMoverRC.h" />
-    <ClInclude Include="Ray Casting\utils\Dragger\TriangleMoverRC.h" />
-    <ClInclude Include="Ray Casting\utils\parallel\parallel_executorRC.h" />
-    <ClInclude Include="general\utils\timer\FPSTimerRC.h" />
-    <ClInclude Include="Ray Casting\window\WindowRC.h" />
+    <CustomBuild Include="C:\Users\vadym\source\repos\vchan playground\engine\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/vadym/source/repos/vchan playground/engine/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/vadym/source/repos/vchan playground" "-BC:/Users/vadym/source/repos/vchan playground" --check-stamp-file "C:/Users/vadym/source/repos/vchan playground/engine/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\glm-prefix\tmp\glm-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\vadym\source\repos\vchan playground\engine\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/vadym/source/repos/vchan playground/engine/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/vadym/source/repos/vchan playground" "-BC:/Users/vadym/source/repos/vchan playground" --check-stamp-file "C:/Users/vadym/source/repos/vchan playground/engine/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\glm-prefix\tmp\glm-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\vadym\source\repos\vchan playground\engine\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/vadym/source/repos/vchan playground/engine/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/vadym/source/repos/vchan playground" "-BC:/Users/vadym/source/repos/vchan playground" --check-stamp-file "C:/Users/vadym/source/repos/vchan playground/engine/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\glm-prefix\tmp\glm-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\vadym\source\repos\vchan playground\engine\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/vadym/source/repos/vchan playground/engine/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/vadym/source/repos/vchan playground" "-BC:/Users/vadym/source/repos/vchan playground" --check-stamp-file "C:/Users/vadym/source/repos/vchan playground/engine/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;C:\Users\vadym\source\repos\vchan playground\engine\general\dependencies\glm\glm-prefix\tmp\glm-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\vadym\source\repos\vchan playground\engine\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DirectX 11\EngineDX.cpp" />
-    <ClCompile Include="DirectX 11\source\Controller\ModelManager.cpp" />
-    <ClCompile Include="DirectX 11\source\Controller\ShaderManager.cpp" />
-    <ClCompile Include="DirectX 11\source\Math\Colision\boxDX.cpp" />
-    <ClCompile Include="DirectX 11\source\D3D\D3D.cpp" />
-    <ClCompile Include="DirectX 11\source\MeshSystem\Mesh.cpp" />
-    <ClCompile Include="DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.cpp" />
-    <ClCompile Include="DirectX 11\source\MeshSystem\MeshSystem.cpp" />
-    <ClCompile Include="DirectX 11\source\MeshSystem\Model.cpp" />
-    <ClCompile Include="DirectX 11\source\MeshSystem\OpaqueInstances.cpp" />
-    <ClCompile Include="DirectX 11\source\Texture\DDSTextureLoader11.cpp" />
-    <ClCompile Include="DirectX 11\source\Utils\Camera.cpp" />
-    <ClCompile Include="DirectX 11\window\WindowDX.cpp" />
-    <ClCompile Include="general\utils\console\Console.cpp" />
-    <ClCompile Include="DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp" />
-    <ClCompile Include="Ray Casting\render\SceneRC.cpp" />
-    <ClCompile Include="Ray Casting\source\math\boxRC.cpp" />
-    <ClCompile Include="Ray Casting\source\math\meshRC.cpp" />
-    <ClCompile Include="Ray Casting\source\math\planeRC.cpp" />
-    <ClCompile Include="Ray Casting\source\math\rayRC.cpp" />
-    <ClCompile Include="Ray Casting\source\math\sphereRC.cpp" />
-    <ClCompile Include="Ray Casting\source\math\triangleRC.cpp" />
-    <ClCompile Include="Ray Casting\utils\BVH\TriangleOctreeRC.cpp" />
-    <ClCompile Include="Ray Casting\utils\parallel\parallel_executorRC.cpp" />
-    <ClCompile Include="general\utils\timer\FPSTimerRC.cpp" />
-    <ClCompile Include="Ray Casting\window\WindowRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Controller\ModelManager.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Controller\ShaderManager.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\D3D\D3D.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Math\Colision\boxDX.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\MeshSystem\Mesh.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\MeshSystem\MeshSystem.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\MeshSystem\Model.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\MeshSystem\OpaqueInstances.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Texture\DDSTextureLoader11.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Utils\Camera.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\window\WindowDX.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\EngineDX.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\general\utils\timer\FPSTimerRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\general\utils\console\Console.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\render\SceneRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\boxRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\meshRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\planeRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\rayRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\sphereRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\triangleRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\BVH\TriangleOctreeRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\parallel\parallel_executorRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\window\WindowRC.cpp" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Buffer\Buffer.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Buffer\ConstantBuffer.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Buffer\DepthStencilBuffer.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Buffer\IndexBuffer.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Buffer\VertexBuffer.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Controller\BufferManager.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Controller\TextureManager.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Math\Movement\MeshMover.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Shader\Shader.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Shader\VertexShader.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Shader\HullShader.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Shader\DomainShader.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Shader\GeometryShader.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Shader\PixelShader.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Texture\SampleState.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Texture\Texture2D.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Renderer.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\EngineDX.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\general\include\SimpleMathToHLSL.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\general\include\win.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\general\include\win_def.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\general\include\win_undef.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\material\coloredMeshRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\material\coloredPlaneRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\material\coloredPointLightRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\material\coloredSphereRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\material\coloredSpotLightRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\material\coloredTriangleRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\material\materialRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\material\coloredDirectionLightRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\Camera.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\Dragger\IObjectMoverRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\Dragger\MeshMoverRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\Dragger\PlaneMoverRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\Dragger\SphereMoverRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\Dragger\TriangleMoverRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Controller\ModelManager.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Controller\ShaderManager.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\D3D\D3D.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Math\Colision\boxDX.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\MeshSystem\Mesh.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\MeshSystem\MeshSystem.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\MeshSystem\Model.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\MeshSystem\OpaqueInstances.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Texture\DDSTextureLoader11.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\source\Utils\Camera.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectX 11\window\WindowDX.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\general\utils\timer\FPSTimerRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\general\utils\console\Console.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\render\SceneRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\boxRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\meshRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\planeRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\rayRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\sphereRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\source\math\triangleRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\BVH\TriangleOctreeRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\utils\parallel\parallel_executorRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan playground\engine\Ray Casting\window\WindowRC.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="general\resources\shaders\colorPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\colorVertexShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramDomainShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramGeometryShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramHullShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalVisualizerGeometryShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalVisualizerPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalVisualizerVertexShader.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="general\resources\shaders\hologramShader.hlsli" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="general\resources\textures\diamond.dds" />
-    <Image Include="general\resources\textures\obsidian.dds" />
+    <ProjectReference Include="C:\Users\vadym\source\repos\vchan playground\ZERO_CHECK.vcxproj">
+      <Project>{647E09C2-5DA4-3161-94B1-F47DA2BEC829}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\vadym\source\repos\vchan playground\engine\DirectXTK.vcxproj">
+      <Project>{7F20467D-43A6-32F0-9BBB-F222C9BD678D}</Project>
+      <Name>DirectXTK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\vadym\source\repos\vchan playground\engine\assimp.vcxproj">
+      <Project>{7993048B-8AEC-3336-BECD-59D42AFBA830}</Project>
+      <Name>assimp</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\vadym\source\repos\vchan playground\engine\glm.vcxproj">
+      <Project>{8A50B38D-65F1-36EF-9D82-BF6F8D1B54D0}</Project>
+      <Name>glm</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

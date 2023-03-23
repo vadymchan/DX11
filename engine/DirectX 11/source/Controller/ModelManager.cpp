@@ -31,13 +31,9 @@ namespace engine::DX
 			auto& srcMesh = assimpScene->mMeshes[i];
 			auto& dstMesh = model.meshes.at(i);
 
-
-
 			dstMesh.name = srcMesh->mName.C_Str();
 			dstMesh.box.min = reinterpret_cast<float3&>(srcMesh->mAABB.mMin);
 			dstMesh.box.max = reinterpret_cast<float3&>(srcMesh->mAABB.mMax);
-
-
 
 			dstMesh.vertices.resize(srcMesh->mNumVertices);
 			dstMesh.indices.resize(srcMesh->mNumFaces * 3);
@@ -50,6 +46,7 @@ namespace engine::DX
 			{
 				dstMesh.vertices.at(v).position = reinterpret_cast<DirectX::SimpleMath::Vector3&>(srcMesh->mVertices[v]);
 				dstMesh.vertices.at(v).normal = reinterpret_cast<DirectX::SimpleMath::Vector3&>(srcMesh->mNormals[v]);
+				dstMesh.vertices.at(v).texCoord = reinterpret_cast<DirectX::SimpleMath::Vector2&>(srcMesh->mTextureCoords[0][v]);
 			}
 
 
@@ -96,7 +93,7 @@ namespace engine::DX
 	}
 
 
-	std::shared_ptr<Model> ModelManager::getModel(const std::string& modelFileName) 
+	std::shared_ptr<Model> ModelManager::getModel(const std::string& modelFileName)
 	{
 		auto pair = models.find(modelFileName);
 		if (pair != models.end()) // model is already created
@@ -105,7 +102,7 @@ namespace engine::DX
 		}
 		else if (modelFileName == cubeTag || modelFileName == debugCubeTag)
 		{
-			
+
 			createCube(modelFileName);
 		}
 		else
@@ -126,39 +123,74 @@ namespace engine::DX
 		//cube data
 		//----------------------------------------------------------------------
 
+		//std::vector<Mesh::Vertex> cubeVerticesSeparateNormal = {
+		//	{ { -0.5f, -0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f } }, // Front Face - Bottom Left
+		//	{ { -0.5f,  0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f } }, // Front Face - Top Left
+		//	{ { 0.5f,  0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f } }, // Front Face - Top Right
+		//	{ { 0.5f, -0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f } }, // Front Face - Bottom Right
+
+		//	{ { -0.5f, -0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f } }, // Back Face - Bottom Left
+		//	{ { -0.5f,  0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f } }, // Back Face - Top Left
+		//	{ { 0.5f,  0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f } }, // Back Face - Top Right
+		//	{ { 0.5f, -0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f } }, // Back Face - Bottom Right
+
+		//	{ { -0.5f, -0.5f, -0.5f },{ 0.0f, -1.0f, 0.0f } }, // Bottom Face - Top Left
+		//	{ { -0.5f, -0.5f,  0.5f },{ 0.0f, -1.0f, 0.0f } }, // Bottom Face - Bottom Left
+		//	{ { 0.5f, -0.5f,  0.5f },{ 0.0f, -1.0f, 0.0f } }, // Bottom Face - Bottom Right
+		//	{ { 0.5f, -0.5f, -0.5f },{ 0.0f, -1.0f, 0.0f } }, // Bottom Face - Top Right
+
+		//	{ { -0.5f,  0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f } }, // Top Face - Top Left
+		//	{ { -0.5f,  0.5f,  0.5f },{ 0.0f, 1.0f, 0.0f } }, // Top Face - Bottom Left
+		//	{ { 0.5f,  0.5f,  0.5f },{ 0.0f, 1.0f, 0.0f } }, // Top Face - Bottom Right
+		//	{ { 0.5f,  0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f } }, // Top Face - Top Right
+
+		//	{ { 0.5f,  0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f } }, // Right Face - Top Left
+		//	{ { 0.5f,  0.5f,  0.5f },{ 1.0f, 0.0f, 0.0f } }, // Right Face - Top Right
+		//	{ { 0.5f, -0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f } }, // Right Face - Bottom Left
+		//	{ { 0.5f, -0.5f,  0.5f },{ 1.0f, 0.0f, 0.0f } }, // Right Face - Bottom Right
+
+		//	{ { -0.5f,  0.5f,  0.5f },{ -1.0f, 0.0f, 0.0f } }, // Left Face - Top Left
+		//	{ { -0.5f,  0.5f, -0.5f },{ -1.0f, 0.0f, 0.0f } }, // Left Face - Top Right
+		//	{ { -0.5f, -0.5f,  0.5f },{ -1.0f, 0.0f, 0.0f } }, // Left Face - Bottom Left
+		//	{ { -0.5f, -0.5f, -0.5f },{ -1.0f, 0.0f, 0.0f } }, // Left Face - Bottom Right
+
+
+		//};
+
 		std::vector<Mesh::Vertex> cubeVerticesSeparateNormal = {
-			{ { -0.5f, -0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f } }, // Front Face - Bottom Left
-			{ { -0.5f,  0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f } }, // Front Face - Top Left
-			{ { 0.5f,  0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f } }, // Front Face - Top Right
-			{ { 0.5f, -0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f } }, // Front Face - Bottom Right
 
-			{ { -0.5f, -0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f } }, // Back Face - Bottom Left
-			{ { -0.5f,  0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f } }, // Back Face - Top Left
-			{ { 0.5f,  0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f } }, // Back Face - Top Right
-			{ { 0.5f, -0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f } }, // Back Face - Bottom Right
+			{ { -0.5f, -0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 0.0f } }, // Front Face - Bottom Left
+			{ { -0.5f,  0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f },{ 0.0f, 1.0f } }, // Front Face - Top Left
+			{ { 0.5f,  0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 1.0f } }, // Front Face - Top Right
+			{ { 0.5f, -0.5f, -0.5f },{ 0.0f, 0.0f, -1.0f },{ 1.0f, 0.0f } }, // Front Face - Bottom Right
 
-			{ { -0.5f, -0.5f, -0.5f },{ 0.0f, -1.0f, 0.0f } }, // Bottom Face - Top Left
-			{ { -0.5f, -0.5f,  0.5f },{ 0.0f, -1.0f, 0.0f } }, // Bottom Face - Bottom Left
-			{ { 0.5f, -0.5f,  0.5f },{ 0.0f, -1.0f, 0.0f } }, // Bottom Face - Bottom Right
-			{ { 0.5f, -0.5f, -0.5f },{ 0.0f, -1.0f, 0.0f } }, // Bottom Face - Top Right
+			{ { -0.5f, -0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 0.0f } }, // Back Face - Bottom Left
+			{ { -0.5f,  0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f },{ 1.0f, 1.0f } }, // Back Face - Top Left
+			{ { 0.5f,  0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 1.0f } }, // Back Face - Top Right
+			{ { 0.5f, -0.5f,  0.5f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, 0.0f } }, // Back Face - Bottom Right
 
-			{ { -0.5f,  0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f } }, // Top Face - Top Left
-			{ { -0.5f,  0.5f,  0.5f },{ 0.0f, 1.0f, 0.0f } }, // Top Face - Bottom Left
-			{ { 0.5f,  0.5f,  0.5f },{ 0.0f, 1.0f, 0.0f } }, // Top Face - Bottom Right
-			{ { 0.5f,  0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f } }, // Top Face - Top Right
+			{ { -0.5f, -0.5f, -0.5f },{ 0.0f, -1.0f, 0.0f },{ 0.0f, 0.0f } }, // Bottom Face - Top Left
+			{ { -0.5f, -0.5f,  0.5f },{ 0.0f, -1.0f, 0.0f },{ 0.0f, 1.0f } }, // Bottom Face - Bottom Left
+			{ { 0.5f, -0.5f,  0.5f },{ 0.0f, -1.0f, 0.0f },{ 1.0f, 1.0f } }, // Bottom Face - Bottom Right
+			{ { 0.5f, -0.5f, -0.5f },{ 0.0f, -1.0f, 0.0f },{ 1.0f, 0.0f } }, // Bottom Face - Top Right
 
-			{ { 0.5f,  0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f } }, // Right Face - Top Left
-			{ { 0.5f,  0.5f,  0.5f },{ 1.0f, 0.0f, 0.0f } }, // Right Face - Top Right
-			{ { 0.5f, -0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f } }, // Right Face - Bottom Left
-			{ { 0.5f, -0.5f,  0.5f },{ 1.0f, 0.0f, 0.0f } }, // Right Face - Bottom Right
+			{ { -0.5f,  0.5f, -0.5f},{ 0.0f, 1.0f, 0.0f },{ 0.0f, 0.0f } }, // Top Face - Top Left
+			{ { -0.5f, 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f },{ 0.0f, 1.0f } }, // Top Face - Bottom Left
+			{ { 0.5f, 0.5f, 0.5f },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 1.0f } }, // Top Face - Bottom Right
+			{ { 0.5f, 0.5f, -0.5f },{ 0.0f, 1.0f, 0.0f },{ 1.0f, 0.0f } }, // Top Face - Top Right
 
-			{ { -0.5f,  0.5f,  0.5f },{ -1.0f, 0.0f, 0.0f } }, // Left Face - Top Left
-			{ { -0.5f,  0.5f, -0.5f },{ -1.0f, 0.0f, 0.0f } }, // Left Face - Top Right
-			{ { -0.5f, -0.5f,  0.5f },{ -1.0f, 0.0f, 0.0f } }, // Left Face - Bottom Left
-			{ { -0.5f, -0.5f, -0.5f },{ -1.0f, 0.0f, 0.0f } }, // Left Face - Bottom Right
+			{ { 0.5f,  0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } }, // Right Face - Top Left
+			{ { 0.5f,  0.5f,  0.5f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } }, // Right Face - Top Right
+			{ { 0.5f, -0.5f, -0.5f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } }, // Right Face - Bottom Left
+			{ { 0.5f, -0.5f,  0.5f },{ 1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } }, // Right Face - Bottom Right
 
+			{ { -0.5f,  0.5f,  0.5f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 0.0f } }, // Left Face - Top Left
+			{ { -0.5f,  0.5f, -0.5f },{ -1.0f, 0.0f, 0.0f },{ 0.0f, 1.0f } }, // Left Face - Top Right
+			{ { -0.5f, -0.5f,  0.5f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 0.0f } }, // Left Face - Bottom Left
+			{ { -0.5f, -0.5f, -0.5f },{ -1.0f, 0.0f, 0.0f },{ 1.0f, 1.0f } }, // Left Face - Bottom Right
 
 		};
+
 
 		std::vector<unsigned int> cubeIndicesSeparateNormal = {
 			0, 1, 2,

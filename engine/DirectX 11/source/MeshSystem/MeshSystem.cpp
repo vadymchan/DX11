@@ -25,7 +25,7 @@ namespace engine::DX
 				//hull shader
 				if (!shaderGroup.at(1).empty())
 				{
-					
+
 					ShaderManager::getInstance().getHullShader(shaderGroup.at(1))->bind();
 				}
 				else
