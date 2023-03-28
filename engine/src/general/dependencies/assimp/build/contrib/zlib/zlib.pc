@@ -1,0 +1,13 @@
+prefix=C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out
+exec_prefix=C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out
+libdir=
+sharedlibdir=
+includedir=
+
+Name: zlib
+Description: zlib compression library
+Version: 
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}

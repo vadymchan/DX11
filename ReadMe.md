@@ -1,7 +1,7 @@
 to build project:
- - init submodules: git submodule update --init --recursive
- - build submodule assimp and DirectXTK (located in engine\general\dependencies)
- - add assimp dll file 
- - place assimp dll file, which is located in assimp\bin directory to the $(Target) directory of the solution  
- - go to the "project" property pages and in Configuration Properties\Debugging change working directory to $(SolutionDir)
- Run project   
+ - go to cmd (or any other console) and type command from solution root folder (cmake .\CMakeLists.txt)
+ - open project.sln
+ - set project as startup project
+ - build and run
+
+ P.S. sometimes you need to delete CMakeCache.txt and CMakeFiles to build project

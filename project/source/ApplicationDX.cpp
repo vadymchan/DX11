@@ -45,7 +45,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
 	rasterizerDesc.DepthClipEnable = true;
 
-	engine.initRenderer(rasterizerDesc);
+	engine.initRenderer(rasterizerDesc, L"grass_field_debug.dds");
 	//shaders & input layout
 	// -------------------------------------------------------------------------------------------------
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDesc
@@ -61,9 +61,21 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
+	std::vector<D3D11_INPUT_ELEMENT_DESC> hologramInputElementDesc
+	{
+		//model vertex buffer
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//instance vertex buffer
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+	};
+
 	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addVertexShader(colorVertexShaderFileName, inputElementDesc);
-	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, inputElementDesc);
+	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, hologramInputElementDesc);
 	ShaderManager::getInstance().addHullShader(hologramHullShaderFileName);
 	ShaderManager::getInstance().addDomainShader(hologramDomainShaderFileName);
 	ShaderManager::getInstance().addGeometryShader(normalGeometryShaderFileName);
@@ -79,8 +91,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
-	TextureManager::getInstance().addTexture2D(L"diamond.dds", 0, textureDesc);
+	//TextureManager::getInstance().addTexture2D(L"diamond.dds", 0, textureDesc);
 	TextureManager::getInstance().addTexture2D(L"obsidian.dds", 0, textureDesc);
+	TextureManager::getInstance().addTexture2D(L"blockPetroPoroshenko.dds", 0, textureDesc);
+	//TextureManager::getInstance().addTexture2D(L"block.dds", 0, textureDesc);
 
 	// opaque instance
 	//---------------------------------------------------------------------------------------------------
@@ -152,9 +166,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 		std::make_shared<Instance>(Instance{
 			engine::DX::float4x4
-			{{{2.5,0,0,-4},
-			{0,0,2.5,0},
-			{0,-2.5,0,0},
+			{{{1,0,0,-4},
+			{0,0,1,0},
+			{0,-1,0,0},
 			{0,0,0,1},}}
 		}),
 	};
@@ -203,11 +217,12 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	};
 
-	std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond.dds" });
+	//std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond.dds" });
 	std::shared_ptr<Material> obsidian = std::make_shared<Material>(Material{ L"obsidian.dds" });
+	std::shared_ptr<Material> ukranianWilleyWonka = std::make_shared<Material>(Material{ L"blockPetroPoroshenko.dds" });
 	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
 
-	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, diamond, diamondInstance);
+	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, ukranianWilleyWonka, diamondInstance);
 	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, obsidian, cubeInstance);
 
 

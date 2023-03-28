@@ -16,7 +16,7 @@ add_executable(project ${PROJECT_SOURCE} ${PROJECT_HEADER})
 target_compile_features(project PRIVATE cxx_std_17)
 
 target_include_directories(project SYSTEM PUBLIC
-    "${CMAKE_CURRENT_SOURCE_DIR}/../engine"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../engine/src"
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

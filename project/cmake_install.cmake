@@ -1,4 +1,4 @@
-# Install script for directory: C:/Users/vadym/source/repos/vchan playground/project
+# Install script for directory: C:/Users/vadym/source/repos/vchan/project
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
