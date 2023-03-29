@@ -2,7 +2,7 @@
 #include "../window/WindowDX.h"
 #include "Utils/Camera.h"
 #include "MeshSystem/MeshSystem.h"
-#include "Texture/Skybox.h"
+
 
 namespace engine::DX
 {
@@ -22,17 +22,7 @@ namespace engine::DX
 			TextureManager::getInstance().getSamplerState(L"g_anisotropicWrap").bind();
 			MeshSystem::getInstance().render(camera, visualizeNormal);
 
-			camera.setInvCameraBufferVertexShader();
-			ShaderManager::getInstance().getVertexShader(L"skyboxVertexShader.hlsl")->bind();
-			ShaderManager::getInstance().getPixelShader(L"skyboxPixelShader.hlsl")->bind();
-			g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-			g_devcon->HSSetShader(nullptr, nullptr, 0);
-			g_devcon->DSSetShader(nullptr, nullptr, 0);
-			g_devcon->GSSetShader(nullptr, nullptr, 0);
-
-			TextureManager::getInstance().getTexture2D(m_skyboxTextureFileName).bind();
-			g_devcon->Draw(3, 0);
+			
 			
 			window.flush();
 			window.clearDepthStencil();
@@ -47,7 +37,7 @@ namespace engine::DX
 			createRasterizerState();
 
 			initSamplers();
-			m_skyboxTextureFileName = skyboxTextureFileName;
+			
 
 			initSkybox(skyboxTextureFileName);
 		}
@@ -73,7 +63,7 @@ namespace engine::DX
 
 		void changeSkybox(const std::wstring& textureFileName)
 		{
-			skybox.setTexture(textureFileName);
+			m_skyboxTextureFileName = textureFileName;
 		}
 
 		void updateRasterizer()
@@ -92,18 +82,28 @@ namespace engine::DX
 
 	private:
 
+		void renderSkybox(Camera& camera)
+		{
+			camera.setInvCameraBufferVertexShader();
+			ShaderManager::getInstance().getVertexShader(L"skyboxVertexShader.hlsl")->bind();
+			ShaderManager::getInstance().getPixelShader(L"skyboxPixelShader.hlsl")->bind();
+			g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+			g_devcon->HSSetShader(nullptr, nullptr, 0);
+			g_devcon->DSSetShader(nullptr, nullptr, 0);
+			g_devcon->GSSetShader(nullptr, nullptr, 0);
+
+			TextureManager::getInstance().getTexture2D(m_skyboxTextureFileName).bind();
+			g_devcon->Draw(3, 0);
+		}
+
 		void initSkybox(const std::wstring& skyboxTextureFileName)
 		{
+			m_skyboxTextureFileName = skyboxTextureFileName;
 			//initing skybox shaders
 
-			std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout
-			{
-				{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, SKYBOX_VERTEX_BUFFER_DATA_0, Skybox::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD",    0, DXGI_FORMAT_R32G32_FLOAT, SKYBOX_VERTEX_BUFFER_DATA_0,Skybox::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
-			};
-
+			std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout {};
 			ShaderManager::getInstance().addVertexShader(L"skyboxVertexShader.hlsl", inputLayout);
-
 			ShaderManager::getInstance().addPixelShader(L"skyboxPixelShader.hlsl");
 
 			//initing skybox texture
@@ -117,7 +117,6 @@ namespace engine::DX
 				TextureManager::getInstance().addTexture2D(skyboxTextureFileName, 0, textureDesc);
 			}
 
-			skybox.initSkybox(skyboxTextureFileName);
 		}
 
 		void initSamplers()
@@ -165,7 +164,6 @@ namespace engine::DX
 
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
-		Skybox skybox; // may be changed later to a vector of skyboxes
 		std::wstring m_skyboxTextureFileName;
 		bool visualizeNormal{};
 		bool needToUpdateRasterizer{};

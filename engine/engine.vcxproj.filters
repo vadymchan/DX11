@@ -1,292 +1,279 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Controller\ModelManager.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Controller\ModelManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Controller\ShaderManager.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Controller\ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\D3D\D3D.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\D3D\D3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\MeshSystem.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\MeshSystem\MeshSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Model.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\MeshSystem\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\OpaqueInstances.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\MeshSystem\OpaqueInstances.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\DDSTextureLoader11.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Texture\DDSTextureLoader11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Utils\Camera.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Utils\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\window\WindowDX.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\window\WindowDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\EngineDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\general\utils\timer\FPSTimerRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\console\Console.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\general\utils\console\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\render\SceneRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\render\SceneRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\boxRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\boxRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\meshRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\meshRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\planeRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\planeRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\rayRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\rayRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\sphereRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\sphereRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\triangleRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\triangleRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\BVH\TriangleOctreeRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\BVH\TriangleOctreeRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\window\WindowRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\DirectX 11\source\Texture\Skybox.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\Buffer.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Buffer\Buffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\ConstantBuffer.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Buffer\ConstantBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\DepthStencilBuffer.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Buffer\DepthStencilBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\IndexBuffer.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Buffer\IndexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\VertexBuffer.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Buffer\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Controller\BufferManager.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Controller\BufferManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Controller\TextureManager.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Controller\TextureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Movement\MeshMover.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Math\Movement\MeshMover.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Shader\Shader.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Shader\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Shader\VertexShader.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Shader\VertexShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Shader\HullShader.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Shader\HullShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Shader\DomainShader.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Shader\DomainShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Shader\GeometryShader.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Shader\GeometryShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Shader\PixelShader.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Shader\PixelShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\SampleState.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Texture\SampleState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Texture2D.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Texture\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Renderer.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\EngineDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\include\SimpleMathToHLSL.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\general\include\SimpleMathToHLSL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\include\win.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\general\include\win.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\include\win_def.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\general\include\win_def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\include\win_undef.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\general\include\win_undef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\material\coloredMeshRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\material\coloredMeshRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\material\coloredPlaneRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\material\coloredPlaneRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\material\coloredPointLightRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\material\coloredPointLightRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\material\coloredSphereRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\material\coloredSphereRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\material\coloredSpotLightRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\material\coloredSpotLightRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\material\coloredTriangleRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\material\coloredTriangleRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\material\materialRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\material\materialRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\material\coloredDirectionLightRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\material\coloredDirectionLightRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\Camera.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\Dragger\IObjectMoverRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\Dragger\IObjectMoverRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\Dragger\MeshMoverRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\Dragger\MeshMoverRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\Dragger\PlaneMoverRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\Dragger\PlaneMoverRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\Dragger\SphereMoverRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\Dragger\SphereMoverRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\Dragger\TriangleMoverRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\Dragger\TriangleMoverRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Controller\ModelManager.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Controller\ModelManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Controller\ShaderManager.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Controller\ShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\D3D\D3D.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\D3D\D3D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\MeshSystem.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\MeshSystem\MeshSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Model.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\MeshSystem\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\OpaqueInstances.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\MeshSystem\OpaqueInstances.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\DDSTextureLoader11.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Texture\DDSTextureLoader11.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Utils\Camera.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\source\Utils\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\window\WindowDX.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\DirectX 11\window\WindowDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\general\utils\timer\FPSTimerRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\console\Console.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\general\utils\console\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\render\SceneRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\render\SceneRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\boxRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\boxRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\meshRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\meshRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\planeRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\planeRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\rayRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\rayRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\sphereRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\sphereRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\source\math\triangleRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\source\math\triangleRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\BVH\TriangleOctreeRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\BVH\TriangleOctreeRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\src\Ray Casting\window\WindowRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\DirectX 11\source\Texture\Skybox.h" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\vadym\source\repos\vchan\engine\CMakeLists.txt" />
+    <CustomBuild Include="C:\Users\vadym\source\repos\vchan draft\vchan\engine\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{E7A125E6-A25E-3F42-9036-9C256C4AB04A}</UniqueIdentifier>
+      <UniqueIdentifier>{0815E345-3899-3E51-9840-0B8B41C44441}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{38381219-B6EC-3154-9CAB-EA4C74ADE7F8}</UniqueIdentifier>
+      <UniqueIdentifier>{D4A8314E-8063-3349-983A-56DF794D4BE1}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="src\general\resources\textures\diamond.dds" />
-    <Image Include="src\general\resources\textures\grass_field.dds" />
-    <Image Include="src\general\resources\textures\lake_beach.dds" />
-    <Image Include="src\general\resources\textures\mountains.dds" />
-    <Image Include="src\general\resources\textures\night_street.dds" />
-    <Image Include="src\general\resources\textures\obsidian.dds" />
-    <Image Include="src\general\resources\textures\block.dds" />
-    <Image Include="src\general\resources\textures\blockPetroPoroshenko.dds" />
-    <Image Include="src\general\resources\textures\blockPetroPoroshenko.png" />
   </ItemGroup>
 </Project>
