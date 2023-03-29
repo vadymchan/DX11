@@ -9,3 +9,7 @@ to build project: (flexible way)
  to build project: (fast build)
   - go to engine/general/dependencies/ and run init dependencies.bat
   - add assimp dll file (either build assimp or just move existing dll from static libs in engine/general/dependencies/ to the directory, where .exe is located)
+
+  About hw 5 funtionality:
+   - to turn on/off normal visualization press N key
+   - to turn on/off wireframe mode press E key
