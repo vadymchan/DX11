@@ -82,7 +82,6 @@ namespace engine::DX
 		
 
 		std::vector<ShaderGroup> shaders;
-		//std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>> shaders;
 		bool instanceBufferUpdated{};
 		bool m_hasTexture{};
 	public:

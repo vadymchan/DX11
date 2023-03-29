@@ -134,9 +134,6 @@ namespace engine::DX
 						materialData.setPixelShaderBuffer();
 					}
 
-					
-					
-					
 					g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedModelIndexes, renderedModelVertexes, renderedInstance);
 
 
