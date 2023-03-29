@@ -36,7 +36,7 @@ namespace engine::DX
 		*
 		* @return an ID of opaque instance.
 		*/
-		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames);
+		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames);
 
 		void castRay();
 

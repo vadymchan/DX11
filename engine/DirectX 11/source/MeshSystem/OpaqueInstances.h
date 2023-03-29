@@ -16,6 +16,18 @@ namespace engine::DX
 	class OpaqueInstances
 	{
 	public:
+
+		enum class ShaderType
+		{
+			VERTEX_SHADER,
+			HULL_SHADER,
+			DOMAIN_SHADER,
+			GEOMETRY_SHADER,
+			PIXEL_SHADER,
+			SHADER_TYPE_NUM
+
+		};
+
 		struct Material
 		{
 			DirectX::SimpleMath::Vector4 color;
@@ -49,10 +61,7 @@ namespace engine::DX
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
 		
-		std::vector<std::array<std::wstring, 5>> shaders;
-		/*std::wstring vertexShaderFileName;
-		std::wstring geometryShaderFileName;
-		std::wstring pixelShaderFileName;*/
+		std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>> shaders;
 		bool instanceBufferUpdated{};
 		bool m_hasTexture{};
 	public:
@@ -60,11 +69,11 @@ namespace engine::DX
 
 		void needToUpdateInstanceBuffer();
 
-		void setShaders(const std::vector<std::array<std::wstring, 5>>& shaderBatches);
+		void setShaders(const std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>>& shaderBatches);
 
 		void hasTexture(bool value);
 
-		const std::vector<std::array<std::wstring, 5>>& getShaders() const
+		const std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>>& getShaders() const
 		{
 			return shaders;
 		}

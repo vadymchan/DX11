@@ -29,7 +29,7 @@ namespace engine::DX
 	}
 
 
-	uint32_t Engine::createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames)
+	uint32_t Engine::createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames)
 	{
 		return MeshSystem::getInstance().createOpaqueInstance(shaderFileNames);
 	}

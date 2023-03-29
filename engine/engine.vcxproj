@@ -136,7 +136,8 @@
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
-      <ShaderType>Effect</ShaderType>
+      <ShaderType>
+      </ShaderType>
     </FxCompile>
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)general\dependencies\assimp\lib\Debug;$(ProjectDir)general\dependencies\static libs</AdditionalLibraryDirectories>
@@ -266,16 +267,38 @@
     <ClCompile Include="Ray Casting\window\WindowRC.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="general\resources\shaders\colorPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\colorVertexShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramDomainShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramGeometryShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramHullShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalVisualizerGeometryShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalVisualizerPixelShader.hlsl" />
-    <FxCompile Include="general\resources\shaders\normalVisualizerVertexShader.hlsl" />
+    <FxCompile Include="general\resources\shaders\colorPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </EntryPointName>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\colorVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\hologramDomainShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Domain</ShaderType>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\hologramGeometryShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\hologramHullShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Hull</ShaderType>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\hologramPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\hologramVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\normalVisualizerGeometryShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Geometry</ShaderType>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\normalVisualizerPixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="general\resources\shaders\normalVisualizerVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="general\resources\shaders\hologramShader.hlsli" />

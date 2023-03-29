@@ -24,7 +24,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	cameraRotationSpeed = 0.005f;
 	cameraMaxPitch = DirectX::XMConvertToRadians(89.0f);
 	cameraMinPitch = DirectX::XMConvertToRadians(-89.0f);
-	wireframeMode = true;
+	wireframeMode = false;
 #ifdef _DEBUG
 	engine::general::initConsole();
 #endif

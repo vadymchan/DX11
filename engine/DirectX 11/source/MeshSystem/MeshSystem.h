@@ -29,7 +29,7 @@ namespace engine::DX
 		void updateOpaqueInstanceBuffer(const std::weak_ptr<Instance>& instance);
 
 		/// <param name="instances">instance may be change during dragging</param>
-		void addInstances(uint32_t opaqueInstanceID,
+		void addInstances(uint32_t opaqueInstanceID, 
 			const std::shared_ptr<Model>& model,
 			const std::vector<size_t>& meshIndex,
 			const std::shared_ptr<OpaqueInstances::Material>& material,
@@ -66,7 +66,47 @@ namespace engine::DX
 
 		std::vector<ModelIntersection> modelIntersections{};
 
+		enum class RenderMode
+		{
+			DEFAULT,
+			NORMAL_VISUALISER,
+			HOLOGRAM
+		};
 
+		template<RenderMode Mode>
+		void renderMode(OpaqueInstances* opaqueInstance = nullptr, Camera* camera = nullptr) {};
+
+		template<>
+		void renderMode<RenderMode::DEFAULT>(OpaqueInstances* opaqueInstance, Camera* camera)
+		{
+			opaqueInstance->hasTexture(true);
+		}
+
+		template<>
+		void renderMode<RenderMode::NORMAL_VISUALISER>(OpaqueInstances* opaqueInstance, Camera* camera)
+		{
+			opaqueInstance->hasTexture(false);
+		}
+
+		template<>
+		void renderMode<RenderMode::HOLOGRAM>(OpaqueInstances* opaqueInstance, Camera* camera)
+		{
+			opaqueInstance->hasTexture(false);
+
+			time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {general::FPSTimer::getCurrentTick() - general::FPSTimer::initTick, 0, 0, 0}});
+			time.setBuffer();
+			
+			float3 cameraPos = camera->position();
+			cameraPosition.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {cameraPos.x, cameraPos.y, cameraPos.z, 1.0}});
+			cameraPosition.setPixelShaderBuffer();
+			camera->setCameraBufferGeometryShader();
+		}
+
+		RenderMode getRenderMode(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup);
+
+		void setShaders(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup);
+
+		void setPrimitiveTopology(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup);
 
 	};
 
