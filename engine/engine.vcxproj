@@ -185,7 +185,6 @@
     <ClInclude Include="DirectX 11\source\Shader\GeometryShader.h" />
     <ClInclude Include="DirectX 11\source\Shader\HullShader.h" />
     <ClInclude Include="DirectX 11\source\Utils\Camera.h" />
-    <ClInclude Include="DirectX 11\source\ConstBuffer.h" />
     <ClInclude Include="DirectX 11\source\Controller\BufferManager.h" />
     <ClInclude Include="DirectX 11\source\Controller\ModelManager.h" />
     <ClInclude Include="DirectX 11\source\Buffer\IndexBuffer.h" />

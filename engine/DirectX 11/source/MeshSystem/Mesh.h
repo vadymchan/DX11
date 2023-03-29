@@ -59,7 +59,7 @@ namespace engine::DX
 		const float4x4& getMeshToModelMat(uint32_t index) const
 		{
 			assert(index < meshToModelMat.size() && "getMeshToModelMat in Mesh: out of bounds. Error!");
-			return meshToModelMat.at(index);
+			return meshToModelMat[index];
 
 		}
 
@@ -71,7 +71,7 @@ namespace engine::DX
 		const float4x4& getInvMeshToModelMat(uint32_t index) const
 		{
 			assert(index < invMeshToModelMat.size() && "getInvMeshToModelMat in Mesh: out of bounds. Error!");
-			return invMeshToModelMat.at(index);
+			return invMeshToModelMat[index];
 
 		}
 

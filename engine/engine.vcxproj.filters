@@ -120,9 +120,6 @@
     <ClInclude Include="DirectX 11\EngineDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DirectX 11\source\ConstBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DirectX 11\source\Vertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
