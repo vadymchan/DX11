@@ -128,17 +128,6 @@ namespace engine::DX
 
 	MeshSystem::RenderMode MeshSystem::getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup)
 	{
-		/*if (std::any_of(shaderGroup.begin(), shaderGroup.end(),
-			[](const std::wstring& shaderName) { return shaderName.find(L"normalVisualizer") != std::wstring::npos; }))
-		{
-			return RenderMode::NORMAL_VISUALISER;
-		}
-
-		if (std::any_of(shaderGroup.begin(), shaderGroup.end(),
-			[](const std::wstring& shaderName) { return shaderName.find(L"hologram") != std::wstring::npos; }))
-		{
-			return RenderMode::HOLOGRAM;
-		}*/
 
 		switch (shaderGroup.type)
 		{

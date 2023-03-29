@@ -156,9 +156,9 @@ namespace engine::DX
 						
 					}
 
-
-
-
+					
+					
+					
 					g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedModelIndexes, renderedModelVertexes, renderedInstance);
 
 

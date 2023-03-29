@@ -212,9 +212,6 @@
       <ImportLibrary>C:/Users/vadym/source/repos/vchan/project/MinSizeRel/project.lib</ImportLibrary>
       <ProgramDataBaseFile>C:/Users/vadym/source/repos/vchan/project/MinSizeRel/project.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SolutionDir)engine\general\dependencies\DirectXTK\Bin\Desktop_2022\x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
