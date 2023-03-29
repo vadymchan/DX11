@@ -22,7 +22,7 @@ namespace engine::DX
 		{
 			camera.setView(position, direction, cameraUp);
 			camera.setPerspective(DirectX::XMConvertToRadians(fov), aspect, zNear, zFar);
-			camera.initBuffer(PER_VIEW_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
+			camera.initBuffer(PER_VIEW_SHADER, INV_PER_VIEW_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
 		}
 
 		void Engine::addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances)

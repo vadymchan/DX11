@@ -2,13 +2,13 @@
 
 namespace engine::DX
 {
-	void Camera::initBuffer(UINT registerNumber, D3D11_USAGE bufferUsage, UINT CPUAccessFlags, UINT miscFlags, UINT structureByteStride, UINT sysMemPitch, UINT sysMemSlicePitch)
+	void Camera::initBuffer(UINT registerNumber, UINT invCameraRegisterNumber, D3D11_USAGE bufferUsage, UINT CPUAccessFlags, UINT miscFlags, UINT structureByteStride, UINT sysMemPitch, UINT sysMemSlicePitch)
 	{
 		cameraBuffer.initBuffer(registerNumber, bufferUsage,
 			CPUAccessFlags, miscFlags, structureByteStride,
 			sysMemPitch, sysMemSlicePitch);
 
-		invCameraBuffer.initBuffer(1, bufferUsage,
+		invCameraBuffer.initBuffer(invCameraRegisterNumber, bufferUsage,
 			CPUAccessFlags, miscFlags, structureByteStride,
 			sysMemPitch, sysMemSlicePitch);
 
@@ -24,7 +24,6 @@ namespace engine::DX
 	{
 		updateMatrices();
 		invCameraBuffer.setBufferData(std::vector<ViewProjectionMatrix>{ {getViewMatrix().Transpose().Invert(), getPerspectiveMatrix().Transpose().Invert()} });
-		invCameraBuffer.setPixelShaderBuffer();
 		invCameraBuffer.setVertexShaderBuffer();
 	}
 

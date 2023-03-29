@@ -26,6 +26,11 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const std::wstring hologramHullShaderFileName		{ L"hologramHullShader.hlsl" };
 	const std::wstring hologramDomainShaderFileName		{ L"hologramDomainShader.hlsl" };
 	const std::wstring hologramPixelShaderFileName		{ L"hologramPixelShader.hlsl" };
+
+	const std::wstring diamondTextureFileName			{ L"diamond.dds" };
+	const std::wstring obsidianTextureFileName			{ L"obsidian.dds" };
+	const std::wstring skyboxTextureFileName			{ L"ocean_sunset.dds" };
+
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;
 	cameraMaxPitch = DirectX::XMConvertToRadians(89.0f);
@@ -45,7 +50,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
 	rasterizerDesc.DepthClipEnable = true;
 
-	engine.initRenderer(rasterizerDesc, L"grass_field_debug.dds");
+	engine.initRenderer(rasterizerDesc, skyboxTextureFileName);
 	//shaders & input layout
 	// -------------------------------------------------------------------------------------------------
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDesc
@@ -91,10 +96,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 	textureDesc.CPUAccessFlags = 0;
 	textureDesc.MiscFlags = 0;
-	//TextureManager::getInstance().addTexture2D(L"diamond.dds", 0, textureDesc);
-	TextureManager::getInstance().addTexture2D(L"obsidian.dds", 0, textureDesc);
-	TextureManager::getInstance().addTexture2D(L"blockPetroPoroshenko.dds", 0, textureDesc);
-	//TextureManager::getInstance().addTexture2D(L"block.dds", 0, textureDesc);
+
+	TextureManager::getInstance().addTexture2D(obsidianTextureFileName, 0, textureDesc);
+	TextureManager::getInstance().addTexture2D(diamondTextureFileName, 0, textureDesc);
 
 	// opaque instance
 	//---------------------------------------------------------------------------------------------------
@@ -115,19 +119,6 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::shared_ptr<Model> knightHorse = ModelManager::getInstance().getModel("KnightHorse/KnightHorse.fbx");
 
 
-	/*std::vector<std::shared_ptr<Material>> materials(8);
-	for (auto& material : materials)
-	{
-		material = std::make_shared<Material>();
-	}
-	materials.at(0)->color = { 1,0,0,0 };
-	materials.at(1)->color = { 0,1,0,0 };
-	materials.at(2)->color = { 0,0,1,0 };
-	materials.at(3)->color = { 1,1,0,0 };
-	materials.at(4)->color = { 0,1,1,0 };
-	materials.at(5)->color = { 1,0,1,0 };
-	materials.at(6)->color = { 1,1,1,0 };
-	materials.at(7)->color = { 0,0,0,0 };*/
 
 
 
@@ -152,13 +143,6 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 			{0,0,1,0},
 			{0,0,0,1},}}
 		}),
-		/*std::make_shared<Instance>(Instance{
-			engine::DX::float4x4
-			{{{1,0,0,-10},
-			{0,1,0,0},
-			{0,0,1,0},
-			{0,0,0,1},}}
-		}),*/
 	};
 
 	std::vector<std::shared_ptr<Instance>> knightInstances
@@ -193,37 +177,59 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<std::shared_ptr<Instance>> cubeInstance
-	{
-		std::make_shared<Instance>(
-			Instance{ engine::DX::float4x4 {
-				{1,0,0,0},
-				{0,1,0,0},
-				{0,0,1,-2},
-				{0,0,0,1},
-			} }),
-			
+	std::vector<std::shared_ptr<Instance>> obsidianCubeInstance
+	{		
 	};
 
 	std::vector<std::shared_ptr<Instance>> diamondInstance
 	{
-		std::make_shared<Instance>(
-			Instance{ engine::DX::float4x4 {
-				{1,0,0,0},
-				{0,1,0,0},
-				{0,0,1,-2},
-				{0,0,0,1},
-			} }),
-
 	};
 
-	//std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond.dds" });
+	for (size_t i = 0; i < 16; i++)
+	{
+		std::vector<std::shared_ptr<Instance>>* first;
+		std::vector<std::shared_ptr<Instance>>* second;
+		if (i & 1)
+		{
+			first =  &obsidianCubeInstance;
+			second = &diamondInstance;
+		}
+		else
+		{
+			first =  &diamondInstance;
+			second = &obsidianCubeInstance ;
+		}
+
+		for (size_t j = 0; j < 16; j++)
+		{
+
+			float x = ((float)j - 0) * (8 + 8) / (15 - 0) - 8;
+			float y = ((float)i - 0) * (-8 - 8) / (15 - 0) + 8;
+			auto instance = std::make_shared<Instance>(
+				Instance{ engine::DX::float4x4 {
+					{1,0,0,x },
+					{0,1,0,y },
+					{0,0,1,0},
+					{0,0,0,1},
+				} });
+
+			if (j & 1)
+			{
+				first->push_back(instance);
+			}
+			else
+			{
+				second->push_back(instance);
+			}
+		}
+	}
+
+	std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond.dds" });
 	std::shared_ptr<Material> obsidian = std::make_shared<Material>(Material{ L"obsidian.dds" });
-	std::shared_ptr<Material> ukranianWilleyWonka = std::make_shared<Material>(Material{ L"blockPetroPoroshenko.dds" });
 	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
 
-	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, ukranianWilleyWonka, diamondInstance);
-	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, obsidian, cubeInstance);
+	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, diamond, diamondInstance);
+	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, obsidian, obsidianCubeInstance);
 
 
 	std::vector<size_t> samuraiMeshIndices;
@@ -231,7 +237,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		samuraiMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(hologramOpaqueInstance, samurai, samuraiMeshIndices, noMaterial, samuraiInstance);
+	//engine.addInstancedModel(hologramOpaqueInstance, samurai, samuraiMeshIndices, noMaterial, samuraiInstance);
 
 
 
@@ -248,7 +254,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		knightMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(hologramOpaqueInstance, knight, knightMeshIndices, noMaterial, knightInstances);
+	//engine.addInstancedModel(hologramOpaqueInstance, knight, knightMeshIndices, noMaterial, knightInstances);
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)

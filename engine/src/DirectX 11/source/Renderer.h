@@ -30,7 +30,10 @@ namespace engine::DX
 			g_devcon->HSSetShader(nullptr, nullptr, 0);
 			g_devcon->DSSetShader(nullptr, nullptr, 0);
 			g_devcon->GSSetShader(nullptr, nullptr, 0);
-			skybox.render();
+
+			TextureManager::getInstance().getTexture2D(m_skyboxTextureFileName).bind();
+			g_devcon->Draw(3, 0);
+			
 			window.flush();
 			window.clearDepthStencil();
 		}
@@ -44,7 +47,7 @@ namespace engine::DX
 			createRasterizerState();
 
 			initSamplers();
-
+			m_skyboxTextureFileName = skyboxTextureFileName;
 
 			initSkybox(skyboxTextureFileName);
 		}
@@ -163,6 +166,7 @@ namespace engine::DX
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
 		Skybox skybox; // may be changed later to a vector of skyboxes
+		std::wstring m_skyboxTextureFileName;
 		bool visualizeNormal{};
 		bool needToUpdateRasterizer{};
 

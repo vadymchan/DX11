@@ -77,7 +77,7 @@ float4 main(Input input) : SV_TARGET
 
 #ifdef TRIANGLE
     
-    float4 color = modelTexture.Sample(g_pointWrap, input.texCoord);
+    float4 color = modelTexture.Sample(g_anisotropicWrap, input.texCoord);
     //float4 color = modelTexture.Sample(g_linearWrap, input.texCoord);
     //float4 color = modelTexture.Sample(g_anisotropicWrap, input.texCoord);
     

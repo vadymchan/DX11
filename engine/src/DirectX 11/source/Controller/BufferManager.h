@@ -11,6 +11,7 @@
 namespace engine::DX
 {
 #define PER_VIEW_SHADER 0 //in vertex shader
+#define INV_PER_VIEW_SHADER 1 //in vertex shader
 #define MESH_TO_MODEL_SHADER 2 //in vertex shader
 #define MATERIAL_NORMAL_SHADER 0 //in pixel shader
 #define PER_VIEW_PIXEL_HOLOGRAM_SHADER 0 //in pixel shader

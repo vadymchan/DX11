@@ -35,8 +35,7 @@ namespace engine::DX
 		void render()
 		{
 			//m_vertexBuffer.setBuffer();
-			TextureManager::getInstance().getTexture2D(m_textureFileName).bind();
-			g_devcon->Draw(3, 0);
+			
 		}
 
 		void setTexture(const std::wstring& textureFileName)

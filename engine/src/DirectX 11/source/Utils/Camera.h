@@ -80,7 +80,7 @@ namespace engine::DX
 
 		
 
-		void initBuffer(UINT registerNumber, D3D11_USAGE bufferUsage,
+		void initBuffer(UINT registerNumber, UINT invCameraRegisterNumber, D3D11_USAGE bufferUsage,
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0);
 
