@@ -22,7 +22,7 @@ namespace engine::DX
 			TextureManager::getInstance().getSamplerState(L"g_anisotropicWrap").bind();
 			MeshSystem::getInstance().render(camera, visualizeNormal);
 
-			
+			renderSkybox(camera);
 			
 			window.flush();
 			window.clearDepthStencil();
