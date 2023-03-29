@@ -14,75 +14,35 @@ namespace engine::DX
 			//bind shaders (draw several times with different shader)
 			for (auto& shaderGroup : opaqueInstance->getShaders())
 			{
-				if (!showNormal && shaderGroup.at(3).find(L"normalVisualizer") != std::wstring::npos)
+				RenderMode renderModeType = getRenderMode(shaderGroup);
+				
+				switch (renderModeType)
 				{
-					continue;
+				case RenderMode::DEFAULT:
+					renderMode<RenderMode::DEFAULT>(opaqueInstance.get(), &camera);
+					break;
+				case RenderMode::NORMAL_VISUALISER:
+					if (!showNormal)
+						continue;
+					renderMode<RenderMode::NORMAL_VISUALISER>(opaqueInstance.get(), &camera);
+					break;
+				case RenderMode::HOLOGRAM:
+					renderMode<RenderMode::HOLOGRAM>(opaqueInstance.get(), &camera);
+					break;
+
 				}
 
-				//vertex shader
-				ShaderManager::getInstance().getVertexShader(shaderGroup.at(0))->bind();
-
-				//hull shader
-				if (!shaderGroup.at(1).empty())
-				{
-
-					ShaderManager::getInstance().getHullShader(shaderGroup.at(1))->bind();
-				}
-				else
-				{
-					g_devcon->HSSetShader(nullptr, nullptr, 0);
-				}
-
-				//domain shader
-				if (!shaderGroup.at(2).empty())
-				{
-					ShaderManager::getInstance().getDomainShader(shaderGroup.at(2))->bind();
-				}
-				else
-				{
-					g_devcon->DSSetShader(nullptr, nullptr, 0);
-				}
-
-				//geometry shader
-				if (!shaderGroup.at(3).empty())
-				{
-					ShaderManager::getInstance().getGeometryShader(shaderGroup.at(3))->bind();
-				}
-				else
-				{
-					g_devcon->GSSetShader(nullptr, nullptr, 0);
-				}
-
-				//pixel shader
-				ShaderManager::getInstance().getPixelShader(shaderGroup.at(4))->bind();
-
-
-				if (shaderGroup.at(4).find(L"hologram") != std::wstring::npos)
-				{
-					float3 cameraPos = camera.position();
-					cameraPosition.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {cameraPos.x, cameraPos.y, cameraPos.z, 1.0}});
-
-					time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {general::FPSTimer::getCurrentTick() - general::FPSTimer::initTick, 0, 0, 0}});
-					cameraPosition.setPixelShaderBuffer();
-					camera.setCameraBufferGeometryShader();
-					time.setBuffer();
-				}
-				opaqueInstance->hasTexture(shaderGroup.at(4).find(L"color") != std::wstring::npos);
-
-				//topology
-				if (!shaderGroup.at(1).empty() && !shaderGroup.at(2).empty())
-				{
-					g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-				}
-				else
-				{
-					g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-				}
+				setShaders(shaderGroup);
+				setPrimitiveTopology(shaderGroup);
+				
 
 				opaqueInstance->render();
 			}
 		}
 	}
+
+
+
 
 	/// <param name="instance">instance, which is contained in opaqueInstance</param>
 	bool MeshSystem::findIntersection(const ray& r, std::weak_ptr<Instance>& instance, Intersection& intersection)
@@ -164,6 +124,75 @@ namespace engine::DX
 		opaqueInstance->setShaders(shaderFileNames);
 		opaqueInstances.push_back(opaqueInstance);
 		return (opaqueInstances.size() - 1);
+	}
+
+	MeshSystem::RenderMode MeshSystem::getRenderMode(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup)
+	{
+		if (std::any_of(shaderGroup.begin(), shaderGroup.end(),
+			[](const std::wstring& shaderName) { return shaderName.find(L"normalVisualizer") != std::wstring::npos; }))
+		{
+			return RenderMode::NORMAL_VISUALISER;
+		}
+
+		if (std::any_of(shaderGroup.begin(), shaderGroup.end(),
+			[](const std::wstring& shaderName) { return shaderName.find(L"hologram") != std::wstring::npos; }))
+		{
+			return RenderMode::HOLOGRAM;
+		}
+
+		return RenderMode::DEFAULT;
+	}
+
+	void MeshSystem::setShaders(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup)
+	{
+		//vertex shader
+		ShaderManager::getInstance().getVertexShader(shaderGroup.at((int)OpaqueInstances::ShaderType::VERTEX_SHADER))->bind();
+
+		//hull shader
+		if (!shaderGroup.at((int)OpaqueInstances::ShaderType::HULL_SHADER).empty())
+		{
+			ShaderManager::getInstance().getHullShader(shaderGroup.at((int)OpaqueInstances::ShaderType::HULL_SHADER))->bind();
+		}
+		else
+		{
+			g_devcon->HSSetShader(nullptr, nullptr, 0);
+		}
+
+		//domain shader
+		if (!shaderGroup.at((int)OpaqueInstances::ShaderType::DOMAIN_SHADER).empty())
+		{
+			ShaderManager::getInstance().getDomainShader(shaderGroup.at((int)OpaqueInstances::ShaderType::DOMAIN_SHADER))->bind();
+		}
+		else
+		{
+			g_devcon->DSSetShader(nullptr, nullptr, 0);
+		}
+
+		//geometry shader
+		if (!shaderGroup.at((int)OpaqueInstances::ShaderType::GEOMETRY_SHADER).empty())
+		{
+			ShaderManager::getInstance().getGeometryShader(shaderGroup.at((int)OpaqueInstances::ShaderType::GEOMETRY_SHADER))->bind();
+		}
+		else
+		{
+			g_devcon->GSSetShader(nullptr, nullptr, 0);
+		}
+
+		//pixel shader
+		ShaderManager::getInstance().getPixelShader(shaderGroup.at((int)OpaqueInstances::ShaderType::PIXEL_SHADER))->bind();
+	}
+
+	void MeshSystem::setPrimitiveTopology(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup)
+	{
+		//topology
+		if (!shaderGroup.at((int)OpaqueInstances::ShaderType::HULL_SHADER).empty() && !shaderGroup.at((int)OpaqueInstances::ShaderType::DOMAIN_SHADER).empty())
+		{
+			g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+		}
+		else
+		{
+			g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		}
 	}
 
 }
