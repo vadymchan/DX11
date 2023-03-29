@@ -28,6 +28,13 @@ namespace engine::DX
 
 		};
 
+		enum class RenderType
+		{
+			DEFAULT,
+			NORMAL_VISUALIZER,
+			HOLOGRAM,
+		};
+
 		struct Material
 		{
 			DirectX::SimpleMath::Vector4 color;
@@ -37,6 +44,18 @@ namespace engine::DX
 		{
 			float4x4 toWorldMatrix;
 		};
+
+		struct ShaderGroup
+		{
+			RenderType type;
+			
+			std::weak_ptr<VertexShader> vertexShader;
+			std::weak_ptr<HullShader> hullShader;
+			std::weak_ptr<DomainShader> domainShader;
+			std::weak_ptr<GeometryShader> geometryShader;
+			std::weak_ptr<PixelShader> pixelShader;
+		};
+
 	protected:
 
 		struct PerMaterial
@@ -61,7 +80,9 @@ namespace engine::DX
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
 		
-		std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>> shaders;
+
+		std::vector<ShaderGroup> shaders;
+		//std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>> shaders;
 		bool instanceBufferUpdated{};
 		bool m_hasTexture{};
 	public:
@@ -69,11 +90,11 @@ namespace engine::DX
 
 		void needToUpdateInstanceBuffer();
 
-		void setShaders(const std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>>& shaderBatches);
+		void setShaders(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderBatches);
 
-		void hasTexture(bool value);
+		void SetTexture(bool useTexture);
 
-		const std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>>& getShaders() const
+		const std::vector<ShaderGroup>& getShaders() const
 		{
 			return shaders;
 		}

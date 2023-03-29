@@ -31,15 +31,64 @@ namespace engine::DX
 		instanceBufferUpdated = false;
 	}
 
-	void OpaqueInstances::setShaders(const std::vector<std::array<std::wstring, 5>>& shaderBatches)
+
+
+	void OpaqueInstances::setShaders(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderBatches)
 	{
-		shaders = shaderBatches;
+		shaders.clear();
+		shaders.resize(shaderBatches.size()); 
+		
+		for (size_t i = 0; i < shaderBatches.size(); ++i)
+		{
+			ShaderGroup shaderGroup;
+
+			//assign render type
+			if (std::any_of(shaderBatches[i].begin(), shaderBatches[i].end(),
+				[](const std::wstring& shaderName) { return shaderName.find(L"normalVisualizer") != std::wstring::npos; }))
+			{
+				shaderGroup.type = RenderType::NORMAL_VISUALIZER;
+			}
+			else if (std::any_of(shaderBatches[i].begin(), shaderBatches[i].end(),
+				[](const std::wstring& shaderName) { return shaderName.find(L"hologram") != std::wstring::npos; }))
+			{
+				shaderGroup.type = RenderType::HOLOGRAM;
+			}
+			else
+			{
+				shaderGroup.type = RenderType::DEFAULT;
+			}
+
+			//add shaders
+			//vertex shader
+			shaderGroup.vertexShader = !shaderBatches[i][(int)OpaqueInstances::ShaderType::VERTEX_SHADER].empty()
+				? ShaderManager::getInstance().getVertexShader(shaderBatches[i][(int)OpaqueInstances::ShaderType::VERTEX_SHADER])
+				: std::weak_ptr<VertexShader>();
+			//hull shader
+			shaderGroup.hullShader = !shaderBatches[i][(int)OpaqueInstances::ShaderType::HULL_SHADER].empty()
+				? ShaderManager::getInstance().getHullShader(shaderBatches[i][(int)OpaqueInstances::ShaderType::HULL_SHADER])
+				: std::weak_ptr<HullShader>();
+			//domain shader
+			shaderGroup.domainShader = !shaderBatches[i][(int)OpaqueInstances::ShaderType::DOMAIN_SHADER].empty()
+				? ShaderManager::getInstance().getDomainShader(shaderBatches[i][(int)OpaqueInstances::ShaderType::DOMAIN_SHADER])
+				: std::weak_ptr<DomainShader>();
+			//geometry shader
+			shaderGroup.geometryShader = !shaderBatches[i][(int)OpaqueInstances::ShaderType::GEOMETRY_SHADER].empty()
+				? ShaderManager::getInstance().getGeometryShader(shaderBatches[i][(int)OpaqueInstances::ShaderType::GEOMETRY_SHADER])
+				: std::weak_ptr<GeometryShader>();
+			//pixel shader
+			shaderGroup.pixelShader = !shaderBatches[i][(int)OpaqueInstances::ShaderType::PIXEL_SHADER].empty()
+				? ShaderManager::getInstance().getPixelShader(shaderBatches[i][(int)OpaqueInstances::ShaderType::PIXEL_SHADER])
+				: std::weak_ptr<PixelShader>();
+
+			shaders[i] = shaderGroup;
+		}
+		
 	}
 
 
-	void OpaqueInstances::hasTexture(bool value)
+	void OpaqueInstances::SetTexture(bool useTexture)
 	{
-		m_hasTexture = value;
+		m_hasTexture = useTexture;
 	}
 
 	void OpaqueInstances::render()

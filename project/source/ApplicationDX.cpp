@@ -1,14 +1,8 @@
 #include "ApplicationDX.h"
+#include <glm/trigonometric.hpp>
 #include <random>
 
-using Instance = engine::DX::OpaqueInstances::Instance;
-using Material = engine::DX::OpaqueInstances::Material;
-using engine::DX::Model;
-using engine::DX::Mesh;
-using engine::DX::MeshSystem;
-using engine::DX::ModelManager;
-using engine::DX::ShaderManager;
-using engine::DX::TextureManager;
+
 
 void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 {
@@ -16,19 +10,16 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const int windowHeight{ 800 };
 	const int windowStartX{ 0 };
 	const int windowStartY{ 0 };
-	const std::wstring normalVertexShaderFileName		{ L"normalVisualiser/normalVisualizerVertexShader.hlsl" };
-	const std::wstring normalGeometryShaderFileName		{ L"normalVisualiser/normalVisualizerGeometryShader.hlsl" };
-	const std::wstring normalPixelShaderFileName		{ L"normalVisualiser/normalVisualizerPixelShader.hlsl" };
-	const std::wstring colorVertexShaderFileName		{ L"texture/colorVertexShader.hlsl" };
-	const std::wstring colorPixelShaderFileName			{ L"texture/colorPixelShader.hlsl" };
-	const std::wstring hologramVertexShaderFileName		{ L"hologram/hologramVertexShader.hlsl" };
-	const std::wstring hologramGeometryShaderFileName	{ L"hologram/hologramGeometryShader.hlsl" };
-	const std::wstring hologramHullShaderFileName		{ L"hologram/hologramHullShader.hlsl" };
-	const std::wstring hologramDomainShaderFileName		{ L"hologram/hologramDomainShader.hlsl" };
-	const std::wstring hologramPixelShaderFileName		{ L"hologram/hologramPixelShader.hlsl" };
-
-	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/grass_field.dds" };
-
+	const std::wstring normalVertexShaderFileName		{ L"normalVisualizerVertexShader.hlsl" };
+	const std::wstring normalGeometryShaderFileName		{ L"normalVisualizerGeometryShader.hlsl" };
+	const std::wstring normalPixelShaderFileName		{ L"normalVisualizerPixelShader.hlsl" };
+	const std::wstring colorVertexShaderFileName		{ L"colorVertexShader.hlsl" };
+	const std::wstring colorPixelShaderFileName			{ L"colorPixelShader.hlsl" };
+	const std::wstring hologramVertexShaderFileName		{ L"hologramVertexShader.hlsl" };
+	const std::wstring hologramGeometryShaderFileName	{ L"hologramGeometryShader.hlsl" };
+	const std::wstring hologramHullShaderFileName		{ L"hologramHullShader.hlsl" };
+	const std::wstring hologramDomainShaderFileName		{ L"hologramDomainShader.hlsl" };
+	const std::wstring hologramPixelShaderFileName		{ L"hologramPixelShader.hlsl" };
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;
 	cameraMaxPitch = DirectX::XMConvertToRadians(89.0f);
@@ -41,47 +32,32 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	engine::DX::D3D::Init();
 
 	
-	engine.initWindow("DirectX 11 Model", windowStartX, windowStartY, windowWidth, windowHeight, appHandle, windowShowParams);
+	engine.initWindow(L"DirectX 11 Model", windowStartX, windowStartY, windowWidth, windowHeight, appHandle, windowShowParams);
 	
 	D3D11_RASTERIZER_DESC rasterizerDesc{};
 	rasterizerDesc.FillMode = wireframeMode ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
 	rasterizerDesc.DepthClipEnable = true;
 
-	engine::DX::Skybox skybox;
-	skybox.initSkybox(skyboxTexture);
-
-	engine.initRenderer(rasterizerDesc, std::make_shared<engine::DX::Skybox>(skybox));
+	engine.initRenderer(rasterizerDesc);
 	//shaders & input layout
 	// -------------------------------------------------------------------------------------------------
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDesc
 	{
 		//model vertex buffer
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(2), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		//instance vertex buffer
-		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-	};
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
 
-	std::vector<D3D11_INPUT_ELEMENT_DESC> hologramInputElementDesc
-	{
-		//model vertex buffer
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
 		//instance vertex buffer
-		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
 	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addVertexShader(colorVertexShaderFileName, inputElementDesc);
-	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, hologramInputElementDesc);
+	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addHullShader(hologramHullShaderFileName);
 	ShaderManager::getInstance().addDomainShader(hologramDomainShaderFileName);
 	ShaderManager::getInstance().addGeometryShader(normalGeometryShaderFileName);
@@ -89,22 +65,13 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	ShaderManager::getInstance().addPixelShader(normalPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(colorPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(hologramPixelShaderFileName);
-	
-	//textures & sampler 
-	//---------------------------------------------------------------------------------------------------
 
-	D3D11_TEXTURE2D_DESC textureDesc{};
-	textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc.CPUAccessFlags = 0;
-	textureDesc.MiscFlags = 0;
 
 	// opaque instance
 	//---------------------------------------------------------------------------------------------------
 
-	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", /*hologramHullShaderFileName, hologramDomainShaderFileName,*/ hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/});
-
+	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName}, {colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}});
+	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, hologramHullShaderFileName, hologramDomainShaderFileName, hologramGeometryShaderFileName, hologramPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName}, });
 
 	// models
 	//---------------------------------------------------------------------------------------------------
@@ -115,6 +82,19 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::shared_ptr<Model> knightHorse = ModelManager::getInstance().getModel("KnightHorse/KnightHorse.fbx");
 
 
+	std::vector<std::shared_ptr<Material>> materials(8);
+	for (auto& material : materials)
+	{
+		material = std::make_shared<Material>();
+	}
+	materials.at(0)->color = { 1,0,0,0 };
+	materials.at(1)->color = { 0,1,0,0 };
+	materials.at(2)->color = { 0,0,1,0 };
+	materials.at(3)->color = { 1,1,0,0 };
+	materials.at(4)->color = { 0,1,1,0 };
+	materials.at(5)->color = { 1,0,1,0 };
+	materials.at(6)->color = { 1,1,1,0 };
+	materials.at(7)->color = { 0,0,0,0 };
 
 
 
@@ -122,9 +102,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		std::make_shared<Instance>(
 			Instance{ engine::DX::float4x4 {
-				{2.5,0,0,-2},
-				{0,2.5,0,0},
-				{0,0,2.5,0},
+				{1,0,0,-2},
+				{0,1,0,0},
+				{0,0,1,0},
 				{0,0,0,1},
 			} }),
 	};
@@ -132,9 +112,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::vector<std::shared_ptr<Instance>> eastTowerInstances
 	{
+
 		std::make_shared<Instance>(Instance{
 			engine::DX::float4x4
-			{{{1,0,0,2},
+			{{{1,0,0,-10},
 			{0,1,0,0},
 			{0,0,1,0},
 			{0,0,0,1},}}
@@ -147,8 +128,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		std::make_shared<Instance>(Instance{
 			engine::DX::float4x4
 			{{{1,0,0,-4},
+			{0,1,0,0},
 			{0,0,1,0},
-			{0,-1,0,0},
 			{0,0,0,1},}}
 		}),
 	};
@@ -173,75 +154,40 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<std::shared_ptr<Instance>> obsidianCubeInstance
-	{		
+	std::vector<std::shared_ptr<Instance>> cubeInstance
+	{
+		std::make_shared<Instance>(
+			Instance{ engine::DX::float4x4 {
+				{1,0,0,0},
+				{0,1,0,0},
+				{0,0,1,0},
+				{0,0,0,1},
+			} }),
+			std::make_shared<Instance>(
+			Instance{ engine::DX::float4x4 {
+				{2,0,0,2},
+				{0,2,0,0},
+				{0,0,2,0},
+				{0,0,0,1},
+			} }),
+			std::make_shared<Instance>(
+			Instance{ engine::DX::float4x4 {
+				{3,0,0,7},
+				{0,3,0,0},
+				{0,0,3,0},
+				{0,0,0,1},
+			} }),
 	};
 
-	std::vector<std::shared_ptr<Instance>> diamondInstance
-	{
-	};
+	engine.addInstancedModel(hologramOpaqueInstance, cube, cubeMeshIndices, materials.at(7), cubeInstance);
 
-	for (size_t i = 0; i < 16; i++)
-	{
-		std::vector<std::shared_ptr<Instance>>* first;
-		std::vector<std::shared_ptr<Instance>>* second;
-		if (i & 1)
-		{
-			first =  &obsidianCubeInstance;
-			second = &diamondInstance;
-		}
-		else
-		{
-			first =  &diamondInstance;
-			second = &obsidianCubeInstance ;
-		}
 
-		for (size_t j = 0; j < 16; j++)
-		{
-
-			float x = ((float)j - 0) * (8 + 8) / (15 - 0) - 8;
-			float y = ((float)i - 0) * (-8 - 8) / (15 - 0) + 8;
-			auto instance = std::make_shared<Instance>(
-				Instance{ engine::DX::float4x4 {
-					{1,0,0,x },
-					{0,1,0,y },
-					{0,0,1,10},
-					{0,0,0,1},
-				} });
-
-			if (j & 1)
-			{
-				first->push_back(instance);
-			}
-			else
-			{
-				second->push_back(instance);
-			}
-		}
-	}
-
-	/*std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond.dds" });
-	std::shared_ptr<Material> obsidian = std::make_shared<Material>(Material{ L"obsidian.dds" });
-	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
-	std::shared_ptr<Material> defaultSkin = std::make_shared<Material>(Material{ L"default" });*/
-
-	std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond" });
-	std::shared_ptr<Material> obsidian = std::make_shared<Material>(Material{ L"obsidian" });
-	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
-	std::shared_ptr<Material> defaultSkin = std::make_shared<Material>(Material{ L"default" });
-
-	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, diamond, diamondInstance);
-	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, obsidian, obsidianCubeInstance);
-
-	
 	std::vector<size_t> samuraiMeshIndices;
 	for (size_t i = 0; i < samurai.get()->getMeshesCount(); ++i)
 	{
 		samuraiMeshIndices.emplace_back(i);
 	}
-	//engine.addInstancedModel(hologramOpaqueInstance, samurai, samuraiMeshIndices, noMaterial, samuraiInstance);
-
-	engine.addInstancedModel(normalOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
+	engine.addInstancedModel(hologramOpaqueInstance, samurai, samuraiMeshIndices, materials.at(1), samuraiInstance);
 
 
 
@@ -250,7 +196,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		eastTowerMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
+	engine.addInstancedModel(hologramOpaqueInstance, eastTower, eastTowerMeshIndices, materials.at(1), eastTowerInstances);
 
 
 	std::vector<size_t> knightMeshIndices;
@@ -258,14 +204,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		knightMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
+	engine.addInstancedModel(hologramOpaqueInstance, knight, knightMeshIndices, materials.at(1), knightInstances);
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)
 	{
 		knightHorseMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
+	engine.addInstancedModel(hologramOpaqueInstance, knightHorse, knightHorseMeshIndices, materials.at(1), knightHorseInstances);
 
 	
 
@@ -273,7 +219,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3& position{  0, 0, -5 };
+	const engine::DX::float3& position{  0, 0, -2 };
 	const engine::DX::float3& direction{ 0, 0,  1};
 	const engine::DX::float3& cameraUp{ 0,1,0 };
 
@@ -351,18 +297,6 @@ bool ApplicationDX::ProcessInputs()
 		case WM_KEYDOWN:
 			switch (msg.wParam)
 			{
-			case VK_NUMPAD1:
-			case '1':
-				engine.getRenderer().changeRenderState(engine::DX::SampleState::BindSlot::POINT_WRAP);
-				break;
-			case VK_NUMPAD2:
-			case '2':
-				engine.getRenderer().changeRenderState(engine::DX::SampleState::BindSlot::LINEAR_WRAP);
-				break;
-			case VK_NUMPAD3:
-			case '3':
-				engine.getRenderer().changeRenderState(engine::DX::SampleState::BindSlot::ANISOTROPIC_WRAP);
-				break;
 			case 0x57: // W
 				cameraMovingDirections[MoveDirection::FORWARD] = true;
 				break;

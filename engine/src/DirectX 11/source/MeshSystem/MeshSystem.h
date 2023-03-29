@@ -40,7 +40,7 @@ namespace engine::DX
 		/// </summary>
 		/// <param name = "shaderFileNames">0 - vertex, 1 - hull shader, 2 - domain shader, 3 - geometry shader, 4 - pixel shader file names</param>
 		/// <returns>ID to access to created opaque instance</returns>
-		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames);
+		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames);
 		
 
 	
@@ -74,24 +74,24 @@ namespace engine::DX
 		};
 
 		template<RenderMode Mode>
-		void renderMode(OpaqueInstances* opaqueInstance = nullptr, Camera* camera = nullptr) {};
+		void SetRenderMode(OpaqueInstances* opaqueInstance = nullptr, Camera* camera = nullptr) {};
 
 		template<>
-		void renderMode<RenderMode::DEFAULT>(OpaqueInstances* opaqueInstance, Camera* camera)
+		void SetRenderMode<RenderMode::DEFAULT>(OpaqueInstances* opaqueInstance, Camera* camera)
 		{
-			opaqueInstance->hasTexture(true);
+			opaqueInstance->SetTexture(true);
 		}
 
 		template<>
-		void renderMode<RenderMode::NORMAL_VISUALISER>(OpaqueInstances* opaqueInstance, Camera* camera)
+		void SetRenderMode<RenderMode::NORMAL_VISUALISER>(OpaqueInstances* opaqueInstance, Camera* camera)
 		{
-			opaqueInstance->hasTexture(false);
+			opaqueInstance->SetTexture(false);
 		}
 
 		template<>
-		void renderMode<RenderMode::HOLOGRAM>(OpaqueInstances* opaqueInstance, Camera* camera)
+		void SetRenderMode<RenderMode::HOLOGRAM>(OpaqueInstances* opaqueInstance, Camera* camera)
 		{
-			opaqueInstance->hasTexture(false);
+			opaqueInstance->SetTexture(false);
 
 			time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {general::FPSTimer::getCurrentTick() - general::FPSTimer::initTick, 0, 0, 0}});
 			time.setBuffer();
@@ -102,11 +102,11 @@ namespace engine::DX
 			camera->setCameraBufferGeometryShader();
 		}
 
-		RenderMode getRenderMode(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup);
+		RenderMode getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup);
 
-		void setShaders(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup);
+		void setShaders(const OpaqueInstances::ShaderGroup& shaderGroup);
 
-		void setPrimitiveTopology(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup);
+		void setPrimitiveTopology(const OpaqueInstances::ShaderGroup& shaderGroup);
 
 	};
 

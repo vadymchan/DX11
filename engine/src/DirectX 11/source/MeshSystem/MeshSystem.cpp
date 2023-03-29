@@ -15,26 +15,26 @@ namespace engine::DX
 			for (auto& shaderGroup : opaqueInstance->getShaders())
 			{
 				RenderMode renderModeType = getRenderMode(shaderGroup);
-				
+
 				switch (renderModeType)
 				{
 				case RenderMode::DEFAULT:
-					renderMode<RenderMode::DEFAULT>(opaqueInstance.get(), &camera);
+					SetRenderMode<RenderMode::DEFAULT>(opaqueInstance.get(), &camera);
 					break;
 				case RenderMode::NORMAL_VISUALISER:
 					if (!showNormal)
 						continue;
-					renderMode<RenderMode::NORMAL_VISUALISER>(opaqueInstance.get(), &camera);
+					SetRenderMode<RenderMode::NORMAL_VISUALISER>(opaqueInstance.get(), &camera);
 					break;
 				case RenderMode::HOLOGRAM:
-					renderMode<RenderMode::HOLOGRAM>(opaqueInstance.get(), &camera);
+					SetRenderMode<RenderMode::HOLOGRAM>(opaqueInstance.get(), &camera);
 					break;
 
 				}
 
 				setShaders(shaderGroup);
 				setPrimitiveTopology(shaderGroup);
-				
+
 
 				opaqueInstance->render();
 			}
@@ -80,7 +80,7 @@ namespace engine::DX
 		for (size_t meshIndex = 0; meshIndex < meshIndices.size(); ++meshIndex)
 		{
 
-			opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices.at(meshIndex), material, instances);
+			opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices[meshIndex], material, instances);
 
 			if (model->getMesh(meshIndex).GetName() == ModelManager::debugCubeTag)
 			{
@@ -98,7 +98,7 @@ namespace engine::DX
 				{
 					if (triangleOctrees[triangleOctreeIndex]->alreadyInited(model, meshIndices)) // already created
 					{
-						modelIntersections.emplace_back(ModelIntersection{ triangleOctrees.at(triangleOctreeIndex), instance, opaqueInstances.at(opaqueInstanceID) });
+						modelIntersections.emplace_back(ModelIntersection{ triangleOctrees[triangleOctreeIndex], instance, opaqueInstances[opaqueInstanceID] });
 						break;
 					}
 				}
@@ -106,7 +106,7 @@ namespace engine::DX
 				if (triangleOctreeIndex == triangleOctrees.size())
 				{
 					triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, meshIndices));
-					modelIntersections.emplace_back(ModelIntersection{ triangleOctrees.at(triangleOctrees.size() - 1), instance, opaqueInstances.at(opaqueInstanceID) });
+					modelIntersections.emplace_back(ModelIntersection{ triangleOctrees[triangleOctrees.size() - 1], instance, opaqueInstances[opaqueInstanceID] });
 				}
 			}
 		}
@@ -118,7 +118,7 @@ namespace engine::DX
 	/// creates new Opaque Instance
 	/// </summary>
 	/// <returns>ID to access to created opaque instance</returns>
-	uint32_t MeshSystem::createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames)
+	uint32_t MeshSystem::createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames)
 	{
 		std::shared_ptr<OpaqueInstances> opaqueInstance = std::make_shared<OpaqueInstances>();
 		opaqueInstance->setShaders(shaderFileNames);
@@ -126,9 +126,9 @@ namespace engine::DX
 		return (opaqueInstances.size() - 1);
 	}
 
-	MeshSystem::RenderMode MeshSystem::getRenderMode(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup)
+	MeshSystem::RenderMode MeshSystem::getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup)
 	{
-		if (std::any_of(shaderGroup.begin(), shaderGroup.end(),
+		/*if (std::any_of(shaderGroup.begin(), shaderGroup.end(),
 			[](const std::wstring& shaderName) { return shaderName.find(L"normalVisualizer") != std::wstring::npos; }))
 		{
 			return RenderMode::NORMAL_VISUALISER;
@@ -138,20 +138,32 @@ namespace engine::DX
 			[](const std::wstring& shaderName) { return shaderName.find(L"hologram") != std::wstring::npos; }))
 		{
 			return RenderMode::HOLOGRAM;
+		}*/
+
+		switch (shaderGroup.type)
+		{
+		case OpaqueInstances::RenderType::NORMAL_VISUALIZER:
+			return RenderMode::NORMAL_VISUALISER;
+		case OpaqueInstances::RenderType::HOLOGRAM:
+			return RenderMode::HOLOGRAM;
+		case OpaqueInstances::RenderType::DEFAULT:
+			return RenderMode::DEFAULT;
+		default:
+			return RenderMode::DEFAULT;
 		}
 
-		return RenderMode::DEFAULT;
+
 	}
 
-	void MeshSystem::setShaders(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup)
+	void MeshSystem::setShaders(const OpaqueInstances::ShaderGroup& shaderGroup)
 	{
 		//vertex shader
-		ShaderManager::getInstance().getVertexShader(shaderGroup.at((int)OpaqueInstances::ShaderType::VERTEX_SHADER))->bind();
+		shaderGroup.vertexShader.lock()->bind();
 
 		//hull shader
-		if (!shaderGroup.at((int)OpaqueInstances::ShaderType::HULL_SHADER).empty())
+		if (!shaderGroup.hullShader.expired())
 		{
-			ShaderManager::getInstance().getHullShader(shaderGroup.at((int)OpaqueInstances::ShaderType::HULL_SHADER))->bind();
+			shaderGroup.hullShader.lock()->bind();
 		}
 		else
 		{
@@ -159,9 +171,9 @@ namespace engine::DX
 		}
 
 		//domain shader
-		if (!shaderGroup.at((int)OpaqueInstances::ShaderType::DOMAIN_SHADER).empty())
+		if (!shaderGroup.domainShader.expired())
 		{
-			ShaderManager::getInstance().getDomainShader(shaderGroup.at((int)OpaqueInstances::ShaderType::DOMAIN_SHADER))->bind();
+			shaderGroup.domainShader.lock()->bind();
 		}
 		else
 		{
@@ -169,9 +181,9 @@ namespace engine::DX
 		}
 
 		//geometry shader
-		if (!shaderGroup.at((int)OpaqueInstances::ShaderType::GEOMETRY_SHADER).empty())
+		if (!shaderGroup.geometryShader.expired())
 		{
-			ShaderManager::getInstance().getGeometryShader(shaderGroup.at((int)OpaqueInstances::ShaderType::GEOMETRY_SHADER))->bind();
+			shaderGroup.geometryShader.lock()->bind();
 		}
 		else
 		{
@@ -179,13 +191,13 @@ namespace engine::DX
 		}
 
 		//pixel shader
-		ShaderManager::getInstance().getPixelShader(shaderGroup.at((int)OpaqueInstances::ShaderType::PIXEL_SHADER))->bind();
+		shaderGroup.pixelShader.lock()->bind();
 	}
 
-	void MeshSystem::setPrimitiveTopology(const std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>& shaderGroup)
+	void MeshSystem::setPrimitiveTopology(const OpaqueInstances::ShaderGroup& shaderGroup)
 	{
 		//topology
-		if (!shaderGroup.at((int)OpaqueInstances::ShaderType::HULL_SHADER).empty() && !shaderGroup.at((int)OpaqueInstances::ShaderType::DOMAIN_SHADER).empty())
+		if (!shaderGroup.hullShader.expired() && !shaderGroup.domainShader.expired())
 		{
 			g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
 		}
