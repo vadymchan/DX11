@@ -10,6 +10,7 @@
 #include "../Controller/ShaderManager.h"
 #include "../Controller/BufferManager.h"
 #include "../Controller/TextureManager.h"
+#include <variant>
 
 
 namespace engine::DX
@@ -19,8 +20,9 @@ namespace engine::DX
 	public:
 		struct Material
 		{
-			//DirectX::SimpleMath::Vector4 color;
-			std::wstring textureName;
+			//std::variant<float3, std::vector<Mesh::Texture>> material; // float3 - color, Mesh::Texture - textures
+			std::variant<float3, std::wstring> material; // float3 - color, Mesh::Texture - textures
+			//std::wstring textureName;
 		};
 
 		struct Instance

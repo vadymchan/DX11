@@ -80,28 +80,31 @@ namespace engine::DX
 
 
 					if (m_hasTexture)
-					{
-						std::filesystem::path modelTextureDirectory = mesh.getTextureLocation();
-						std::filesystem::path textureLocation = modelTextureDirectory / perMaterial.material.get()->textureName;
-						if (perMaterial.material.get()->textureName.find(L".") && std::search(modelTextureDirectory.begin(), modelTextureDirectory.end(),
-							textureDirectory.begin(), textureDirectory.end()) != modelTextureDirectory.end()) 
+					{ 
+						const auto& textureFolder = perMaterial.material.get()->material;
+
+						if (std::holds_alternative<float3>(textureFolder))
 						{
-							TextureManager::getInstance().getTexture2D(textureLocation).bind();
+							materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
+							materialData.setPixelShaderBuffer();
 						}
-						else
+						else if (std::holds_alternative<std::wstring>(textureFolder))
 						{
-							for (const auto& material : mesh.getMaterialNames())
+							const auto& textures = mesh.getMaterialNames(std::get<std::wstring>(textureFolder));
+							for (const auto& texture : textures)
 							{
-								if (material.find(L"Base"))
-								{
-									TextureManager::getInstance().getTexture2D(textureLocation / material).bind();
-								}
+								texture.lock()->bind();
 							}
+
+
+
+
 						}
+
+						
 						
 
-						/*materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
-						materialData.setPixelShaderBuffer();*/
+						
 					}
 
 

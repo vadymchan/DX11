@@ -220,20 +220,26 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		}
 	}
 
-	std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond.dds" });
+	/*std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond.dds" });
 	std::shared_ptr<Material> obsidian = std::make_shared<Material>(Material{ L"obsidian.dds" });
+	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
+	std::shared_ptr<Material> defaultSkin = std::make_shared<Material>(Material{ L"default" });*/
+
+	std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond" });
+	std::shared_ptr<Material> obsidian = std::make_shared<Material>(Material{ L"obsidian" });
 	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
 	std::shared_ptr<Material> defaultSkin = std::make_shared<Material>(Material{ L"default" });
 
 	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, diamond, diamondInstance);
 	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, obsidian, obsidianCubeInstance);
 
-
+	
 	std::vector<size_t> samuraiMeshIndices;
 	for (size_t i = 0; i < samurai.get()->getMeshesCount(); ++i)
 	{
 		samuraiMeshIndices.emplace_back(i);
 	}
+	//engine.addInstancedModel(hologramOpaqueInstance, samurai, samuraiMeshIndices, noMaterial, samuraiInstance);
 
 	engine.addInstancedModel(normalOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
 
