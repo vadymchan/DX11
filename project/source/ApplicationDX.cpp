@@ -29,7 +29,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	const std::wstring diamondTextureFileName			{ L"diamond.dds" };
 	const std::wstring obsidianTextureFileName			{ L"obsidian.dds" };
-	const std::wstring skyboxTextureFileName			{ L"ocean_sunset.dds" };
+	const std::wstring skyboxTextureFileName			{ L"hdr/grass_field.dds" };
 
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;

@@ -136,7 +136,7 @@ namespace engine::DX
 		HRESULT result = g_factory->CreateSwapChainForHwnd(g_device, hwnd, &swapchainDesc, nullptr, nullptr, swapchain.ReleaseAndGetAddressOf());
 		if (FAILED(result))
 		{
-			std::cerr << "Swapchain was not initialized\n";
+			PrintError(result, L"Swapchain was not initialized");
 		}
 	}
 

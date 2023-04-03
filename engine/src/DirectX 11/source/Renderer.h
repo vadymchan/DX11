@@ -20,6 +20,7 @@ namespace engine::DX
 			TextureManager::getInstance().getSamplerState(L"g_pointWrap").bind();
 			TextureManager::getInstance().getSamplerState(L"g_linearWrap").bind();
 			TextureManager::getInstance().getSamplerState(L"g_anisotropicWrap").bind();
+			
 			MeshSystem::getInstance().render(camera, visualizeNormal);
 
 			renderSkybox(camera);
@@ -128,7 +129,7 @@ namespace engine::DX
 			samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 			samplerDesc.MipLODBias = 0.0f;
 			samplerDesc.MaxAnisotropy = 1;
-			samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+			samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 			samplerDesc.BorderColor[0] = 0.0f;
 			samplerDesc.BorderColor[1] = 0.0f;
 			samplerDesc.BorderColor[2] = 0.0f;

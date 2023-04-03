@@ -31,6 +31,8 @@ namespace engine::DX
 			return float(backBufferDesc.Width) / backBufferDesc.Height;
 		}
 		const HWND& GetHWND() const { return hwnd; }
+		const UINT GetWidth() const { return backBufferDesc.Width; }
+		const UINT GetHeight() const { return backBufferDesc.Height; }
 		void flush();
 	private:
 		void initSwapchain();
