@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <string>
+#include <filesystem>
 #include "../Shader/VertexShader.h"
 #include "../Shader/PixelShader.h"
 #include "../Shader/HullShader.h"
@@ -9,7 +10,7 @@
 
 namespace engine::DX
 {
-	const std::wstring shaderDirectory = L"engine\\src\\general\\resources\\shaders\\";
+	const std::filesystem::path shaderDirectory = L"engine\\src\\general\\resources\\shaders\\";
 
 	class ShaderManager
 	{

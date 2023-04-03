@@ -19,7 +19,7 @@ namespace engine::DX
 #define MODEL_DATA_INPUT_SLOT_0 0
 #define INSTANCE_INPUT_SLOT_1 1
 #define SKYBOX_VERTEX_BUFFER_DATA_0 0
-
+#define SELECTED_SAMPLER_STATE_3 3
 
 	class BufferManager
 	{

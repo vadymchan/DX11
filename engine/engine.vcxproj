@@ -106,7 +106,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -151,7 +152,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -196,7 +198,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -240,7 +243,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -343,6 +347,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\BVH\TriangleOctreeRC.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Texture\SampleState.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Texture\Skybox.cpp" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\Buffer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\ConstantBuffer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\DepthStencilBuffer.h" />
@@ -404,6 +410,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\BVH\TriangleOctreeRC.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.h" />
+    <ClInclude Include="src\DirectX 11\source\Texture\Skybox.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:\Users\vadym\source\repos\vchan\ZERO_CHECK.vcxproj">
