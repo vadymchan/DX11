@@ -3,14 +3,19 @@
 #include "../Texture/Texture2D.h"
 #include "../Texture/DDSTextureLoader11.h"
 #include "../D3D/D3D.h"
-#include "../Texture/SampleState.h"
+#include <filesystem>
 
 namespace engine
 {
 	namespace DX
 	{
+#define COLOR_TEXTURE_BIND_SLOT 0
 
-		const std::wstring textureDirectory = L"engine\\src\\general\\resources\\textures\\";
+		
+
+
+		const std::filesystem::path textureDirectory = L"engine/src/general/resources/textures";
+
 
 
 		class TextureManager
@@ -23,29 +28,8 @@ namespace engine
 				return instance;
 			}
 
-			void addSamplerState(
-				const std::wstring& semanticName,
-				UINT bindSlot,
-				const D3D11_SAMPLER_DESC& desc)
-			{
-				assert(m_samplerStates.find(semanticName) == m_samplerStates.end() && "SamplerState is already created! Error");
 
-				m_samplerStates[semanticName].initSampleState(bindSlot, desc);
-			}
-
-			SampleState& getSamplerState(const std::wstring& semanticName)
-			{
-				assert(m_samplerStates.find(semanticName) != m_samplerStates.end() && "SamplerState is not created! Error");
-
-				return m_samplerStates[semanticName];
-
-
-			}
-
-
-			
-
-			
+			/// <param name="fileName">file name including directory</param>
 			/// <param name="bindSlot">in which register in shader to bind</param>
 			/// <param name="textureDesc">only need to set BindFlags, CPUAccessFlags and MiscFlags. Don't forget to add D3D11_RESOURCE_MISC_TEXTURECUBE to MiscFlags when adding cubemap texture </param>
 			void addTexture2D(
@@ -57,7 +41,7 @@ namespace engine
 				DirectX::DDS_ALPHA_MODE* alphaMode = nullptr)
 			{
 				assert(m_2dTextures.find(fileName) == m_2dTextures.end() && "Texture is already created! Error");
-				m_2dTextures[fileName].createTextureFromFile(bindSlot, textureDirectory + fileName, textureDesc, maxSize, loadFlags, alphaMode);
+				m_2dTextures[fileName].createTextureFromFile(bindSlot, fileName, textureDesc, maxSize, loadFlags, alphaMode);
 
 			}
 
@@ -75,7 +59,6 @@ namespace engine
 			TextureManager& operator=(const TextureManager&) = delete;
 
 			std::unordered_map<std::wstring, Texture2D> m_2dTextures{};
-			std::unordered_map<std::wstring, SampleState> m_samplerStates{};
 
 		};
 

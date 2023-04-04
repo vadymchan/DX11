@@ -347,6 +347,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\BVH\TriangleOctreeRC.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Texture\SampleState.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Texture\Skybox.cpp" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\Buffer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\ConstantBuffer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\DepthStencilBuffer.h" />
@@ -408,6 +410,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\BVH\TriangleOctreeRC.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.h" />
+    <ClInclude Include="src\DirectX 11\source\Texture\Skybox.h" />
     <ClInclude Include="src\DirectX 11\source\LightSystem\LightSystem.h" />
     <ClInclude Include="src\DirectX 11\source\PostProcess.h" />
   </ItemGroup>
@@ -432,10 +435,14 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="src\general\resources\shaders\hdrPixelShader.hlsl">
+    <FxCompile Include="src\general\resources\shaders\hdr\hdrPixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="src\general\resources\shaders\hdr\hdrVertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
   </ItemGroup>

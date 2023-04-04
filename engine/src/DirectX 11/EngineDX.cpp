@@ -10,9 +10,9 @@ namespace engine::DX
 			window.initWindow(title, xStart, yStart, width, height, appHandle, windowShowParams);
 		}
 
-		void Engine::initRenderer(const D3D11_RASTERIZER_DESC& rasterizerDesc, const std::wstring& skyboxTextureFileName)
+		void Engine::initRenderer(const D3D11_RASTERIZER_DESC& rasterizerDesc, const std::shared_ptr<Skybox>& skybox)
 		{
-			renderer.initRasterizator(rasterizerDesc, skyboxTextureFileName);
+			renderer.initRasterizator(rasterizerDesc, skybox);
 		}
 
 		/// <param name="fov">in degrees</param>

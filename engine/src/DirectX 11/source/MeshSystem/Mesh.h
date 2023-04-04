@@ -2,6 +2,7 @@
 #include "../D3D/D3D.h"
 #include "../Math/Colision/boxDX.h"
 #include <vector>
+#include <filesystem>
 
 namespace engine::DX
 {
@@ -21,12 +22,7 @@ namespace engine::DX
 		{
 		}
 
-		Mesh(const std::vector<Vertex> vertices, const std::vector<uint32_t>& indices)
-			: vertices{ vertices }
-			, indices{ indices }
-		{
-
-		}
+		
 
 		const std::vector<uint32_t>& getIndices() const
 		{
@@ -76,6 +72,15 @@ namespace engine::DX
 
 		}
 
+		const std::filesystem::path& getTextureLocation() const
+		{
+			return textureLocation;
+		}
+
+		const std::vector<std::wstring>& getMaterialNames() const
+		{
+			return textureFileNames;
+		}
 
 		const std::string& GetName() const
 		{
@@ -88,6 +93,10 @@ namespace engine::DX
 	private:
 		std::vector<uint32_t> indices{};
 		std::vector<Vertex> vertices{};
+
+		std::filesystem::path textureLocation{};
+		//currently it's considered that the mesh has the same textures
+		std::vector<std::wstring> textureFileNames{};
 		std::vector<float4x4> meshToModelMat;
 		std::vector<float4x4> invMeshToModelMat;
 		std::string name;

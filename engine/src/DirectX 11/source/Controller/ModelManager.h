@@ -1,11 +1,13 @@
 #pragma once
 #include "../MeshSystem/Model.h"
 #include "BufferManager.h"
+#include "TextureManager.h"
 #include <string>
 #include <unordered_map>
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <filesystem>
 
 
 namespace engine::DX
@@ -18,7 +20,7 @@ namespace engine::DX
 
 		const static std::string cubeTag;
 		const static std::string debugCubeTag;
-		const static std::string modelDirectory;
+		const static std::filesystem::path modelDirectory;
 
 		static ModelManager& getInstance()
 		{

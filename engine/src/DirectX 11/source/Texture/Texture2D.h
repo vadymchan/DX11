@@ -13,14 +13,17 @@ namespace engine
 		{
 		public:
 			/// <param name="bindSlot">in which register in shader to bind</param>
-			void createTextureFromMemory(UINT bindSlot, const D3D11_TEXTURE2D_DESC& textureDesc, const void* textureData, UINT memoryPitch = 0, UINT memorySlicePitch = 0)
+			void createTextureFromMemory(UINT bindSlot, const D3D11_TEXTURE2D_DESC& textureDesc, const void* textureData,
+				const D3D11_SHADER_RESOURCE_VIEW_DESC& shaderResourceViewDesc, UINT memoryPitch = 0, UINT memorySlicePitch = 0)
 			{
 				m_bindSlot = bindSlot;
 				initTextureDescription(textureDesc);
+				initShaderResourceView(shaderResourceViewDesc);
 				initTextureSubresourceData(textureData, memoryPitch, memorySlicePitch);
 				if (!textureUpdated)
 				{
 					g_device->CreateTexture2D(&m_textureDescription, &m_textureSubresourceData, m_texture.GetAddressOf());
+					g_device->CreateShaderResourceView(m_texture.Get(), &m_shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
 					textureUpdated = true;
 				}
 			}
@@ -78,19 +81,15 @@ namespace engine
 
 		private:
 
+			void initShaderResourceView(const D3D11_SHADER_RESOURCE_VIEW_DESC& shaderResourceViewDesc)
+			{
+				m_shaderResourceViewDesc = shaderResourceViewDesc;
+				textureUpdated = false;
+			}
+
 			void initTextureDescription(const D3D11_TEXTURE2D_DESC& textureDesc)
 			{
 				m_textureDescription = textureDesc;
-				/*m_textureDescription.Width = 0;
-				m_textureDescription.Height = 0;
-				m_textureDescription.MipLevels = 1;
-				m_textureDescription.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-				m_textureDescription.ArraySize = 1;
-				m_textureDescription.CPUAccessFlags = 0;
-				m_textureDescription.MiscFlags = 0;
-				m_textureDescription.SampleDesc.Count = 1;
-				m_textureDescription.SampleDesc.Quality = 0;
-				m_textureDescription.Usage = D3D11_USAGE_DEFAULT;*/
 				textureUpdated = false;
 			}
 
@@ -108,6 +107,8 @@ namespace engine
 			D3D11_SUBRESOURCE_DATA m_textureSubresourceData{};
 			ComPtr<ID3D11Texture2D> m_texture;
 			ComPtr<ID3D11ShaderResourceView> m_shaderResourceView{};
+			D3D11_SHADER_RESOURCE_VIEW_DESC m_shaderResourceViewDesc{};
+
 
 			bool textureUpdated{};
 		};

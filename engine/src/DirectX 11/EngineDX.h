@@ -24,7 +24,7 @@ namespace engine::DX
 
 			void initWindow(const LPCSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 
-			void initRenderer(const D3D11_RASTERIZER_DESC& rasterizerDesc, const std::wstring& skyboxTextureFileName);
+			void initRenderer(const D3D11_RASTERIZER_DESC& rasterizerDesc, const std::shared_ptr<Skybox>& skybox = std::shared_ptr<Skybox>());
 
 			/// <param name="fov">in degrees</param>
 			void initCamera(const float3& position, const float3& direction, const float3& cameraUp, float fov, float aspect, float zNear, float zFar);
@@ -52,6 +52,7 @@ namespace engine::DX
 
 			Camera& getCamera() { return camera; };
 
+			
 			Renderer& getRenderer() { return renderer; };
 
 			void normalVisualization(bool isVisible)

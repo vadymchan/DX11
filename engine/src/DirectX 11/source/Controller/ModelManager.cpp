@@ -1,16 +1,24 @@
 #include "ModelManager.h"
+#include <unordered_set>
 namespace engine::DX
 {
 	const std::string ModelManager::cubeTag = "cube";
 	const std::string ModelManager::debugCubeTag = "cubeDebug";
-	const std::string ModelManager::modelDirectory = "engine/src/general/resources/models/";
+	const std::filesystem::path ModelManager::modelDirectory = "engine/src/general/resources/models/";
 
 	void engine::DX::ModelManager::createModelAssimp(const std::string& modelFileName)
 	{
+		D3D11_TEXTURE2D_DESC textureDesc{};
+		textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags = 0;
+		textureDesc.MiscFlags = 0;
+
+
 		uint32_t flags = uint32_t(aiProcess_Triangulate | aiProcess_GenBoundingBoxes | aiProcess_ConvertToLeftHanded | aiProcess_CalcTangentSpace);
 
 		Assimp::Importer importer;
-		const aiScene* assimpScene = importer.ReadFile(modelDirectory + modelFileName, flags);
+		const aiScene* assimpScene = importer.ReadFile(modelDirectory.string() + modelFileName, flags);
 
 		assert(assimpScene != nullptr && ("model: " + modelFileName + " was not loaded").c_str());
 
@@ -48,6 +56,32 @@ namespace engine::DX
 				dstMesh.vertices.at(v).normal = reinterpret_cast<DirectX::SimpleMath::Vector3&>(srcMesh->mNormals[v]);
 				dstMesh.vertices.at(v).texCoord = reinterpret_cast<DirectX::SimpleMath::Vector2&>(srcMesh->mTextureCoords[0][v]);
 			}
+
+
+			std::filesystem::path texturePath = modelDirectory / std::filesystem::path(modelFileName).parent_path() / "skins";
+			dstMesh.textureLocation = texturePath;
+
+			std::unordered_set<std::string> uniqueFileNames;
+
+			for (const auto& entry : std::filesystem::recursive_directory_iterator(texturePath))
+			{
+				if (entry.is_regular_file() && entry.path().extension() == ".dds")
+				{
+					std::string fileName = entry.path().filename().string();
+					//find the textures that have the same name as mesh name (and exclude the _mesh part)
+					if (fileName.find(dstMesh.name.substr(0, dstMesh.name.find("_mesh"))) != std::string::npos)
+					{
+						// Only insert the filename if it hasn't been inserted before
+						if (uniqueFileNames.insert(fileName).second)
+						{
+							dstMesh.textureFileNames.emplace_back(entry.path().filename());
+							auto test = entry.path();
+							TextureManager::getInstance().addTexture2D(entry.path(), COLOR_TEXTURE_BIND_SLOT, textureDesc);
+						}
+					}
+				}
+			}
+
 
 
 			for (uint32_t f = 0, index = 0; f < srcMesh->mNumFaces; ++f)
@@ -114,6 +148,13 @@ namespace engine::DX
 
 	void engine::DX::ModelManager::createCube(const std::string& modelFileName)
 	{
+		D3D11_TEXTURE2D_DESC textureDesc{};
+		textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		textureDesc.CPUAccessFlags = 0;
+		textureDesc.MiscFlags = 0;
+
+
 		Model cube;
 		cube.meshes.resize(1);
 		cube.meshRanges.resize(1);
@@ -226,6 +267,19 @@ namespace engine::DX
 		mesh.indices = cubeIndicesSeparateNormal;
 		mesh.meshToModelMat = { float4x4::Identity };
 		mesh.invMeshToModelMat = { float4x4::Identity };
+
+
+		
+		std::filesystem::path texturePath = textureDirectory / "cube";
+	    mesh.textureLocation = texturePath;
+		for (const auto& entry : std::filesystem::recursive_directory_iterator(texturePath))
+		{
+			if (entry.is_regular_file() && entry.path().extension() == ".dds")
+			{
+				mesh.textureFileNames.emplace_back(entry.path().filename());
+				TextureManager::getInstance().addTexture2D(entry.path(), COLOR_TEXTURE_BIND_SLOT, textureDesc);
+			}
+		}
 
 		//buffers
 		cube.initVertexBuffer(MODEL_DATA_INPUT_SLOT_0, std::vector<UINT>{sizeof(Mesh::Vertex)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE);
