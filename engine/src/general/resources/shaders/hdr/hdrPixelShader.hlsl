@@ -12,6 +12,20 @@ cbuffer PostProcess : register(b0)
 
 float3 acesHdr2Ldr(float3 hdr)
 {
+    
+    //float a = 2.51f;
+    //float b = 0.03f;
+    //float c = 2.43f;
+    //float d = 0.59f;
+    //float e = 0.14f;
+    //return saturate((hdr * (a * hdr + b)) / (hdr * (c * hdr + d) + e));
+    
+    //--------------------------------
+    
+    //return hdr / (hdr + 1.0f);
+    
+    //--------------------------------
+    
     float3x3 m1 = float3x3(
 		float3(0.59719f, 0.07600f, 0.02840f),
 		float3(0.35458f, 0.90834f, 0.13383f),
@@ -25,7 +39,7 @@ float3 acesHdr2Ldr(float3 hdr)
 
     float3 v = mul(hdr, m1);
     float3 a = v * (v + float3(0.0245786f, 0.0245786f, 0.0245786f)) - float3(0.000090537f, 0.000090537f, 0.000090537f);
-    float3 b = v * (float3(0.983729f, 0.983729f, 0.983729f) * v + float3(0.4329510f, 0.4329510f, 0.4329510f)) + float3(0.238081f, 0.238081f, 0.238081f);
+    float3 b = v * (v * float3(0.983729f, 0.983729f, 0.983729f) + float3(0.4329510f, 0.4329510f, 0.4329510f)) + float3(0.238081f, 0.238081f, 0.238081f);
     float3 ldr = saturate(mul(a / b, m2));
 
     return ldr;
@@ -33,6 +47,7 @@ float3 acesHdr2Ldr(float3 hdr)
 
 float3 adjustExposure(float3 color, float EV100)
 {
+    
     float LMax = (78.0f / (0.65f * 100.0f)) * pow(2.0f, EV100);
     return color * (1.0f / LMax);
 }
@@ -43,12 +58,42 @@ float3 correctGamma(float3 color, float gamma)
 }
 
 
-
-
-float4 main(float2 uv : TEXCOORD) : SV_TARGET
+float3 correctGamma1(float3 color, float gamma)
 {
+    return pow(color, gamma);
+}
+
+
+
+struct Input
+{
+    float4 position : SV_POSITION;
+    float2 uv : TEXCOORD;
+};
+
+float3 main(Input input) : SV_TARGET
+{
+    
+    float3 hdrColor;
+    
+    switch (g_samplerStateIndex)
+    {
+        case 0:
+            hdrColor = hdrTexture.Sample(g_pointWrap, input.uv).rgb;
+            break;
+        case 1:
+            hdrColor = hdrTexture.Sample(g_linearWrap, input.uv).rgb;
+            break;
+        case 2:
+            hdrColor = hdrTexture.Sample(g_anisotropicWrap, input.uv).rgb;
+            break;
+        default:
+            hdrColor = hdrTexture.Sample(g_anisotropicWrap, input.uv).rgb;
+            break;
+    }
+    
     // Sample the HDR texture
-    float3 hdrColor = hdrTexture.Sample(g_pointWrap, uv).rgb;
+    //float3 hdrColor = hdrTexture.Sample(g_pointWrap, input.uv).rgb;
 
     // Apply exposure adjustment
     float3 adjustedColor = adjustExposure(hdrColor, EV100);
@@ -58,6 +103,10 @@ float4 main(float2 uv : TEXCOORD) : SV_TARGET
 
     // Apply gamma correction
     float3 finalColor = correctGamma(toneMappedColor, Gamma);
+    //finalColor = correctGamma(finalColor, Gamma);
 
-    return float4(finalColor, 1.0);
+    return finalColor;
+    //return float4(finalColor, 1.0);
+    //return float4(toneMappedColor, 1.0);
+    //return float4(hdrColor, 1.0);
 }

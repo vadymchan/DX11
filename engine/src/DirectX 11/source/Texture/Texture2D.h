@@ -22,11 +22,12 @@ namespace engine
 				initTextureSubresourceData(textureData, memoryPitch, memorySlicePitch);
 				if (!textureUpdated)
 				{
-					g_device->CreateTexture2D(&m_textureDescription, &m_textureSubresourceData, m_texture.GetAddressOf());
+					g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.GetAddressOf());
 					g_device->CreateShaderResourceView(m_texture.Get(), &m_shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
 					textureUpdated = true;
 				}
 			}
+
 
 			/// <param name="bindSlot">in which register in shader to bind</param>
 			/// <param name="textureDesc">only need to set BindFlags, CPUAccessFlags and MiscFlags </param>
@@ -63,14 +64,33 @@ namespace engine
 				m_texture->GetDesc(&m_textureDescription);
 
 				//set texture subresource
-				D3D11_MAPPED_SUBRESOURCE subresource;
+				/*D3D11_MAPPED_SUBRESOURCE subresource;
 				g_devcon->Map(m_texture.Get(), 0, D3D11_MAP_READ, 0, &subresource);
 				m_textureSubresourceData.pSysMem = subresource.pData;
 				m_textureSubresourceData.SysMemPitch = subresource.RowPitch;
 				m_textureSubresourceData.SysMemSlicePitch = subresource.DepthPitch;
-				g_devcon->Unmap(m_texture.Get(), 0);
+				g_devcon->Unmap(m_texture.Get(), 0);*/
 			}
 
+			const D3D11_TEXTURE2D_DESC& getTextureDesc() const
+			{
+				return m_textureDescription;
+			}
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC* getShaderResourceViewDesc()
+			{
+				return &m_shaderResourceViewDesc;
+			}
+
+			ID3D11ShaderResourceView* const getShaderResourceView() const
+			{
+				return m_shaderResourceView.Get();
+			}
+
+			ID3D11Texture2D* const getTexture2DView()
+			{
+				return m_texture.Get();
+			}
 
 			void bind()
 			{
@@ -99,6 +119,7 @@ namespace engine
 				m_textureSubresourceData.SysMemPitch = memoryPitch;
 				m_textureSubresourceData.SysMemSlicePitch = memorySlicePitch;
 				textureUpdated = false;
+
 			}
 
 

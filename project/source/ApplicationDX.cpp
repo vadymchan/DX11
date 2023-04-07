@@ -27,7 +27,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const std::wstring hologramDomainShaderFileName		{ L"hologram/hologramDomainShader.hlsl" };
 	const std::wstring hologramPixelShaderFileName		{ L"hologram/hologramPixelShader.hlsl" };
 
-	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/grass_field.dds" };
+	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
 
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;

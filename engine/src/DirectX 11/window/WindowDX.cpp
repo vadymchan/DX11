@@ -88,6 +88,11 @@ namespace engine::DX
 		initBackbuffer();
 		initRenderTargetView();
 		initViewport();
+		initDepthStencil();
+	}
+
+	void Window::initDepthStencil()
+	{
 		backBuffer.Get()->GetDesc(&backBufferDesc);
 		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
 		depthStencilTextureDesc.Width = backBufferDesc.Width;
@@ -114,6 +119,8 @@ namespace engine::DX
 		depthStencilViewDesc.Flags = 0;
 
 		depthStencilBuffer.initDepthStencil(depthStencilTextureDesc, depthStencilDesc, depthStencilViewDesc);
+		depthStencilBuffer.setDepthStencilState();
+		//depthStencilUpdated = true;
 	}
 
 	void Window::initSwapchain()
@@ -168,7 +175,6 @@ namespace engine::DX
 		bgColorRGBA[3] = 1.0f;
 
 		g_device->CreateRenderTargetView(backBuffer.Get(), nullptr, renderTargetView.ReleaseAndGetAddressOf());
-		g_devcon->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), nullptr);
 	}
 
 	void Window::initViewport()

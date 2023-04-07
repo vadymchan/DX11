@@ -30,15 +30,20 @@ namespace engine::DX
 			backBuffer.Get()->GetDesc(&backBufferDesc);
 			return float(backBufferDesc.Width) / backBufferDesc.Height;
 		}
+		const D3D11_TEXTURE2D_DESC& GetBackBufferDesc() { backBuffer.Get()->GetDesc(&backBufferDesc);  return backBufferDesc; }
 		const HWND& GetHWND() const { return hwnd; }
-		const UINT GetWidth() const { return backBufferDesc.Width; }
-		const UINT GetHeight() const { return backBufferDesc.Height; }
+		const DepthStencilBuffer& GetDepthStencilBuffer() const { return depthStencilBuffer; }
+		UINT GetWidth() const { return backBufferDesc.Width; }
+		UINT GetHeight() const { return backBufferDesc.Height; }
+		ID3D11RenderTargetView* const GetRenderTargetView() const { return renderTargetView.Get(); }
+		bool isDepthtStencilUpdated() const { return depthStencilUpdated; }
 		void flush();
 	private:
 		void initSwapchain();
 		void initBackbuffer();
 		void initRenderTargetView();
 		void initViewport();
+		void initDepthStencil();
 		HWND hwnd;
 		WNDCLASSEX wc;
 		ComPtr<IDXGISwapChain1> swapchain;
@@ -51,6 +56,7 @@ namespace engine::DX
 		float width{};
 		float height{};
 		bool vsync{};
+		bool depthStencilUpdated{};	
 	};
 
 

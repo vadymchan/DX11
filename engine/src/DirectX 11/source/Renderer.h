@@ -4,6 +4,7 @@
 #include "MeshSystem/MeshSystem.h"
 #include "Texture/Skybox.h"
 #include "Texture/SampleState.h"
+#include "PostProcess.h"
 
 namespace engine::DX
 {
@@ -11,14 +12,25 @@ namespace engine::DX
 	{
 	public:
 
+		
+
 		void render(Window& window, Camera& camera)
 		{
-			updateRasterizer();
-			g_devcon->RSSetState(rasterizerState.Get());
-			window.clearWindow();
-			window.setViews();
-			camera.setCameraBufferVertexShader();
+			static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
+			updateOffScreenRenderer(window);
+			updateRasterizer();
+
+			setOffScreenRenderer();
+
+			g_devcon->RSSetState(rasterizerState.Get());
+
+			window.clearWindow();
+			g_devcon->ClearRenderTargetView(m_offscreenRTV.Get(), offScreenBgColor);
+			//window.setViews();
+			
+			camera.setCameraBufferVertexShader();
+			
 			setSampleState();
 
 			MeshSystem::getInstance().render(camera, visualizeNormal);
@@ -28,10 +40,19 @@ namespace engine::DX
 				m_skybox.get()->render(camera);
 			}
 
-			std::cout << "Current render state: " << (UINT)currentSampleState << std::endl;
+			window.setViews();
+			m_HDRtexture.bind();
+			m_postProcess.resolve(m_HDRtexture.getShaderResourceView(), window.GetRenderTargetView());
+			//PostProcess::getInstance().resolve(m_HDRtexture.getTexture2D().Get(), window.GetBackBufferRTV().Get());
 
 			window.flush();
+
+			
+			g_devcon->ClearDepthStencilView(m_offscreenDSB.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 			window.clearDepthStencil();
+
+			//clear depth stencil of hdr texture
+			//g_devcon->ClearDepthStencilView(depthStencilBuffer.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0.0f);
 		}
 
 
@@ -41,6 +62,7 @@ namespace engine::DX
 			createRasterizerState();
 
 			initSamplers();
+			m_postProcess.init();
 
 			m_skybox = skybox;
 		}
@@ -88,6 +110,55 @@ namespace engine::DX
 		}
 
 	private:
+
+		void updateOffScreenRenderer(Window& window)
+		{
+			const D3D11_TEXTURE2D_DESC& backBufferDesc = window.GetBackBufferDesc();
+			const D3D11_TEXTURE2D_DESC& hdrTextureDesc = m_HDRtexture.getTextureDesc();
+			if (backBufferDesc.Width != hdrTextureDesc.Width 
+				|| backBufferDesc.Height != hdrTextureDesc.Height)
+			{
+				//texture 2d
+				initHDRTexture(window.GetBackBufferDesc());
+
+				//depth stencil view
+				m_offscreenDSB = window.GetDepthStencilBuffer();
+
+				//render target view
+				g_device->CreateRenderTargetView(m_HDRtexture.getTexture2DView(), nullptr, m_offscreenRTV.ReleaseAndGetAddressOf());
+			}
+			
+		}
+
+		void setOffScreenRenderer()
+		{
+			
+			
+
+			m_offscreenDSB.setDepthStencilState();
+			g_devcon->OMSetRenderTargets(1, m_offscreenRTV.GetAddressOf(), m_offscreenDSB.getPDepthStencilView());
+
+		}
+
+
+
+
+		void initHDRTexture(D3D11_TEXTURE2D_DESC backBufferTex)
+		{
+			//backBufferTex.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+			backBufferTex.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+			//backBufferTex.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+			backBufferTex.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
+
+			D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+			srvDesc.Format = backBufferTex.Format;
+			srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = 1;
+
+			m_HDRtexture.createTextureFromMemory(PostProcess::POST_PROCESS_SAMPLE_STATE_SLOT, backBufferTex, nullptr, srvDesc);
+		}
+
 
 		void setSampleState()
 		{
@@ -171,14 +242,19 @@ namespace engine::DX
 			float padding2;
 			float padding3;
 		};
-		ConstantBuffer<constantBufferSamplerState> samplerStateIndexBuffer; // float4 for adding paddings
+		ConstantBuffer<constantBufferSamplerState> samplerStateIndexBuffer; // float3 for adding paddings
 		SampleState::BindSlot currentSampleState{ SampleState::BindSlot::ANISOTROPIC_WRAP };
 
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
 
-		std::shared_ptr<Skybox> m_skybox;
+		Texture2D m_HDRtexture;
+		ComPtr<ID3D11RenderTargetView> m_offscreenRTV;
+		DepthStencilBuffer m_offscreenDSB;
 
+		PostProcess m_postProcess;
+
+		std::shared_ptr<Skybox> m_skybox;
 
 		bool visualizeNormal{};
 		bool needToUpdateRasterizer{};

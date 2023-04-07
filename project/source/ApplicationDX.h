@@ -27,7 +27,6 @@ public:
 		COUNT
 	};
 
-
 	void Init(const HINSTANCE& appHandle, int windowShowParams);
 	void Run();
 	bool ProcessInputs();
