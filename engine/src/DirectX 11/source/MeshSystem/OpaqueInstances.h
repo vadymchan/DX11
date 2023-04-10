@@ -10,6 +10,7 @@
 #include "../Controller/ShaderManager.h"
 #include "../Controller/BufferManager.h"
 #include "../Controller/TextureManager.h"
+#include <variant>
 
 
 namespace engine::DX
@@ -17,10 +18,42 @@ namespace engine::DX
 	class OpaqueInstances
 	{
 	public:
+
+		enum class ShaderType
+		{
+			VERTEX_SHADER,
+			HULL_SHADER,
+			DOMAIN_SHADER,
+			GEOMETRY_SHADER,
+			PIXEL_SHADER,
+			SHADER_TYPE_NUM
+
+		};
+
+		enum class RenderType
+		{
+			DEFAULT,
+			NORMAL_VISUALIZER,
+			HOLOGRAM,
+		};
+
+
+		struct ShaderGroup
+		{
+			RenderType type;
+
+			std::weak_ptr<VertexShader> vertexShader;
+			std::weak_ptr<HullShader> hullShader;
+			std::weak_ptr<DomainShader> domainShader;
+			std::weak_ptr<GeometryShader> geometryShader;
+			std::weak_ptr<PixelShader> pixelShader;
+		};
+
 		struct Material
 		{
-			//DirectX::SimpleMath::Vector4 color;
-			std::wstring textureName;
+			
+			std::variant<float3, std::wstring> material; // float3 - color, std::wsting  - skin folder
+			
 		};
 
 		struct Instance
@@ -46,15 +79,15 @@ namespace engine::DX
 			std::vector<PerMesh> perMesh{};
 		};
 
+		
+
+
 		std::vector<PerModel> perModel{};
 		VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
 
-		std::vector<std::array<std::wstring, 5>> shaders;
-		/*std::wstring vertexShaderFileName;
-		std::wstring geometryShaderFileName;
-		std::wstring pixelShaderFileName;*/
+		std::vector<ShaderGroup> shaders;
 		bool instanceBufferUpdated{};
 		bool m_hasTexture{};
 	public:
@@ -64,12 +97,13 @@ namespace engine::DX
 
 		void setShaders(const std::vector<std::array<std::wstring, 5>>& shaderBatches);
 
-		void hasTexture(bool value);
+		void SetTexture(bool useTexture);
 
-		const std::vector<std::array<std::wstring, 5>>& getShaders() const
+		const std::vector<ShaderGroup>& getShaders() const
 		{
 			return shaders;
 		}
+
 
 		void render();
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "../D3D/D3D.h"
 #include "../Math/Colision/boxDX.h"
+#include "../Texture/Texture2D.h"
 #include <vector>
 #include <filesystem>
 
@@ -9,6 +10,8 @@ namespace engine::DX
 	class Mesh
 	{
 	public:
+
+
 		struct Vertex
 		{
 			DirectX::SimpleMath::Vector3 position;
@@ -16,6 +19,12 @@ namespace engine::DX
 			DirectX::SimpleMath::Vector2 texCoord;
 			const static std::vector<UINT> alignedByteOffsets;
 		};
+
+		
+		
+
+		using texDirID = size_t;
+
 
 
 		Mesh()
@@ -56,7 +65,7 @@ namespace engine::DX
 		const float4x4& getMeshToModelMat(uint32_t index) const
 		{
 			assert(index < meshToModelMat.size() && "getMeshToModelMat in Mesh: out of bounds. Error!");
-			return meshToModelMat.at(index);
+			return meshToModelMat[index];
 
 		}
 
@@ -68,7 +77,7 @@ namespace engine::DX
 		const float4x4& getInvMeshToModelMat(uint32_t index) const
 		{
 			assert(index < invMeshToModelMat.size() && "getInvMeshToModelMat in Mesh: out of bounds. Error!");
-			return invMeshToModelMat.at(index);
+			return invMeshToModelMat[index];
 
 		}
 
@@ -77,10 +86,11 @@ namespace engine::DX
 			return textureLocation;
 		}
 
-		const std::vector<std::wstring>& getMaterialNames() const
+		const std::vector<std::weak_ptr<Texture2D>>& getMaterialNames(const std::wstring& textureFolderName) const
 		{
-			return textureFileNames;
+			return textureFileNames.at(textureFolderName);
 		}
+
 
 		const std::string& GetName() const
 		{
@@ -91,12 +101,13 @@ namespace engine::DX
 
 
 	private:
+		
+
 		std::vector<uint32_t> indices{};
 		std::vector<Vertex> vertices{};
 
 		std::filesystem::path textureLocation{};
-		//currently it's considered that the mesh has the same textures
-		std::vector<std::wstring> textureFileNames{};
+		std::unordered_map<std::wstring, std::vector<std::weak_ptr<Texture2D>>> textureFileNames{};
 		std::vector<float4x4> meshToModelMat;
 		std::vector<float4x4> invMeshToModelMat;
 		std::string name;

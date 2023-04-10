@@ -41,11 +41,15 @@ namespace engine
 				DirectX::DDS_ALPHA_MODE* alphaMode = nullptr)
 			{
 				assert(m_2dTextures.find(fileName) == m_2dTextures.end() && "Texture is already created! Error");
-				m_2dTextures[fileName].createTextureFromFile(bindSlot, fileName, textureDesc, maxSize, loadFlags, alphaMode);
+
+				auto texture = std::make_shared<Texture2D>();
+				texture->createTextureFromFile(bindSlot, fileName, textureDesc, maxSize, loadFlags, alphaMode);
+				m_2dTextures[fileName] = texture;
+
 
 			}
 
-			Texture2D& getTexture2D(const std::wstring& fileName)
+			const std::shared_ptr<Texture2D>& getTexture2D(const std::wstring& fileName)
 			{
 				assert(m_2dTextures.find(fileName) != m_2dTextures.end() && "Texture is not created! Error");
 
@@ -58,7 +62,7 @@ namespace engine
 			TextureManager(const TextureManager&) = delete;
 			TextureManager& operator=(const TextureManager&) = delete;
 
-			std::unordered_map<std::wstring, Texture2D> m_2dTextures{};
+			std::unordered_map<std::wstring, std::shared_ptr<Texture2D>> m_2dTextures{};
 
 		};
 

@@ -61,7 +61,7 @@ namespace engine::DX
 		g_devcon->DSSetShader(nullptr, nullptr, 0);
 		g_devcon->GSSetShader(nullptr, nullptr, 0);
 
-		TextureManager::getInstance().getTexture2D(m_textureFileName).bind();
+		TextureManager::getInstance().getTexture2D(m_textureFileName)->bind();
 		g_devcon->Draw(3, 0);
 
 		g_devcon->OMSetDepthStencilState(originalDepthStencilState.Get(), stencilRef);

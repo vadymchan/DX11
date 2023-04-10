@@ -6,7 +6,7 @@ namespace engine::DX
 	class PixelShader : public Shader
 	{
 	public:
-		PixelShader(const std::wstring& pathToShader, const std::string& entryPoint = "main", const std::string& shaderVersion = "vs_4_0")
+		PixelShader(const std::wstring& pathToShader, const std::string& entryPoint = "main", const std::string& shaderVersion = "ps_4_0")
 			: Shader(pathToShader, entryPoint, shaderVersion)
 		{
 			compileShader();
@@ -15,14 +15,14 @@ namespace engine::DX
 
 		void bind() override
 		{
-			if (shaderBinary == nullptr)
+			/*if (shaderBinary == nullptr)
 			{
 				compileShader();
 			}
 			if (shader.Get() == nullptr)
 			{
 				createShader();
-			}
+			}*/
 
 			g_devcon->PSSetShader(shader.Get(), 0, 0);
 		}

@@ -57,30 +57,8 @@ namespace engine::DX
 				dstMesh.vertices.at(v).texCoord = reinterpret_cast<DirectX::SimpleMath::Vector2&>(srcMesh->mTextureCoords[0][v]);
 			}
 
+			addTextureFiles(dstMesh, textureDesc, std::filesystem::path(modelFileName).parent_path() / "skins");
 
-			std::filesystem::path texturePath = modelDirectory / std::filesystem::path(modelFileName).parent_path() / "skins";
-			dstMesh.textureLocation = texturePath;
-
-			std::unordered_set<std::string> uniqueFileNames;
-
-			for (const auto& entry : std::filesystem::recursive_directory_iterator(texturePath))
-			{
-				if (entry.is_regular_file() && entry.path().extension() == ".dds")
-				{
-					std::string fileName = entry.path().filename().string();
-					//find the textures that have the same name as mesh name (and exclude the _mesh part)
-					if (fileName.find(dstMesh.name.substr(0, dstMesh.name.find("_mesh"))) != std::string::npos)
-					{
-						// Only insert the filename if it hasn't been inserted before
-						if (uniqueFileNames.insert(fileName).second)
-						{
-							dstMesh.textureFileNames.emplace_back(entry.path().filename());
-							auto test = entry.path();
-							TextureManager::getInstance().addTexture2D(entry.path(), COLOR_TEXTURE_BIND_SLOT, textureDesc);
-						}
-					}
-				}
-			}
 
 
 
@@ -269,17 +247,8 @@ namespace engine::DX
 		mesh.invMeshToModelMat = { float4x4::Identity };
 
 
-		
-		std::filesystem::path texturePath = textureDirectory / "cube";
-	    mesh.textureLocation = texturePath;
-		for (const auto& entry : std::filesystem::recursive_directory_iterator(texturePath))
-		{
-			if (entry.is_regular_file() && entry.path().extension() == ".dds")
-			{
-				mesh.textureFileNames.emplace_back(entry.path().filename());
-				TextureManager::getInstance().addTexture2D(entry.path(), COLOR_TEXTURE_BIND_SLOT, textureDesc);
-			}
-		}
+		addTextureFiles(mesh, textureDesc, std::filesystem::path("Cube/skins"));
+
 
 		//buffers
 		cube.initVertexBuffer(MODEL_DATA_INPUT_SLOT_0, std::vector<UINT>{sizeof(Mesh::Vertex)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE);
@@ -288,6 +257,42 @@ namespace engine::DX
 
 		models[modelFileName] = std::make_shared<Model>(std::move(cube));
 
+
+	}
+
+	void ModelManager::addTextureFiles(Mesh& mesh, const D3D11_TEXTURE2D_DESC& textureDesc, const std::filesystem::path& texturePath)
+	{
+
+
+
+		mesh.textureLocation = modelDirectory / texturePath;
+
+
+		// iterate through directories in the textureLocation
+		for (const auto& directoryEntry : std::filesystem::directory_iterator(mesh.textureLocation))
+		{
+			if (directoryEntry.is_directory())
+			{
+				const std::wstring& skinFolder = directoryEntry.path().filename().wstring();
+
+				// iterate through files in the current directory
+				for (const auto& fileEntry : std::filesystem::directory_iterator(directoryEntry.path()))
+				{
+					if (fileEntry.is_regular_file() && fileEntry.path().extension() == ".dds")
+					{
+						std::string fileName = fileEntry.path().filename().string();
+						// find the textures that have the same name as the mesh name (and exclude the _mesh part)
+						if (fileName.find(mesh.name.substr(0, mesh.name.find("_mesh"))) != std::string::npos)
+						{
+							// add the file to the textureFileNames map
+							TextureManager::getInstance().addTexture2D(fileEntry.path(), COLOR_TEXTURE_BIND_SLOT, textureDesc);
+
+							mesh.textureFileNames[skinFolder].emplace_back(TextureManager::getInstance().getTexture2D(fileEntry.path()));
+						}
+					}
+				}
+			}
+		}
 
 	}
 

@@ -14,75 +14,35 @@ namespace engine::DX
 			//bind shaders (draw several times with different shader)
 			for (auto& shaderGroup : opaqueInstance->getShaders())
 			{
-				if (!showNormal && shaderGroup.at(3).find(L"normalVisualizer") != std::wstring::npos)
+				RenderMode renderModeType = getRenderMode(shaderGroup);
+
+				switch (renderModeType)
 				{
-					continue;
+				case RenderMode::DEFAULT:
+					SetRenderMode<RenderMode::DEFAULT>(opaqueInstance.get(), &camera);
+					break;
+				case RenderMode::NORMAL_VISUALISER:
+					if (!showNormal)
+						continue;
+					SetRenderMode<RenderMode::NORMAL_VISUALISER>(opaqueInstance.get(), &camera);
+					break;
+				case RenderMode::HOLOGRAM:
+					SetRenderMode<RenderMode::HOLOGRAM>(opaqueInstance.get(), &camera);
+					break;
+
 				}
 
-				//vertex shader
-				ShaderManager::getInstance().getVertexShader(shaderGroup.at(0))->bind();
+				setShaders(shaderGroup);
+				setPrimitiveTopology(shaderGroup);
 
-				//hull shader
-				if (!shaderGroup.at(1).empty())
-				{
-
-					ShaderManager::getInstance().getHullShader(shaderGroup.at(1))->bind();
-				}
-				else
-				{
-					g_devcon->HSSetShader(nullptr, nullptr, 0);
-				}
-
-				//domain shader
-				if (!shaderGroup.at(2).empty())
-				{
-					ShaderManager::getInstance().getDomainShader(shaderGroup.at(2))->bind();
-				}
-				else
-				{
-					g_devcon->DSSetShader(nullptr, nullptr, 0);
-				}
-
-				//geometry shader
-				if (!shaderGroup.at(3).empty())
-				{
-					ShaderManager::getInstance().getGeometryShader(shaderGroup.at(3))->bind();
-				}
-				else
-				{
-					g_devcon->GSSetShader(nullptr, nullptr, 0);
-				}
-
-				//pixel shader
-				ShaderManager::getInstance().getPixelShader(shaderGroup.at(4))->bind();
-
-
-				if (shaderGroup.at(4).find(L"hologram") != std::wstring::npos)
-				{
-					float3 cameraPos = camera.position();
-					cameraPosition.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {cameraPos.x, cameraPos.y, cameraPos.z, 1.0}});
-
-					time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {general::FPSTimer::getCurrentTick() - general::FPSTimer::initTick, 0, 0, 0}});
-					cameraPosition.setPixelShaderBuffer();
-					camera.setCameraBufferGeometryShader();
-					time.setBuffer();
-				}
-				opaqueInstance->hasTexture(shaderGroup.at(4).find(L"color") != std::wstring::npos);
-
-				//topology
-				if (!shaderGroup.at(1).empty() && !shaderGroup.at(2).empty())
-				{
-					g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
-				}
-				else
-				{
-					g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-				}
 
 				opaqueInstance->render();
 			}
 		}
 	}
+
+
+
 
 	/// <param name="instance">instance, which is contained in opaqueInstance</param>
 	bool MeshSystem::findIntersection(const ray& r, std::weak_ptr<Instance>& instance, Intersection& intersection)
@@ -120,7 +80,7 @@ namespace engine::DX
 		for (size_t meshIndex = 0; meshIndex < meshIndices.size(); ++meshIndex)
 		{
 
-			opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices.at(meshIndex), material, instances);
+			opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices[meshIndex], material, instances);
 
 			if (model->getMesh(meshIndex).GetName() == ModelManager::debugCubeTag)
 			{
@@ -138,7 +98,7 @@ namespace engine::DX
 				{
 					if (triangleOctrees[triangleOctreeIndex]->alreadyInited(model, meshIndices)) // already created
 					{
-						modelIntersections.emplace_back(ModelIntersection{ triangleOctrees.at(triangleOctreeIndex), instance, opaqueInstances.at(opaqueInstanceID) });
+						modelIntersections.emplace_back(ModelIntersection{ triangleOctrees[triangleOctreeIndex], instance, opaqueInstances[opaqueInstanceID] });
 						break;
 					}
 				}
@@ -146,7 +106,7 @@ namespace engine::DX
 				if (triangleOctreeIndex == triangleOctrees.size())
 				{
 					triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, meshIndices));
-					modelIntersections.emplace_back(ModelIntersection{ triangleOctrees.at(triangleOctrees.size() - 1), instance, opaqueInstances.at(opaqueInstanceID) });
+					modelIntersections.emplace_back(ModelIntersection{ triangleOctrees[triangleOctrees.size() - 1], instance, opaqueInstances[opaqueInstanceID] });
 				}
 			}
 		}
@@ -158,12 +118,82 @@ namespace engine::DX
 	/// creates new Opaque Instance
 	/// </summary>
 	/// <returns>ID to access to created opaque instance</returns>
-	uint32_t MeshSystem::createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames)
+	uint32_t MeshSystem::createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames)
 	{
 		std::shared_ptr<OpaqueInstances> opaqueInstance = std::make_shared<OpaqueInstances>();
 		opaqueInstance->setShaders(shaderFileNames);
 		opaqueInstances.push_back(opaqueInstance);
 		return (opaqueInstances.size() - 1);
+	}
+
+	MeshSystem::RenderMode MeshSystem::getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup)
+	{
+
+		switch (shaderGroup.type)
+		{
+		case OpaqueInstances::RenderType::NORMAL_VISUALIZER:
+			return RenderMode::NORMAL_VISUALISER;
+		case OpaqueInstances::RenderType::HOLOGRAM:
+			return RenderMode::HOLOGRAM;
+		case OpaqueInstances::RenderType::DEFAULT:
+			return RenderMode::DEFAULT;
+		default:
+			return RenderMode::DEFAULT;
+		}
+
+
+	}
+
+	void MeshSystem::setShaders(const OpaqueInstances::ShaderGroup& shaderGroup)
+	{
+		//vertex shader
+		shaderGroup.vertexShader.lock()->bind();
+
+		//hull shader
+		if (!shaderGroup.hullShader.expired())
+		{
+			shaderGroup.hullShader.lock()->bind();
+		}
+		else
+		{
+			g_devcon->HSSetShader(nullptr, nullptr, 0);
+		}
+
+		//domain shader
+		if (!shaderGroup.domainShader.expired())
+		{
+			shaderGroup.domainShader.lock()->bind();
+		}
+		else
+		{
+			g_devcon->DSSetShader(nullptr, nullptr, 0);
+		}
+
+		//geometry shader
+		if (!shaderGroup.geometryShader.expired())
+		{
+			shaderGroup.geometryShader.lock()->bind();
+		}
+		else
+		{
+			g_devcon->GSSetShader(nullptr, nullptr, 0);
+		}
+
+		//pixel shader
+		shaderGroup.pixelShader.lock()->bind();
+	}
+
+	void MeshSystem::setPrimitiveTopology(const OpaqueInstances::ShaderGroup& shaderGroup)
+	{
+		//topology
+		if (!shaderGroup.hullShader.expired() && !shaderGroup.domainShader.expired())
+		{
+			g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_3_CONTROL_POINT_PATCHLIST);
+		}
+		else
+		{
+			g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		}
 	}
 
 }

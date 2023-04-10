@@ -39,5 +39,7 @@ namespace engine::DX
 
 		void createCube(const std::string& modelFileName);
 
+		void addTextureFiles(Mesh& mesh, const D3D11_TEXTURE2D_DESC& textureDesc, const std::filesystem::path& texturePath);
+
 	};
 }
