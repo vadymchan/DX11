@@ -11,10 +11,7 @@ set(ENGINE_SOURCES
 	"src/DirectX 11/source/MeshSystem/Model.cpp"
 	"src/DirectX 11/source/MeshSystem/OpaqueInstances.cpp"
 	"src/DirectX 11/source/Texture/DDSTextureLoader11.cpp"
-	"src/DirectX 11/source/Texture/SampleState.cpp"
 	"src/DirectX 11/source/Utils/Camera.cpp"
-	"src/DirectX 11/source/Texture/Skybox.cpp"
-	"src/DirectX 11/source/PostProcess.cpp"
 	"src/DirectX 11/window/WindowDX.cpp"
 	"src/DirectX 11/EngineDX.cpp"
 	"src/DirectX 11/source/Texture/SampleState.cpp"
@@ -41,7 +38,6 @@ set(ENGINE_HEADERS
 	"src/DirectX 11/source/Buffer/VertexBuffer.h"
 	"src/DirectX 11/source/Controller/BufferManager.h"
 	"src/DirectX 11/source/Controller/TextureManager.h"
-	"src/DirectX 11/source/PostProcess.h"
 	"src/DirectX 11/source/Math/Movement/MeshMover.h"
 	"src/DirectX 11/source/Shader/Shader.h"
 	"src/DirectX 11/source/Shader/VertexShader.h"
@@ -51,7 +47,6 @@ set(ENGINE_HEADERS
 	"src/DirectX 11/source/Shader/PixelShader.h"
 	"src/DirectX 11/source/Texture/SampleState.h"
 	"src/DirectX 11/source/Texture/Texture2D.h"
-	"src/DirectX 11/source/Texture/Skybox.h"
 	"src/DirectX 11/source/Renderer.h"
 	"src/DirectX 11/EngineDX.h"
 	"src/DirectX 11/source/Texture/Skybox.h"
@@ -185,7 +180,36 @@ if(NOT imgui_POPULATED)
 endif()
 
 
-add_library(engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS})
+set (IMGUI_SOURCES
+    ${DEPENDENCIES_DIR}/imgui/imgui.cpp
+    ${DEPENDENCIES_DIR}/imgui/imgui_draw.cpp
+    ${DEPENDENCIES_DIR}/imgui/imgui_tables.cpp
+    ${DEPENDENCIES_DIR}/imgui/imgui_widgets.cpp
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_sdl2.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_sdl3.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_sdlrenderer.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_vulkan.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_wgpu.cpp"
+    "${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_win32.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_allegro5.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_android.cpp"
+    "${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_dx9.cpp"
+    "${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_dx10.cpp"
+    "${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_dx11.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_dx12.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_glfw.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_glut.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_opengl2.cpp"
+    #"${DEPENDENCIES_DIR}/imgui/backends/imgui_impl_opengl3.cpp"
+)
+
+
+#-----------------------------------------------------------------------
+
+
+ add_library(engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} ${IMGUI_SOURCES})
+
+#link libs -------------------------------------------------------------
 
 # Link with Assimp
 add_dependencies(engine assimp)

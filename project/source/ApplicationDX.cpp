@@ -27,13 +27,15 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const std::wstring hologramDomainShaderFileName{ L"hologram/hologramDomainShader.hlsl" };
 	const std::wstring hologramPixelShaderFileName{ L"hologram/hologramPixelShader.hlsl" };
 
-	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
+	//const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
+	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/grass_field.dds" };
 
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;
 	cameraMaxPitch = DirectX::XMConvertToRadians(89.0f);
 	cameraMinPitch = DirectX::XMConvertToRadians(-89.0f);
 	wireframeMode = false;
+	deltaExposure = 1.f;
 #ifdef _DEBUG
 	engine::general::initConsole();
 #endif
@@ -304,21 +306,27 @@ bool ApplicationDX::ProcessInputs()
 	float xPos{ lastMousePos.x };
 	float yPos{ lastMousePos.y };
 
+	
+		
+	
 	while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
 		switch (msg.message)
 		{
 		case WM_MOUSEMOVE:
-			if (pitchYawRotation || rayCasted)
+			if (!ImGui::GetIO().WantCaptureMouse && (pitchYawRotation || rayCasted))
 			{
 				xPos = static_cast<float>(GET_X_LPARAM(msg.lParam));
 				yPos = static_cast<float>(GET_Y_LPARAM(msg.lParam));
 			}
 			break;
 		case WM_LBUTTONDOWN:
-			pitchYawRotation = true;
-			lastMousePos.x = xPos = static_cast<float>(GET_X_LPARAM(msg.lParam));
-			lastMousePos.y = yPos = static_cast<float>(GET_Y_LPARAM(msg.lParam));
+			if (!ImGui::GetIO().WantCaptureMouse)
+			{
+				pitchYawRotation = true;
+				lastMousePos.x = xPos = static_cast<float>(GET_X_LPARAM(msg.lParam));
+				lastMousePos.y = yPos = static_cast<float>(GET_Y_LPARAM(msg.lParam));
+			}
 			break;
 		case WM_LBUTTONUP:
 			pitchYawRotation = false;
@@ -345,6 +353,12 @@ bool ApplicationDX::ProcessInputs()
 		case WM_KEYDOWN:
 			switch (msg.wParam)
 			{
+			case VK_OEM_PLUS:
+				exposureState[(int)ChangeState::INCREASE] = true;
+				break;
+			case VK_OEM_MINUS:
+				exposureState[(int)ChangeState::DECREASE] = true;
+				break;
 			case VK_NUMPAD1:
 			case '1':
 				engine.getRenderer().changeRenderState(engine::DX::SampleState::BindSlot::POINT_WRAP);
@@ -395,6 +409,12 @@ bool ApplicationDX::ProcessInputs()
 		case WM_KEYUP:
 			switch (msg.wParam)
 			{
+			case VK_OEM_PLUS:
+				exposureState[(int)ChangeState::INCREASE] = false;
+				break;
+			case VK_OEM_MINUS:
+				exposureState[(int)ChangeState::DECREASE] = false;
+				break;
 			case 0x57: // W
 				cameraMovingDirections[MoveDirection::FORWARD] = false;
 				break;
@@ -427,6 +447,8 @@ bool ApplicationDX::ProcessInputs()
 			break;
 		}
 
+		
+
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);
 	}
@@ -450,6 +472,7 @@ bool ApplicationDX::ProcessInputs()
 		RotateCamera(xPos, yPos);
 	}
 	MoveCamera();
+	HandleExposure();
 	lastMousePos = { xPos, yPos };
 	cameraDirection = engine::DX::float3();
 	return true;
@@ -522,6 +545,26 @@ void ApplicationDX::RotateCamera(float xPos, float yPos)
 	}
 
 
+}
+
+void ApplicationDX::HandleExposure()
+{
+	if (exposureState[(int)ChangeState::INCREASE] || exposureState[(int)ChangeState::DECREASE])
+	{
+		auto& postProcess = engine.getRenderer().getPostProcess();
+		float exposure = postProcess.getEV100();
+
+		if (exposureState[(int)ChangeState::INCREASE])
+		{
+			exposure += deltaExposure * deltaTime;
+		}
+		if (exposureState[(int)ChangeState::DECREASE])
+		{
+			exposure -= deltaExposure * deltaTime;
+		}
+
+		postProcess.setEV100(exposure);
+	}
 }
 
 std::vector<std::shared_ptr<Instance>> ApplicationDX::generateRandomInstances(size_t numInstances)

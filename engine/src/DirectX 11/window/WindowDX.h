@@ -1,9 +1,9 @@
 #pragma once
 
 #include "../../general/include/win.h"
-
 #include "../source/D3D/D3D.h"
 #include "../source/Buffer/DepthStencilBuffer.h"
+#include "../source/Controller/ImGuiManager.h"
 
 
 namespace engine::DX

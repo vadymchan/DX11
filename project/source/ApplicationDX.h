@@ -27,6 +27,14 @@ public:
 		COUNT
 	};
 
+	enum class ChangeState
+	{
+        NONE = -1,
+		INCREASE,
+		DECREASE,
+		COUNT
+	};
+
 	void Init(const HINSTANCE& appHandle, int windowShowParams);
 	void Run();
 	bool ProcessInputs();
@@ -34,6 +42,7 @@ public:
 	bool MoveCamera();
 	void MoveObject(float xPos, float yPos);
 	void RotateCamera(float xPos, float yPos);
+	void HandleExposure();
 	std::vector<std::shared_ptr<engine::DX::OpaqueInstances::Instance>> generateRandomInstances(size_t numInstances);
 	~ApplicationDX()
 	{
@@ -49,7 +58,6 @@ private:
 
 	engine::general::FPSTimer fpsTimer;
 
-
 	engine::DX::Engine engine;
 	MSG msg;
 	float cameraSpeed{};
@@ -64,5 +72,8 @@ private:
 	bool objectCaptured{};
 	bool nomalVisualized{};
 	bool wireframeMode{};
+
+	std::array<bool, int(COUNT)> exposureState{};
+	float deltaExposure{};
 };
 

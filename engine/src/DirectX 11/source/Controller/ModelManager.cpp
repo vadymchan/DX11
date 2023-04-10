@@ -296,4 +296,201 @@ namespace engine::DX
 
 	}
 
+
+	void ModelManager::initUnitSphere()
+	{
+		//const uint32_t SIDES = 6;
+		//const uint32_t GRID_SIZE = 12;
+		//const uint32_t TRIS_PER_SIDE = GRID_SIZE * GRID_SIZE * 2;
+		//const uint32_t VERT_PER_SIZE = (GRID_SIZE + 1) * (GRID_SIZE + 1);
+
+		//Model model;
+
+		////model.box = engine::Box::empty();
+
+		//Mesh& mesh = model.meshes.emplace_back();
+		//mesh.name = "UNIT_SPHERE";
+		//mesh.box = Box::empty();
+		//mesh.meshToModelMat = { float4x4::Identity};
+		//mesh.invMeshToModelMat = { float4x4::Identity };
+
+		//mesh.vertices.resize(VERT_PER_SIZE * SIDES);
+		//Mesh::Vertex* vertex = mesh.vertices.data();
+
+		//int sideMasks[6][3] =
+		//{
+		//	{ 2, 1, 0 },
+		//	{ 0, 1, 2 },
+		//	{ 2, 1, 0 },
+		//	{ 0, 1, 2 },
+		//	{ 0, 2, 1 },
+		//	{ 0, 2, 1 }
+		//};
+
+		//float sideSigns[6][3] =
+		//{
+		//	{ +1, +1, +1 },
+		//	{ -1, +1, +1 },
+		//	{ -1, +1, -1 },
+		//	{ +1, +1, -1 },
+		//	{ +1, -1, -1 },
+		//	{ +1, +1, +1 }
+		//};
+
+		//for (int side = 0; side < SIDES; ++side)
+		//{
+		//	for (int row = 0; row < GRID_SIZE + 1; ++row)
+		//	{
+		//		for (int col = 0; col < GRID_SIZE + 1; ++col)
+		//		{
+		//			float3 v;
+		//			v.x = col / float(GRID_SIZE) * 2.f - 1.f;
+		//			v.y = row / float(GRID_SIZE) * 2.f - 1.f;
+		//			v.z = 1.f;
+
+		//			vertex[0] = Mesh::Vertex::initial();
+
+		//			vertex[0].position[sideMasks[side][0]] = v.x * sideSigns[side][0];
+		//			vertex[0].position[sideMasks[side][1]] = v.y * sideSigns[side][1];
+		//			vertex[0].position[sideMasks[side][2]] = v.z * sideSigns[side][2];
+		//			vertex[0].normal = vertex[0].position = vertex[0].position.normalized();
+
+		//			vertex += 1;
+		//		}
+		//	}
+		//}
+
+		//mesh.triangles.resize(TRIS_PER_SIDE * SIDES);
+		//auto* triangle = mesh.triangles.data();
+
+		//for (int side = 0; side < SIDES; ++side)
+		//{
+		//	uint32_t sideOffset = VERT_PER_SIZE * side;
+
+		//	for (int row = 0; row < GRID_SIZE; ++row)
+		//	{
+		//		for (int col = 0; col < GRID_SIZE; ++col)
+		//		{
+		//			triangle[0].indices[0] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 0;
+		//			triangle[0].indices[1] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
+		//			triangle[0].indices[2] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
+
+		//			triangle[1].indices[0] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
+		//			triangle[1].indices[1] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 1;
+		//			triangle[1].indices[2] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
+
+		//			triangle += 2;
+		//		}
+		//	}
+		//}
+
+		//mesh.updateOctree();
+
+		//addModel(DefaultModels[UNIT_SPHERE], std::move(model));
+	}
+
+	void ModelManager::initUnitSphereFlat()
+	{
+		/*const uint32_t SIDES = 6;
+		const uint32_t GRID_SIZE = 12;
+		const uint32_t TRIS_PER_SIDE = GRID_SIZE * GRID_SIZE * 2;
+		const uint32_t VERT_PER_SIZE = 3 * TRIS_PER_SIDE;
+
+		engine::Model model;
+		model.name = "UNIT_SPHERE_FLAT";
+		model.box = engine::Box::empty();
+
+		engine::Mesh& mesh = model.meshes.emplace_back();
+		mesh.name = "UNIT_SPHERE_FLAT";
+		mesh.box = model.box;
+		mesh.instances = { engine::Mat4::identity() };
+		mesh.instancesInv = { engine::Mat4::identity() };
+
+		mesh.vertices.resize(VERT_PER_SIZE * SIDES);
+		Mesh::Vertex* vertex = mesh.vertices.data();
+
+		int sideMasks[6][3] =
+		{
+			{ 2, 1, 0 },
+			{ 0, 1, 2 },
+			{ 2, 1, 0 },
+			{ 0, 1, 2 },
+			{ 0, 2, 1 },
+			{ 0, 2, 1 }
+		};
+
+		float sideSigns[6][3] =
+		{
+			{ +1, +1, +1 },
+			{ -1, +1, +1 },
+			{ -1, +1, -1 },
+			{ +1, +1, -1 },
+			{ +1, -1, -1 },
+			{ +1, +1, +1 }
+		};
+
+		for (int side = 0; side < SIDES; ++side)
+		{
+			for (int row = 0; row < GRID_SIZE; ++row)
+			{
+				for (int col = 0; col < GRID_SIZE; ++col)
+				{
+					float left = (col + 0) / float(GRID_SIZE) * 2.f - 1.f;
+					float right = (col + 1) / float(GRID_SIZE) * 2.f - 1.f;
+					float bottom = (row + 0) / float(GRID_SIZE) * 2.f - 1.f;
+					float top = (row + 1) / float(GRID_SIZE) * 2.f - 1.f;
+
+					float3 quad[4] =
+					{
+						{ left, bottom, 1.f },
+						{ left, top, 1.f },
+						{ right, bottom, 1.f },
+						{ right, top, 1.f }
+					};
+
+					vertex[0] = vertex[1] = vertex[2] = vertex[3] = Mesh::Vertex::initial();
+
+					auto setPos = [sideMasks, sideSigns](int side, Mesh::Vertex& dst, const float3& pos)
+					{
+						dst.position[sideMasks[side][0]] = pos.x * sideSigns[side][0];
+						dst.position[sideMasks[side][1]] = pos.y * sideSigns[side][1];
+						dst.position[sideMasks[side][2]] = pos.z * sideSigns[side][2];
+						dst.position = dst.position.normalized();
+					};
+
+					setPos(side, vertex[0], quad[0]);
+					setPos(side, vertex[1], quad[1]);
+					setPos(side, vertex[2], quad[2]);
+
+					{
+						float3 AB = vertex[1].position - vertex[0].position;
+						float3 AC = vertex[2].position - vertex[0].position;
+						vertex[0].normal = vertex[1].normal = vertex[2].normal = AB.cross(AC).normalized();
+					}
+
+					vertex += 3;
+
+					setPos(side, vertex[0], quad[1]);
+					setPos(side, vertex[1], quad[3]);
+					setPos(side, vertex[2], quad[2]);
+
+					{
+						float3 AB = vertex[1].position - vertex[0].position;
+						float3 AC = vertex[2].position - vertex[0].position;
+						vertex[0].normal = vertex[1].normal = vertex[2].normal = AB.cross(AC).normalized();
+					}
+
+					vertex += 3;
+				}
+			}
+		}
+
+		mesh.updateOctree();
+
+		addModel(DefaultModels[UNIT_SPHERE_FLAT], std::move(model));*/
+	}
+
+
+
+
 }

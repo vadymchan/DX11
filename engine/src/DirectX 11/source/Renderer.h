@@ -16,6 +16,7 @@ namespace engine::DX
 
 		void render(Window& window, Camera& camera)
 		{
+			ImGuiManager::getInstance().NewFrame();
 			static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 			updateOffScreenRenderer(window);
@@ -44,6 +45,10 @@ namespace engine::DX
 			m_HDRtexture.bind();
 			m_postProcess.resolve(m_HDRtexture.getShaderResourceView(), window.GetRenderTargetView());
 			//PostProcess::getInstance().resolve(m_HDRtexture.getTexture2D().Get(), window.GetBackBufferRTV().Get());
+
+			std::cout << m_postProcess.getEV100() << std::endl;
+
+			ImGuiManager::getInstance().Render();
 
 			window.flush();
 
@@ -109,6 +114,16 @@ namespace engine::DX
 			needToUpdateRasterizer = true;
 		}
 
+		const PostProcess& getPostProcess() const
+		{
+			return m_postProcess;
+		}
+
+		PostProcess& getPostProcess()
+		{
+			return m_postProcess;
+		}
+
 	private:
 
 		void updateOffScreenRenderer(Window& window)
@@ -132,9 +147,6 @@ namespace engine::DX
 
 		void setOffScreenRenderer()
 		{
-			
-			
-
 			m_offscreenDSB.setDepthStencilState();
 			g_devcon->OMSetRenderTargets(1, m_offscreenRTV.GetAddressOf(), m_offscreenDSB.getPDepthStencilView());
 

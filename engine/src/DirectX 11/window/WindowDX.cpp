@@ -1,13 +1,22 @@
 #include "WindowDX.h"
 #include <iostream>
 
+
+
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
 namespace engine::DX
 {
+
+
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		static Window* window;
 		static DirectX::XMFLOAT2 windowSize;
 
+		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
+			return true;
+		
 		switch (message)
 		{
 		case WM_CREATE:
@@ -52,6 +61,8 @@ namespace engine::DX
 
 	void Window::initWindow(const LPCSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 	{
+		
+
 		this->width = width;
 		this->height = height;
 
@@ -83,6 +94,7 @@ namespace engine::DX
 
 		ShowWindow(hwnd, windowShowParams);
 
+		ImGuiManager::getInstance().Init(hwnd);
 
 		initSwapchain();
 		initBackbuffer();

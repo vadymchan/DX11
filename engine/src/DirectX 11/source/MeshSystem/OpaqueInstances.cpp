@@ -145,20 +145,11 @@ namespace engine::DX
 								texture.lock()->bind();
 							}
 
-
-
-
 						}
-
-						
-						
 
 						
 					}
 
-					
-					
-					
 					g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedModelIndexes, renderedModelVertexes, renderedInstance);
 
 

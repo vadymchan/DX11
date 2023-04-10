@@ -85,6 +85,22 @@ namespace engine::DX
 			g_devcon->VSSetConstantBuffers(startSlot, numBuffers, constantBuffers);
 			g_devcon->PSSetConstantBuffers(startSlot, numBuffers, constantBuffers);
 		}
+
+		void updateData(const std::vector<T>& bufferData)
+		{
+			D3D11_MAPPED_SUBRESOURCE mappedResource;
+			HRESULT result = g_devcon->Map(Buffer<T>::buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+			if (SUCCEEDED(result))
+			{
+				memcpy(mappedResource.pData, bufferData.data(), bufferData.size() * sizeof(T));
+				g_devcon->Unmap(Buffer<T>::buffer.Get(), 0);
+			}
+			else
+			{
+				PrintError(result, L"constant buffer data was not updated!");
+			}
+		}
+
 	private:
 		UINT registerSlot;
 	};
