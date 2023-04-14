@@ -22,18 +22,18 @@ namespace engine::DX
 
 		void render(Camera& camera, bool showNormal);
 
-		bool findIntersection(const ray& r, std::weak_ptr<Instance>& instance, Intersection& intersection);
+		bool findIntersection(const ray& r, Instance& instance, Intersection& intersection);
 
 
 		/// <param name="instance">instance, which is contained in opaqueInstance</param>
-		void updateOpaqueInstanceBuffer(const std::weak_ptr<Instance>& instance);
+		void updateOpaqueInstanceBuffer(const Instance instance);
 
 		/// <param name="instances">instance may be change during dragging</param>
 		void addInstances(uint32_t opaqueInstanceID, 
 			const std::shared_ptr<Model>& model,
 			const std::vector<size_t>& meshIndex,
 			const std::shared_ptr<OpaqueInstances::Material>& material,
-			const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances);
+			const std::vector<TransformSystem::ID>& transformID);
 
 		/// <summary>
 		/// creates new Opaque Instance
@@ -55,12 +55,13 @@ namespace engine::DX
 			time.initBuffer(PER_DRAW_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 		};
 		std::vector<std::shared_ptr<OpaqueInstances>> opaqueInstances{};
+		std::vector<std::shared_ptr<OpaqueInstances>> lightInstances{};
 		std::vector<std::shared_ptr<ModelTriangleOctree>> triangleOctrees{};
 
 		struct ModelIntersection
 		{
 			std::weak_ptr<ModelTriangleOctree> triangleOctree;
-			std::weak_ptr<Instance> instance;
+			Instance instance;
 			std::weak_ptr<OpaqueInstances> opaqueInstance; // used to update instance buffer during dragging
 		};
 

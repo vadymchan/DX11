@@ -47,7 +47,7 @@ namespace engine::DX
 		}
 
 
-		bool intersect(ray r, Intersection& intersection, const std::shared_ptr<Instance>& instance);
+		bool intersect(ray r, Intersection& intersection, Instance& instance);
 
 
 	private:

@@ -2,11 +2,12 @@
 
 
 
-bool engine::DX::ModelTriangleOctree::intersect(ray r, Intersection& intersection, const std::shared_ptr<Instance>& instance)
+bool engine::DX::ModelTriangleOctree::intersect(ray r, Intersection& intersection, Instance& instance)
 {
 	/*ray oldray = r;*/ //for debug
 	ray modelRay = r;
-	float4x4 invModelMatrix = instance.get()->toWorldMatrix.Transpose().Invert();
+	//float4x4 invModelMatrix = instance.get()->toWorldMatrix.Transpose().Invert();
+	float4x4 invModelMatrix = TransformSystem::getInstance().getTransform(instance.worldMatrixID).Transpose().Invert();
 	modelRay.position = float3::Transform(modelRay.position, invModelMatrix);
 	modelRay.direction = float3::TransformNormal(modelRay.direction, invModelMatrix);
 	modelRay.direction.Normalize();

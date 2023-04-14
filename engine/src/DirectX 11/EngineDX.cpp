@@ -25,9 +25,19 @@ namespace engine::DX
 			camera.initBuffer(PER_VIEW_SHADER, INV_PER_VIEW_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
 		}
 
-		void Engine::addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances)
+		void Engine::addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<float4x4>& instances)
 		{
-			MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndices, material, instances);
+			std::vector<TransformSystem::ID> instanceMatrixIDs;
+			instanceMatrixIDs.resize(instances.size());
+			for (size_t i = 0; i < instances.size(); i++)
+			{
+				instanceMatrixIDs[i] = TransformSystem::getInstance().addTransform(instances[i]);
+
+			}
+		
+
+
+			MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndices, material, instanceMatrixIDs);
 		}
 
 
@@ -55,7 +65,7 @@ namespace engine::DX
 #endif // color of intersection point
 
 			ray ray = rayToWorld(xPos, yPos);
-			std::weak_ptr<Instance> instance;
+			Instance instance{-1};
 			Intersection intersection;
 			intersection.reset();
 			if (MeshSystem::getInstance().findIntersection(ray, instance, intersection))
@@ -78,12 +88,15 @@ namespace engine::DX
 
 			}
 			bool returnResult{};
-			if (!instance.expired())
+			/*if (!instance.expired())
+			{*/
+			if (instance.worldMatrixID != -1)
 			{
 				MeshMover::getInstance().setInstance(instance);
 				returnResult = true;
-
 			}
+
+			//}
 
 
 			return returnResult;
@@ -105,7 +118,7 @@ namespace engine::DX
 			float worldOffsetY = nearPlaneOffsetY * intersectionVec.z / camera.getZNear();
 			float3 moveOffset = worldOffsetX * camera.right() + worldOffsetY * camera.up();
 
-			DirectX::SimpleMath::Matrix worldMatrix = engine::DX::MeshMover::getInstance().getMat().lock()->toWorldMatrix;
+			DirectX::SimpleMath::Matrix worldMatrix = TransformSystem::getInstance().getTransform(MeshMover::getInstance().getMat().worldMatrixID);
 			DirectX::SimpleMath::Vector3 worldSpaceScale;
 			worldSpaceScale.x = worldMatrix.Right().Length();
 			worldSpaceScale.y = worldMatrix.Up().Length();

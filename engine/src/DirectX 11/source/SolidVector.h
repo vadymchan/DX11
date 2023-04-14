@@ -4,26 +4,27 @@
 template<typename T>
 class SolidVector
 {
-protected:
-    void assertId(ID id) const
-    {
-        DEV_ASSERT(id < m_occupied.size());
-        DEV_ASSERT(m_occupied[id]);
-    }
-
 public:
     using ID = uint32_t;
     using Index = uint32_t;
+protected:
+    void assertId(ID id) const
+    {
+        assert(id < m_occupied.size());
+        assert(m_occupied[id]);
+    }
 
-    bool occupied(ID id) const { DEV_ASSERT(id < m_occupied.size()); return m_occupied[id]; }
+public:
+    
+    bool occupied(ID id) const { assert(id < m_occupied.size()); return m_occupied[id]; }
 
     Index size() const { return Index(m_data.size()); }
 
     const T* data() const { return m_data.data(); }
     T* data() { return m_data.data(); }
 
-    const T& at(Index index) const { DEV_ASSERT(index < m_data.size()); return m_data[index]; }
-    T& at(Index index) { DEV_ASSERT(index < m_data.size()); return m_data[index]; }
+    const T& at(Index index) const { assert(index < m_data.size()); return m_data[index]; }
+    T& at(Index index) { assert(index < m_data.size()); return m_data[index]; }
 
     const T& operator[](ID id) const { assertId(id); return m_data[m_forwardMap[id]]; }
     T& operator[](ID id) { assertId(id); return m_data[m_forwardMap[id]]; }
@@ -31,7 +32,7 @@ public:
     ID insert(const T& value)
     {
         ID id = m_nextUnused;
-        DEV_ASSERT(id <= m_forwardMap.size() && m_forwardMap.size() == m_occupied.size());
+        assert(id <= m_forwardMap.size() && m_forwardMap.size() == m_occupied.size());
 
         if (id == m_forwardMap.size())
         {
@@ -39,7 +40,7 @@ public:
             m_occupied.push_back(false);
         }
 
-        DEV_ASSERT(!m_occupied[id]);
+        assert(!m_occupied[id]);
 
         m_nextUnused = m_forwardMap[id];
         m_forwardMap[id] = Index(m_data.size());
@@ -51,17 +52,17 @@ public:
         return id;
     }
 
-    void erase(Id id)
+    void erase(ID id)
     {
-        DEV_ASSERT(id < m_forwardMap.size() && m_forwardMap.size() == m_occupied.size());
+        assert(id < m_forwardMap.size() && m_forwardMap.size() == m_occupied.size());
 
         Index& forwardIndex = m_forwardMap[id];
-        DEV_ASSERT(m_occupied[id]);
+        assert(m_occupied[id]);
 
         m_data[forwardIndex] = std::move(m_data.back());
         m_data.pop_back();
 
-        Id backwardIndex = m_backwardMap.back();
+        ID backwardIndex = m_backwardMap.back();
 
         m_backwardMap[forwardIndex] = backwardIndex;
         m_backwardMap.pop_back();

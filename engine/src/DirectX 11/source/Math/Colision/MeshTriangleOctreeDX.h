@@ -37,7 +37,7 @@ namespace engine::DX
 
 		void initialize(Mesh& mesh);
 
-		bool intersect(ray r, Intersection& nearest, const std::shared_ptr<Instance>& instance) const;
+		bool intersect(ray r, Intersection& nearest, Instance& instance) const;
 
 		Mesh* m_mesh = nullptr;
 	protected:

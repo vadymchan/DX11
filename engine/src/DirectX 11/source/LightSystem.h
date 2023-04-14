@@ -38,7 +38,7 @@ namespace engine::DX
         LightSystem(TransformSystem& transformSystem) : transformSystem(transformSystem) {}
 
         // Add a PointLight
-        PointLightID addPointLight(const Transform& transform, const float3& color, float intensity, float range)
+        PointLightID addPointLight(const float4x4& transform, const float3& color, float intensity, float range)
         {
             TransformSystem::ID transformID = transformSystem.addTransform(transform);
             PointLight light{ transformID, color, intensity, range };

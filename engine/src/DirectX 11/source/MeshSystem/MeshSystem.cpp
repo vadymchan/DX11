@@ -45,13 +45,13 @@ namespace engine::DX
 
 
 	/// <param name="instance">instance, which is contained in opaqueInstance</param>
-	bool MeshSystem::findIntersection(const ray& r, std::weak_ptr<Instance>& instance, Intersection& intersection)
+	bool MeshSystem::findIntersection(const ray& r, Instance& instance, Intersection& intersection)
 	{
 		bool returnResult{};
 
 		for (auto& modelInterseciton : modelIntersections)
 		{
-			if (modelInterseciton.triangleOctree.lock()->intersect(r, intersection, modelInterseciton.instance.lock()))
+			if (modelInterseciton.triangleOctree.lock()->intersect(r, intersection, modelInterseciton.instance))
 			{
 				instance = modelInterseciton.instance;
 				returnResult = true;
@@ -63,20 +63,29 @@ namespace engine::DX
 	}
 
 	/// <param name="instances">instance may be change during dragging</param>
-	void MeshSystem::updateOpaqueInstanceBuffer(const std::weak_ptr<Instance>& instance)
+	void MeshSystem::updateOpaqueInstanceBuffer(const Instance instance)
 	{
 		for (auto& modelIntersection : modelIntersections)
 		{
-			if (!modelIntersection.instance.expired() && !instance.expired() && modelIntersection.instance.lock() == instance.lock())
+			//if (!modelIntersection.instance.expired() && !instance.expired() && modelIntersection.instance.lock() == instance.lock())
+			if (modelIntersection.instance.worldMatrixID == instance.worldMatrixID)
 			{
 				modelIntersection.opaqueInstance.lock()->needToUpdateInstanceBuffer();
 			}
 		}
 	}
 
-	void MeshSystem::addInstances(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<std::shared_ptr<OpaqueInstances::Instance>>& instances)
+	void MeshSystem::addInstances(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<TransformSystem::ID>& transformID)
 	{
 		bool debugCubeModel{};
+
+		std::vector<Instance> instances{};
+		instances.resize(transformID.size());
+		for (size_t i = 0; i < transformID.size(); i++)
+		{
+			instances[i] = Instance{ transformID[i] };
+		}
+
 		for (size_t meshIndex = 0; meshIndex < meshIndices.size(); ++meshIndex)
 		{
 
@@ -89,7 +98,7 @@ namespace engine::DX
 
 		}
 
-		for (auto& instance : instances)
+		for (auto& instanceID : transformID)
 		{
 			if (!debugCubeModel)
 			{
@@ -98,7 +107,8 @@ namespace engine::DX
 				{
 					if (triangleOctrees[triangleOctreeIndex]->alreadyInited(model, meshIndices)) // already created
 					{
-						modelIntersections.emplace_back(ModelIntersection{ triangleOctrees[triangleOctreeIndex], instance, opaqueInstances[opaqueInstanceID] });
+						modelIntersections.emplace_back(
+							ModelIntersection{ triangleOctrees[triangleOctreeIndex], instanceID, opaqueInstances[opaqueInstanceID] });
 						break;
 					}
 				}
@@ -106,7 +116,8 @@ namespace engine::DX
 				if (triangleOctreeIndex == triangleOctrees.size())
 				{
 					triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, meshIndices));
-					modelIntersections.emplace_back(ModelIntersection{ triangleOctrees[triangleOctrees.size() - 1], instance, opaqueInstances[opaqueInstanceID] });
+					modelIntersections.emplace_back(
+						ModelIntersection{ triangleOctrees[triangleOctrees.size() - 1], instanceID, opaqueInstances[opaqueInstanceID] });
 				}
 			}
 		}

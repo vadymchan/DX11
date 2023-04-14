@@ -20,18 +20,11 @@ namespace engine::DX
 			const static std::vector<UINT> alignedByteOffsets;
 		};
 
-		
-		
-
 		using texDirID = size_t;
-
-
 
 		Mesh()
 		{
 		}
-
-		
 
 		const std::vector<uint32_t>& getIndices() const
 		{
@@ -42,8 +35,6 @@ namespace engine::DX
 		{
 			return vertices;
 		}
-
-
 
 		void addVertices(const std::vector<Vertex>& newVertices)
 		{
@@ -99,6 +90,10 @@ namespace engine::DX
 
 		const Box& getBox() const { return box; }
 
+		void updateOctree()
+		{
+
+		}
 
 	private:
 		

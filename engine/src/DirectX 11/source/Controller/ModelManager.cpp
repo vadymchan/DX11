@@ -299,112 +299,164 @@ namespace engine::DX
 
 	void ModelManager::initUnitSphere()
 	{
-		//const uint32_t SIDES = 6;
-		//const uint32_t GRID_SIZE = 12;
-		//const uint32_t TRIS_PER_SIDE = GRID_SIZE * GRID_SIZE * 2;
-		//const uint32_t VERT_PER_SIZE = (GRID_SIZE + 1) * (GRID_SIZE + 1);
+		const uint32_t SIDES = 6;
+		const uint32_t GRID_SIZE = 12;
+		const uint32_t TRIS_PER_SIDE = GRID_SIZE * GRID_SIZE * 2;
+		const uint32_t VERT_PER_SIZE = (GRID_SIZE + 1) * (GRID_SIZE + 1);
 
-		//Model model;
+		Model model;
 
-		////model.box = engine::Box::empty();
+		//model.box = engine::Box::empty();
 
-		//Mesh& mesh = model.meshes.emplace_back();
-		//mesh.name = "UNIT_SPHERE";
-		//mesh.box = Box::empty();
-		//mesh.meshToModelMat = { float4x4::Identity};
-		//mesh.invMeshToModelMat = { float4x4::Identity };
+		Mesh& mesh = model.meshes.emplace_back();
+		mesh.name = "UNIT_SPHERE";
+		mesh.box = Box::empty();
+		mesh.meshToModelMat = { float4x4::Identity};
+		mesh.invMeshToModelMat = { float4x4::Identity };
 
-		//mesh.vertices.resize(VERT_PER_SIZE * SIDES);
-		//Mesh::Vertex* vertex = mesh.vertices.data();
+		mesh.vertices.resize(VERT_PER_SIZE * SIDES);
+		Mesh::Vertex* vertex = mesh.vertices.data();
 
-		//int sideMasks[6][3] =
-		//{
-		//	{ 2, 1, 0 },
-		//	{ 0, 1, 2 },
-		//	{ 2, 1, 0 },
-		//	{ 0, 1, 2 },
-		//	{ 0, 2, 1 },
-		//	{ 0, 2, 1 }
-		//};
+		int sideMasks[6][3] =
+		{
+			{ 2, 1, 0 },
+			{ 0, 1, 2 },
+			{ 2, 1, 0 },
+			{ 0, 1, 2 },
+			{ 0, 2, 1 },
+			{ 0, 2, 1 }
+		};
 
-		//float sideSigns[6][3] =
-		//{
-		//	{ +1, +1, +1 },
-		//	{ -1, +1, +1 },
-		//	{ -1, +1, -1 },
-		//	{ +1, +1, -1 },
-		//	{ +1, -1, -1 },
-		//	{ +1, +1, +1 }
-		//};
+		float sideSigns[6][3] =
+		{
+			{ +1, +1, +1 },
+			{ -1, +1, +1 },
+			{ -1, +1, -1 },
+			{ +1, +1, -1 },
+			{ +1, -1, -1 },
+			{ +1, +1, +1 }
+		};
 
-		//for (int side = 0; side < SIDES; ++side)
-		//{
-		//	for (int row = 0; row < GRID_SIZE + 1; ++row)
-		//	{
-		//		for (int col = 0; col < GRID_SIZE + 1; ++col)
-		//		{
-		//			float3 v;
-		//			v.x = col / float(GRID_SIZE) * 2.f - 1.f;
-		//			v.y = row / float(GRID_SIZE) * 2.f - 1.f;
-		//			v.z = 1.f;
+		for (int side = 0; side < SIDES; ++side)
+		{
+			for (int row = 0; row < GRID_SIZE + 1; ++row)
+			{
+				for (int col = 0; col < GRID_SIZE + 1; ++col)
+				{
+					float3 v;
+					v.x = col / float(GRID_SIZE) * 2.f - 1.f;
+					v.y = row / float(GRID_SIZE) * 2.f - 1.f;
+					v.z = 1.f;
 
-		//			vertex[0] = Mesh::Vertex::initial();
+					//vertex[0] = Mesh::Vertex::initial();
+					vertex[0] = Mesh::Vertex{};
 
-		//			vertex[0].position[sideMasks[side][0]] = v.x * sideSigns[side][0];
-		//			vertex[0].position[sideMasks[side][1]] = v.y * sideSigns[side][1];
-		//			vertex[0].position[sideMasks[side][2]] = v.z * sideSigns[side][2];
-		//			vertex[0].normal = vertex[0].position = vertex[0].position.normalized();
+					// Calculate the values for x, y, and z based on pos and sideSigns.
+					const float values[3] = { v.x * sideSigns[side][0], v.y * sideSigns[side][1], v.z * sideSigns[side][2] };
 
-		//			vertex += 1;
-		//		}
-		//	}
-		//}
+					// Iterate over the sideMasks[side] array.
+					for (int i = 0; i < 3; i++) {
+						int index = sideMasks[side][i];
 
-		//mesh.triangles.resize(TRIS_PER_SIDE * SIDES);
-		//auto* triangle = mesh.triangles.data();
+						// Assign the appropriate value to vertex[0].position.x, vertex[0].position.y, or vertex[0].position.z based on the value of sideMasks[side][i].
+						switch (index) {
+						case 0:
+							vertex[0].position.x = values[i];
+							break;
+						case 1:
+							vertex[0].position.y = values[i];
+							break;
+						case 2:
+							vertex[0].position.z = values[i];
+							break;
+						}
+					}
 
-		//for (int side = 0; side < SIDES; ++side)
-		//{
-		//	uint32_t sideOffset = VERT_PER_SIZE * side;
 
-		//	for (int row = 0; row < GRID_SIZE; ++row)
-		//	{
-		//		for (int col = 0; col < GRID_SIZE; ++col)
-		//		{
-		//			triangle[0].indices[0] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 0;
-		//			triangle[0].indices[1] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
-		//			triangle[0].indices[2] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
 
-		//			triangle[1].indices[0] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
-		//			triangle[1].indices[1] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 1;
-		//			triangle[1].indices[2] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
+					/*vertex[0].position[sideMasks[side][0]] = v.x * sideSigns[side][0];
+					vertex[0].position[sideMasks[side][1]] = v.y * sideSigns[side][1];
+					vertex[0].position[sideMasks[side][2]] = v.z * sideSigns[side][2];*/
+					float3 normal = vertex[0].position;
+					normal.Normalize();
+					vertex[0].normal = vertex[0].position = normal;
 
-		//			triangle += 2;
-		//		}
-		//	}
-		//}
+					vertex += 1;
+				}
+			}
+		}
 
-		//mesh.updateOctree();
 
+		mesh.indices.resize(TRIS_PER_SIDE * SIDES * 3);
+		auto* indices = mesh.indices.data();
+
+		size_t index = 0;
+
+		for (int side = 0; side < SIDES; ++side)
+		{
+			uint32_t sideOffset = VERT_PER_SIZE * side;
+
+			for (int row = 0; row < GRID_SIZE; ++row)
+			{
+				for (int col = 0; col < GRID_SIZE; ++col)
+				{
+					indices[index++] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 0;
+					indices[index++] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
+					indices[index++] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
+
+					indices[index++] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
+					indices[index++] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 1;
+					indices[index++] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
+				}
+			}
+		}
+
+		/*mesh.triangles.resize(TRIS_PER_SIDE * SIDES);
+		auto* triangle = mesh.triangles.data();
+
+		for (int side = 0; side < SIDES; ++side)
+		{
+			uint32_t sideOffset = VERT_PER_SIZE * side;
+
+			for (int row = 0; row < GRID_SIZE; ++row)
+			{
+				for (int col = 0; col < GRID_SIZE; ++col)
+				{
+					triangle[0].indices[0] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 0;
+					triangle[0].indices[1] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
+					triangle[0].indices[2] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
+
+					triangle[1].indices[0] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
+					triangle[1].indices[1] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 1;
+					triangle[1].indices[2] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
+
+					triangle += 2;
+				}
+			}
+		}*/
+
+		mesh.updateOctree();
+
+		models[mesh.name] = std::make_shared<Model>(std::move(model));
 		//addModel(DefaultModels[UNIT_SPHERE], std::move(model));
 	}
 
 	void ModelManager::initUnitSphereFlat()
 	{
-		/*const uint32_t SIDES = 6;
+		const uint32_t SIDES = 6;
 		const uint32_t GRID_SIZE = 12;
 		const uint32_t TRIS_PER_SIDE = GRID_SIZE * GRID_SIZE * 2;
 		const uint32_t VERT_PER_SIZE = 3 * TRIS_PER_SIDE;
 
-		engine::Model model;
-		model.name = "UNIT_SPHERE_FLAT";
-		model.box = engine::Box::empty();
+		Model model;
+		//model.name = "UNIT_SPHERE_FLAT";
+		//model.box = engine::Box::empty();
 
-		engine::Mesh& mesh = model.meshes.emplace_back();
+		Mesh& mesh = model.meshes.emplace_back();
 		mesh.name = "UNIT_SPHERE_FLAT";
-		mesh.box = model.box;
-		mesh.instances = { engine::Mat4::identity() };
-		mesh.instancesInv = { engine::Mat4::identity() };
+		//mesh.box = model.box;
+		mesh.meshToModelMat = { float4x4::Identity };
+		mesh.invMeshToModelMat = { float4x4::Identity };
 
 		mesh.vertices.resize(VERT_PER_SIZE * SIDES);
 		Mesh::Vertex* vertex = mesh.vertices.data();
@@ -448,14 +500,47 @@ namespace engine::DX
 						{ right, top, 1.f }
 					};
 
-					vertex[0] = vertex[1] = vertex[2] = vertex[3] = Mesh::Vertex::initial();
+					//vertex[0] = vertex[1] = vertex[2] = vertex[3] = Mesh::Vertex::initial();
+					vertex[0] = vertex[1] = vertex[2] = vertex[3] = Mesh::Vertex{};
 
 					auto setPos = [sideMasks, sideSigns](int side, Mesh::Vertex& dst, const float3& pos)
 					{
-						dst.position[sideMasks[side][0]] = pos.x * sideSigns[side][0];
+						/*int idx0 = sideMasks[side][0];
+						int idx1 = sideMasks[side][1];
+						int idx2 = sideMasks[side][2];
+
+						dst.position.x = (idx0 == 0 ? pos.x * sideSigns[side][0] : (idx1 == 0 ? pos.y * sideSigns[side][1] : pos.z * sideSigns[side][2]));
+						dst.position.y = (idx0 == 1 ? pos.x * sideSigns[side][0] : (idx1 == 1 ? pos.y * sideSigns[side][1] : pos.z * sideSigns[side][2]));
+						dst.position.z = (idx0 == 2 ? pos.x * sideSigns[side][0] : (idx1 == 2 ? pos.y * sideSigns[side][1] : pos.z * sideSigns[side][2]));*/
+
+						// Calculate the values for x, y, and z based on pos and sideSigns.
+						const float values[3] = { pos.x * sideSigns[side][0], pos.y * sideSigns[side][1], pos.z * sideSigns[side][2] };
+
+						// Iterate over the sideMasks[side] array.
+						for (int i = 0; i < 3; i++) {
+							int index = sideMasks[side][i];
+
+							// Assign the appropriate value to dst.position.x, dst.position.y, or dst.position.z based on the value of sideMasks[side][i].
+							switch (index) {
+							case 0:
+								dst.position.x = values[i];
+								break;
+							case 1:
+								dst.position.y = values[i];
+								break;
+							case 2:
+								dst.position.z = values[i];
+								break;
+							}
+						}
+
+
+
+						/*dst.position[sideMasks[side][0]] = pos.x * sideSigns[side][0];
 						dst.position[sideMasks[side][1]] = pos.y * sideSigns[side][1];
-						dst.position[sideMasks[side][2]] = pos.z * sideSigns[side][2];
-						dst.position = dst.position.normalized();
+						dst.position[sideMasks[side][2]] = pos.z * sideSigns[side][2];*/
+						//dst.position = dst.position.normalized();
+						dst.position.Normalize();
 					};
 
 					setPos(side, vertex[0], quad[0]);
@@ -465,7 +550,9 @@ namespace engine::DX
 					{
 						float3 AB = vertex[1].position - vertex[0].position;
 						float3 AC = vertex[2].position - vertex[0].position;
-						vertex[0].normal = vertex[1].normal = vertex[2].normal = AB.cross(AC).normalized();
+						float3 normal = AB.Cross(AC);
+						normal.Normalize();
+						vertex[0].normal = vertex[1].normal = vertex[2].normal = normal;
 					}
 
 					vertex += 3;
@@ -477,7 +564,9 @@ namespace engine::DX
 					{
 						float3 AB = vertex[1].position - vertex[0].position;
 						float3 AC = vertex[2].position - vertex[0].position;
-						vertex[0].normal = vertex[1].normal = vertex[2].normal = AB.cross(AC).normalized();
+						float3 normal = AB.Cross(AC);
+						normal.Normalize();
+						vertex[0].normal = vertex[1].normal = vertex[2].normal =  normal;
 					}
 
 					vertex += 3;
@@ -487,7 +576,9 @@ namespace engine::DX
 
 		mesh.updateOctree();
 
-		addModel(DefaultModels[UNIT_SPHERE_FLAT], std::move(model));*/
+
+		models[mesh.name] = std::make_shared<Model>(std::move(model));
+
 	}
 
 

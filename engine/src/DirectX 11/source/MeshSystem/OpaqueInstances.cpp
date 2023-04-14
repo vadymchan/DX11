@@ -7,7 +7,7 @@ namespace engine::DX
 		if (instanceBufferUpdated)
 			return;
 
-		std::vector<Instance> instances;
+		std::vector<float4x4> instances;
 		for (const auto& model : perModel)
 		{
 			for (const auto& mesh : model.perMesh)
@@ -16,13 +16,13 @@ namespace engine::DX
 				{
 					for (const auto& instance : material.instances)
 					{
-						instances.push_back(*instance.get());
+						instances.emplace_back(TransformSystem::getInstance().getTransform(instance.worldMatrixID));
 					}
 				}
 			}
 		}
 
-		instanceBuffer.initBuffer(INSTANCE_INPUT_SLOT_1, std::vector<UINT>{sizeof(Instance)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE, instances);
+		instanceBuffer.initBuffer(INSTANCE_INPUT_SLOT_1, std::vector<UINT>{sizeof(float4x4)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE, instances);
 		instanceBufferUpdated = true;
 	}
 
@@ -162,7 +162,7 @@ namespace engine::DX
 
 	}
 
-	void OpaqueInstances::addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances)
+	void OpaqueInstances::addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<Instance>& instances)
 	{
 		assert(meshIndex <= model->getMeshesCount() && "Number of meshes in mesh system are more than in the given model");
 		instanceBufferUpdated = false;

@@ -15,7 +15,7 @@ namespace engine::DX
 			return instance;
 		}
 
-		void setInstance(std::weak_ptr<Instance> instance)
+		void setInstance(Instance instance)
 		{
 			this->instance = instance;
 		}
@@ -29,9 +29,9 @@ namespace engine::DX
 		void moveMesh(const float3& offset)
 		{
 
-			instance.lock()->toWorldMatrix._14 += offset.x;
-			instance.lock()->toWorldMatrix._24 += offset.y;
-			instance.lock()->toWorldMatrix._34 += offset.z;
+			TransformSystem::getInstance().getTransform(instance.worldMatrixID)._14 += offset.x;
+			TransformSystem::getInstance().getTransform(instance.worldMatrixID)._24 += offset.y;
+			TransformSystem::getInstance().getTransform(instance.worldMatrixID)._34 += offset.z;
 
 			intersectionPoint.x += offset.x;
 			intersectionPoint.y += offset.y;
@@ -41,7 +41,7 @@ namespace engine::DX
 		}
 
 		
-		std::weak_ptr<Instance> getMat()
+		Instance getMat()
 		{
 			return instance;
 		}
@@ -60,7 +60,7 @@ namespace engine::DX
 		{
 		}
 
-		std::weak_ptr<Instance> instance;
+		Instance instance;
 		float4 intersectionPoint;
 
 	};

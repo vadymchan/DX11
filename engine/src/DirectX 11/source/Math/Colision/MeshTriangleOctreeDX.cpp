@@ -215,12 +215,12 @@ namespace engine::DX
 	static ray oldray;
 
 
-	bool MeshTriangleOctree::intersect(ray r, Intersection& nearest, const std::shared_ptr<Instance>& instance) const
+	bool MeshTriangleOctree::intersect(ray r, Intersection& nearest, Instance& instance) const
 	{
 
 		oldray = r;
 
-		float4x4 meshToWorld{ (instance.get()->toWorldMatrix * m_mesh->getMeshToModelMat(0)).Transpose()};
+		float4x4 meshToWorld{ (TransformSystem::getInstance().getTransform(instance.worldMatrixID) * m_mesh->getMeshToModelMat(0)).Transpose()};
 		auto rayToMesh{ meshToWorld.Invert() };
 
 		r.position = float3::Transform(r.position, rayToMesh);

@@ -43,7 +43,7 @@ public:
 	void MoveObject(float xPos, float yPos);
 	void RotateCamera(float xPos, float yPos);
 	void HandleExposure();
-	std::vector<std::shared_ptr<engine::DX::OpaqueInstances::Instance>> generateRandomInstances(size_t numInstances);
+	std::vector<engine::DX::float4x4> generateRandomInstances(size_t numInstances);
 	~ApplicationDX()
 	{
 		engine::DX::D3D::Deinit();

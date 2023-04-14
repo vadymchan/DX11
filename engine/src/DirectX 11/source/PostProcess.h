@@ -13,7 +13,7 @@ namespace engine::DX
 	{
 	public:
 
-		void init(float EV100 = 14.f, float Gamma = 2.2f)
+		void init(float EV100 = 2.5f, float Gamma = 2.2f)
 		{
 			m_constBuffer.initBuffer(POST_PROCESS_CONST_BUFFER_SLOT, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
 
@@ -75,7 +75,7 @@ namespace engine::DX
 			ID3D11ShaderResourceView *nullSRV = nullptr;
 			g_devcon->PSSetShaderResources(0, 1, &nullSRV);
 
-			ImGuiManager::getInstance().RenderSlider(ImGuiEv100, m_EV100, 0, 19);
+			ImGuiManager::getInstance().RenderSlider(ImGuiEv100, m_EV100, 0, 5);
 		}
 
 		const static UINT POST_PROCESS_SAMPLE_STATE_SLOT;

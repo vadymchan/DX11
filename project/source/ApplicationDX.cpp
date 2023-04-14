@@ -120,50 +120,49 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<std::shared_ptr<Instance>> samuraiInstance
+	std::vector<engine::DX::float4x4> samuraiInstance
 	{
-		std::make_shared<Instance>(
-			Instance{ engine::DX::float4x4 {
+		
+			 engine::DX::float4x4 {
 				{2.5,0,0,-2},
 				{0,2.5,0,0},
 				{0,0,2.5,0},
 				{0,0,0,1},
-			} }),
+			} ,
 	};
 
 
-	std::vector<std::shared_ptr<Instance>> eastTowerInstances
+	std::vector<engine::DX::float4x4> eastTowerInstances
 	{
-		std::make_shared<Instance>(Instance{
+		
 			engine::DX::float4x4
 			{{{1,0,0,2},
 			{0,1,0,0},
 			{0,0,1,0},
 			{0,0,0,1},}}
-		}),
+		,
 	};
 
-	std::vector<std::shared_ptr<Instance>> knightInstances
+	std::vector<engine::DX::float4x4> knightInstances
 	{
 
-		std::make_shared<Instance>(Instance{
+		
 			engine::DX::float4x4
 			{{{1,0,0,-4},
 			{0,0,1,0},
 			{0,-1,0,0},
 			{0,0,0,1},}}
-		}),
+		,
 	};
 
-	std::vector<std::shared_ptr<Instance>> knightHorseInstances
+	std::vector<engine::DX::float4x4> knightHorseInstances
 	{
-		std::make_shared<Instance>(Instance{
+		
 			engine::DX::float4x4
 			{{{1,0,0,-6},
 			{0,1,0,0},
 			{0,0,1,0},
-			{0,0,0,1},}}
-		}),
+			{0,0,0,1},}},
 	};
 
 
@@ -175,18 +174,18 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<std::shared_ptr<Instance>> obsidianCubeInstance
+	std::vector<engine::DX::float4x4> obsidianCubeInstance
 	{
 	};
 
-	std::vector<std::shared_ptr<Instance>> diamondInstance
+	std::vector<engine::DX::float4x4> diamondInstance
 	{
 	};
 
 	for (size_t i = 0; i < 16; i++)
 	{
-		std::vector<std::shared_ptr<Instance>>* first;
-		std::vector<std::shared_ptr<Instance>>* second;
+		std::vector<engine::DX::float4x4>* first;
+		std::vector<engine::DX::float4x4>* second;
 		if (i & 1)
 		{
 			first = &obsidianCubeInstance;
@@ -203,13 +202,13 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 			float x = ((float)j - 0) * (8 + 8) / (15 - 0) - 8;
 			float y = ((float)i - 0) * (-8 - 8) / (15 - 0) + 8;
-			auto instance = std::make_shared<Instance>(
-				Instance{ engine::DX::float4x4 {
+			auto instance = 
+				 engine::DX::float4x4 {
 					{1,0,0,x },
 					{0,1,0,y },
 					{0,0,1,10},
 					{0,0,0,1},
-				} });
+				};
 
 			if (j & 1)
 			{
@@ -567,10 +566,10 @@ void ApplicationDX::HandleExposure()
 	}
 }
 
-std::vector<std::shared_ptr<Instance>> ApplicationDX::generateRandomInstances(size_t numInstances)
+std::vector<engine::DX::float4x4> ApplicationDX::generateRandomInstances(size_t numInstances)
 {
 
-	std::vector<std::shared_ptr<Instance>> instances(numInstances);
+	std::vector<engine::DX::float4x4> instances(numInstances);
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
@@ -585,13 +584,12 @@ std::vector<std::shared_ptr<Instance>> ApplicationDX::generateRandomInstances(si
 		float y = std::generate_canonical<float, 10>(gen) > 0.5 ? distPos(gen) : distNeg(gen);
 		float z = std::generate_canonical<float, 10>(gen) > 0.5 ? distPos(gen) : distNeg(gen);
 
-		instances.at(j) = std::make_shared<Instance>(Instance{
-			engine::DX::float4x4
-			{{{1,0,0,x},
+		instances.at(j) = engine::DX::float4x4 {
+			{{1,0,0,x},
 			{0,1,0,y},
 			{0,0,1,z},
-			{0,0,0,1},}}
-			});
+			{0,0,0,1},}
+		};
 
 	}
 

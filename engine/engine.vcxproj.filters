@@ -109,6 +109,8 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\DirectX 11\source\Controller\ImGuiManager.cpp" />
+    <ClCompile Include="src\DirectX 11\source\PostProcess.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\Buffer.h">
@@ -297,6 +299,11 @@
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\DirectX 11\source\Controller\ImGuiManager.h" />
+    <ClInclude Include="src\DirectX 11\source\LightSystem.h" />
+    <ClInclude Include="src\DirectX 11\source\PostProcess.h" />
+    <ClInclude Include="src\DirectX 11\source\SolidVector.h" />
+    <ClInclude Include="src\DirectX 11\source\TransformSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\vadym\source\repos\vchan\engine\CMakeLists.txt" />

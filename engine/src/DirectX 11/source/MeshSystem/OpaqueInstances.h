@@ -10,6 +10,7 @@
 #include "../Controller/ShaderManager.h"
 #include "../Controller/BufferManager.h"
 #include "../Controller/TextureManager.h"
+#include "../TransformSystem.h"
 #include <variant>
 
 
@@ -58,14 +59,16 @@ namespace engine::DX
 
 		struct Instance
 		{
-			float4x4 toWorldMatrix;
+			TransformSystem::ID worldMatrixID;
+			//float4x4 toWorldMatrix;
 		};
 	protected:
 
 		struct PerMaterial
 		{
 			std::shared_ptr<Material> material;
-			std::vector<std::shared_ptr<Instance>> instances{};
+			//std::vector<std::shared_ptr<Instance>> instances{};
+			std::vector<Instance> instances{};
 		};
 
 		struct PerMesh
@@ -83,7 +86,8 @@ namespace engine::DX
 
 
 		std::vector<PerModel> perModel{};
-		VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
+		//VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
+		VertexBuffer<float4x4> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
 
@@ -107,7 +111,7 @@ namespace engine::DX
 
 		void render();
 
-		void addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<std::shared_ptr<Instance>>& instances);
+		void addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<Instance>& instances);
 
 		OpaqueInstances()
 		{
