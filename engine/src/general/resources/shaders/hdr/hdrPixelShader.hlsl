@@ -13,19 +13,6 @@ cbuffer PostProcess : register(b0)
 float3 acesHdr2Ldr(float3 hdr)
 {
     
-    //float a = 2.51f;
-    //float b = 0.03f;
-    //float c = 2.43f;
-    //float d = 0.59f;
-    //float e = 0.14f;
-    //return saturate((hdr * (a * hdr + b)) / (hdr * (c * hdr + d) + e));
-    
-    //--------------------------------
-    
-    //return hdr / (hdr + 1.0f);
-    
-    //--------------------------------
-    
     float3x3 m1 = float3x3(
 		float3(0.59719f, 0.07600f, 0.02840f),
 		float3(0.35458f, 0.90834f, 0.13383f),
@@ -91,9 +78,6 @@ float3 main(Input input) : SV_TARGET
             hdrColor = hdrTexture.Sample(g_anisotropicWrap, input.uv).rgb;
             break;
     }
-    
-    // Sample the HDR texture
-    //float3 hdrColor = hdrTexture.Sample(g_pointWrap, input.uv).rgb;
 
     // Apply exposure adjustment
     float3 adjustedColor = adjustExposure(hdrColor, EV100);
@@ -106,7 +90,4 @@ float3 main(Input input) : SV_TARGET
     //finalColor = correctGamma(finalColor, Gamma);
 
     return finalColor;
-    //return float4(finalColor, 1.0);
-    //return float4(toneMappedColor, 1.0);
-    //return float4(hdrColor, 1.0);
 }

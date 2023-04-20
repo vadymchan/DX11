@@ -15,7 +15,9 @@ namespace engine::DX
 	const UINT INSTANCE_INPUT_SLOT_1 = 1;
 	const UINT SKYBOX_VERTEX_BUFFER_DATA_0 = 0;
 	const UINT SELECTED_SAMPLER_STATE_3 = 3;
-
+	
+	const UINT POINT_LIGHT_GLOBAL = 0;
+	
 
 
 

@@ -4,6 +4,8 @@ namespace engine::DX
 {
 	const std::string ModelManager::cubeTag = "cube";
 	const std::string ModelManager::debugCubeTag = "cubeDebug";
+	const std::string ModelManager::sphereTag = "sphere";
+	const std::string ModelManager::flatSphereTag = "flatSphere";
 	const std::filesystem::path ModelManager::modelDirectory = "engine/src/general/resources/models/";
 
 	void engine::DX::ModelManager::createModelAssimp(const std::string& modelFileName)
@@ -116,6 +118,14 @@ namespace engine::DX
 		{
 
 			createCube(modelFileName);
+		}
+		else if (modelFileName == sphereTag)
+		{
+			initUnitSphere();
+		}
+		else if (modelFileName == flatSphereTag)
+		{
+			initUnitSphereFlat();
 		}
 		else
 		{
@@ -306,10 +316,9 @@ namespace engine::DX
 
 		Model model;
 
-		//model.box = engine::Box::empty();
-
 		Mesh& mesh = model.meshes.emplace_back();
-		mesh.name = "UNIT_SPHERE";
+		auto& meshRange = model.meshRanges.emplace_back();
+		mesh.name = sphereTag;
 		mesh.box = Box::empty();
 		mesh.meshToModelMat = { float4x4::Identity};
 		mesh.invMeshToModelMat = { float4x4::Identity };
@@ -358,7 +367,8 @@ namespace engine::DX
 					for (int i = 0; i < 3; i++) {
 						int index = sideMasks[side][i];
 
-						// Assign the appropriate value to vertex[0].position.x, vertex[0].position.y, or vertex[0].position.z based on the value of sideMasks[side][i].
+						// Assign the appropriate value to vertex[0].position.x, 
+						// vertex[0].position.y, or vertex[0].position.z based on the value of sideMasks[side][i].
 						switch (index) {
 						case 0:
 							vertex[0].position.x = values[i];
@@ -371,12 +381,6 @@ namespace engine::DX
 							break;
 						}
 					}
-
-
-
-					/*vertex[0].position[sideMasks[side][0]] = v.x * sideSigns[side][0];
-					vertex[0].position[sideMasks[side][1]] = v.y * sideSigns[side][1];
-					vertex[0].position[sideMasks[side][2]] = v.z * sideSigns[side][2];*/
 					float3 normal = vertex[0].position;
 					normal.Normalize();
 					vertex[0].normal = vertex[0].position = normal;
@@ -411,31 +415,18 @@ namespace engine::DX
 			}
 		}
 
-		/*mesh.triangles.resize(TRIS_PER_SIDE * SIDES);
-		auto* triangle = mesh.triangles.data();
+		//mesh.updateOctree(); // we don't need it because the sphere is unit
+		mesh.box.min = float3(-1, -1, -1);
+		mesh.box.max = float3(1, 1, 1);
 
-		for (int side = 0; side < SIDES; ++side)
-		{
-			uint32_t sideOffset = VERT_PER_SIZE * side;
-
-			for (int row = 0; row < GRID_SIZE; ++row)
-			{
-				for (int col = 0; col < GRID_SIZE; ++col)
-				{
-					triangle[0].indices[0] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 0;
-					triangle[0].indices[1] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
-					triangle[0].indices[2] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
-
-					triangle[1].indices[0] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 0;
-					triangle[1].indices[1] = sideOffset + (row + 1) * (GRID_SIZE + 1) + col + 1;
-					triangle[1].indices[2] = sideOffset + (row + 0) * (GRID_SIZE + 1) + col + 1;
-
-					triangle += 2;
-				}
-			}
-		}*/
-
-		mesh.updateOctree();
+		
+		meshRange.vertexOffset = 0;
+		meshRange.indexOffset = 0;
+		meshRange.indexNum = mesh.indices.size();
+		meshRange.vertexNum = mesh.vertices.size();
+		
+		model.initVertexBuffer(MODEL_DATA_INPUT_SLOT_0, std::vector<UINT>{sizeof(Mesh::Vertex)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE);
+		model.initIndexBuffer(D3D11_USAGE_DEFAULT);
 
 		models[mesh.name] = std::make_shared<Model>(std::move(model));
 		//addModel(DefaultModels[UNIT_SPHERE], std::move(model));
@@ -449,12 +440,10 @@ namespace engine::DX
 		const uint32_t VERT_PER_SIZE = 3 * TRIS_PER_SIDE;
 
 		Model model;
-		//model.name = "UNIT_SPHERE_FLAT";
-		//model.box = engine::Box::empty();
 
 		Mesh& mesh = model.meshes.emplace_back();
-		mesh.name = "UNIT_SPHERE_FLAT";
-		//mesh.box = model.box;
+		auto& meshRange = model.meshRanges.emplace_back();
+		mesh.name = flatSphereTag;
 		mesh.meshToModelMat = { float4x4::Identity };
 		mesh.invMeshToModelMat = { float4x4::Identity };
 
@@ -500,18 +489,10 @@ namespace engine::DX
 						{ right, top, 1.f }
 					};
 
-					//vertex[0] = vertex[1] = vertex[2] = vertex[3] = Mesh::Vertex::initial();
 					vertex[0] = vertex[1] = vertex[2] = vertex[3] = Mesh::Vertex{};
 
 					auto setPos = [sideMasks, sideSigns](int side, Mesh::Vertex& dst, const float3& pos)
 					{
-						/*int idx0 = sideMasks[side][0];
-						int idx1 = sideMasks[side][1];
-						int idx2 = sideMasks[side][2];
-
-						dst.position.x = (idx0 == 0 ? pos.x * sideSigns[side][0] : (idx1 == 0 ? pos.y * sideSigns[side][1] : pos.z * sideSigns[side][2]));
-						dst.position.y = (idx0 == 1 ? pos.x * sideSigns[side][0] : (idx1 == 1 ? pos.y * sideSigns[side][1] : pos.z * sideSigns[side][2]));
-						dst.position.z = (idx0 == 2 ? pos.x * sideSigns[side][0] : (idx1 == 2 ? pos.y * sideSigns[side][1] : pos.z * sideSigns[side][2]));*/
 
 						// Calculate the values for x, y, and z based on pos and sideSigns.
 						const float values[3] = { pos.x * sideSigns[side][0], pos.y * sideSigns[side][1], pos.z * sideSigns[side][2] };
@@ -520,7 +501,8 @@ namespace engine::DX
 						for (int i = 0; i < 3; i++) {
 							int index = sideMasks[side][i];
 
-							// Assign the appropriate value to dst.position.x, dst.position.y, or dst.position.z based on the value of sideMasks[side][i].
+							// Assign the appropriate value to dst.position.x,
+							// dst.position.y, or dst.position.z based on the value of sideMasks[side][i].
 							switch (index) {
 							case 0:
 								dst.position.x = values[i];
@@ -534,12 +516,6 @@ namespace engine::DX
 							}
 						}
 
-
-
-						/*dst.position[sideMasks[side][0]] = pos.x * sideSigns[side][0];
-						dst.position[sideMasks[side][1]] = pos.y * sideSigns[side][1];
-						dst.position[sideMasks[side][2]] = pos.z * sideSigns[side][2];*/
-						//dst.position = dst.position.normalized();
 						dst.position.Normalize();
 					};
 
@@ -574,8 +550,46 @@ namespace engine::DX
 			}
 		}
 
-		mesh.updateOctree();
 
+		mesh.indices.resize(TRIS_PER_SIDE * SIDES * 3);
+		auto* indices = mesh.indices.data();
+
+		size_t index = 0;
+
+		for (int side = 0; side < SIDES; ++side)
+		{
+			uint32_t sideOffset = VERT_PER_SIZE * side;
+
+			for (int row = 0; row < GRID_SIZE; ++row)
+			{
+				for (int col = 0; col < GRID_SIZE; ++col)
+				{
+					uint32_t quad_offset = sideOffset + (row * GRID_SIZE + col) * 6;
+
+					indices[index++] = quad_offset + 0;
+					indices[index++] = quad_offset + 1;
+					indices[index++] = quad_offset + 2;
+
+					indices[index++] = quad_offset + 3;
+					indices[index++] = quad_offset + 4;
+					indices[index++] = quad_offset + 5;
+				}
+			}
+		}
+
+
+		//mesh.updateOctree(); // we don't need it because the sphere is unit
+		mesh.box.min = float3(-1, -1, -1);
+		mesh.box.max = float3(1, 1, 1);
+
+
+		meshRange.vertexOffset = 0;
+		meshRange.indexOffset = 0;
+		meshRange.indexNum = mesh.indices.size();
+		meshRange.vertexNum = mesh.vertices.size();
+
+		model.initVertexBuffer(MODEL_DATA_INPUT_SLOT_0, std::vector<UINT>{sizeof(Mesh::Vertex)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE);
+		model.initIndexBuffer(D3D11_USAGE_DEFAULT);
 
 		models[mesh.name] = std::make_shared<Model>(std::move(model));
 

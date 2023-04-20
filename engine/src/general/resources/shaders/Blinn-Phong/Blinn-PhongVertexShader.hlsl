@@ -10,34 +10,50 @@ cbuffer PerMesh : register(b2)
     float4x4 meshToModel;
 }
 
-struct vertexInput
+struct Input
 {
-
     float3 position : POSITION;
     float3 normal : NORMAL;
     float2 texCoord : TEXCOORD0;
     float4x4 instance : INSTANCE;
 };
 
-struct vertexOutput
+struct Output
 {
     float4 Position : SV_POSITION;
+    float4 ViewPosition : ViewPosition;
+    float4 WorldPosition : WorldPosition;
     float3 Normal : NORMAL;
+    float3 WorldNormal : WORLDNORMAL;
     float2 UV : TEXCOORD;
 
 };
 
 
-vertexOutput main(vertexInput input)
+Output main(Input input)
 {
-    vertexOutput output;
+    Output output;
 
+    output.WorldPosition = mul(mul(float4(input.position, 1),
+    meshToModel), input.instance);
+    output.ViewPosition = mul(output.WorldPosition, View);
+    output.Position = mul(output.ViewPosition, Proj);
+    
+    //output.ViewPosition = mul(mul(float4(input.position, 1),
+    //meshToModel), input.instance);
+    //output.Position = mul(mul(output.ViewPosition, View), Proj);
     
     
-    output.Position = mul(mul(mul(mul(float4(input.position, 1),
-    meshToModel), input.instance), View), Proj);
+    output.Normal = mul(mul(mul(float4(input.normal, 0),
+    meshToModel),
+    input.instance),
+    View);
+    
+    output.WorldNormal = mul(mul(float4(input.normal, 0),
+    meshToModel),
+    input.instance);
+    
     output.UV = input.texCoord;
-   
     return output;
 }
 

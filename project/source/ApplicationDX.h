@@ -55,11 +55,10 @@ private:
 	engine::DX::float3 cameraRotation{};
 	engine::DX::float3 objMoveDirection{};
 	engine::DX::float2 lastMousePos{};
-
 	engine::general::FPSTimer fpsTimer;
-
 	engine::DX::Engine engine;
 	MSG msg;
+	engine::DX::LightSystem::FlashLightID cameraFlashLight;
 	float cameraSpeed{};
 	float cameraRotationSpeed{};
 	float cameraMaxPitch{};
@@ -72,7 +71,7 @@ private:
 	bool objectCaptured{};
 	bool nomalVisualized{};
 	bool wireframeMode{};
-
+	bool flashLightAttached{};
 	std::array<bool, int(COUNT)> exposureState{};
 	float deltaExposure{};
 };

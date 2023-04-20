@@ -335,7 +335,6 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Utils\Camera.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.cpp" />
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\SampleState.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\console\Console.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Skybox.cpp" />
@@ -350,7 +349,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\utils\parallel\parallel_executorRC.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.cpp" />
     <ClCompile Include="src\DirectX 11\source\Controller\ImGuiManager.cpp" />
-    <ClCompile Include="src\DirectX 11\source\PostProcess.cpp" />
+    <ClCompile Include="src\DirectX 11\source\PostProcess\HDR\PostProcess.cpp" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\Buffer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\ConstantBuffer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\DepthStencilBuffer.h" />
@@ -367,7 +366,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Shader\PixelShader.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\SampleState.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Texture2D.h" />
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Renderer.h" />
+    <ClInclude Include="src\DirectX 11\source\Render\Renderer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Skybox.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\include\SimpleMathToHLSL.h" />
@@ -422,10 +421,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx10.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx11.cpp" />
     <ClInclude Include="src\DirectX 11\source\Controller\ImGuiManager.h" />
-    <ClInclude Include="src\DirectX 11\source\LightSystem.h" />
-    <ClInclude Include="src\DirectX 11\source\PostProcess.h" />
-    <ClInclude Include="src\DirectX 11\source\SolidVector.h" />
-    <ClInclude Include="src\DirectX 11\source\TransformSystem.h" />
+    <ClInclude Include="src\DirectX 11\source\Light\LightSystem.h" />
+    <ClInclude Include="src\DirectX 11\source\PostProcess\HDR\PostProcess.h" />
+    <ClInclude Include="src\DirectX 11\source\Utils\SolidVector.h" />
+    <ClInclude Include="src\DirectX 11\source\Math\Transform\TransformSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:\Users\vadym\source\repos\vchan\ZERO_CHECK.vcxproj">

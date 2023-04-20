@@ -33,19 +33,21 @@ namespace engine::DX
 
 	class Camera
 	{
+		mutable float4x4 view;
+		mutable bool viewUpdated;
 
 		Transform transform;
 		float3 target;
 		float3 worldUp;
 		float4x4 proj;
-		float4x4 view;
+		//float4x4 view;
 		float4x4 invView;
 		float fov;
 		float aspect;
 		float zNear;
 		float zFar;
 
-		bool viewUpdated = false;
+		//bool viewUpdated = false;
 		bool projUpdated = false;	
 		bool matricesUpdated = false;
 		bool bufferUpdated = false;

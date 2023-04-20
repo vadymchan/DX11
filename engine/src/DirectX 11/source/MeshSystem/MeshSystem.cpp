@@ -4,9 +4,6 @@
 namespace engine::DX
 {
 
-
-
-
 	void MeshSystem::render(Camera& camera, bool showNormal)
 	{
 		for (const auto& opaqueInstance : opaqueInstances)
@@ -29,10 +26,18 @@ namespace engine::DX
 				case RenderMode::HOLOGRAM:
 					SetRenderMode<RenderMode::HOLOGRAM>(opaqueInstance.get(), &camera);
 					break;
+				case RenderMode::BLINN_PHONG:
+					SetRenderMode<RenderMode::BLINN_PHONG>(opaqueInstance.get(), &camera);
+					break;
+				case RenderMode::POINT_SPHERE:
+					SetRenderMode<RenderMode::POINT_SPHERE>(opaqueInstance.get(), &camera);
+					break;
 
 				}
 
 				setShaders(shaderGroup);
+				LightSystem::getInstance().setBuffer();
+
 				setPrimitiveTopology(shaderGroup);
 
 
@@ -67,7 +72,6 @@ namespace engine::DX
 	{
 		for (auto& modelIntersection : modelIntersections)
 		{
-			//if (!modelIntersection.instance.expired() && !instance.expired() && modelIntersection.instance.lock() == instance.lock())
 			if (modelIntersection.instance.worldMatrixID == instance.worldMatrixID)
 			{
 				modelIntersection.opaqueInstance.lock()->needToUpdateInstanceBuffer();
@@ -75,7 +79,7 @@ namespace engine::DX
 		}
 	}
 
-	void MeshSystem::addInstances(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<TransformSystem::ID>& transformID)
+	void MeshSystem::addInstances(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<Instance>& transformID)
 	{
 		bool debugCubeModel{};
 
@@ -133,9 +137,11 @@ namespace engine::DX
 	{
 		std::shared_ptr<OpaqueInstances> opaqueInstance = std::make_shared<OpaqueInstances>();
 		opaqueInstance->setShaders(shaderFileNames);
-		opaqueInstances.push_back(opaqueInstance);
+		opaqueInstances.emplace_back(opaqueInstance);
 		return (opaqueInstances.size() - 1);
 	}
+
+
 
 	MeshSystem::RenderMode MeshSystem::getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup)
 	{
@@ -148,6 +154,10 @@ namespace engine::DX
 			return RenderMode::HOLOGRAM;
 		case OpaqueInstances::RenderType::DEFAULT:
 			return RenderMode::DEFAULT;
+		case OpaqueInstances::RenderType::BLINN_PHONG:
+			return RenderMode::BLINN_PHONG;
+		case OpaqueInstances::RenderType::POINT_SPHERE:
+			return RenderMode::POINT_SPHERE;
 		default:
 			return RenderMode::DEFAULT;
 		}

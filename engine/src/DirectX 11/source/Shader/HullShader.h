@@ -15,15 +15,6 @@ namespace engine::DX
 
 		void bind() override
 		{
-			/*if (shaderBinary == nullptr)
-			{
-				compileShader();
-			}
-			if (shader.Get() == nullptr)
-			{
-				createShader();
-			}*/
-
 			g_devcon->HSSetShader(shader.Get(), nullptr, 0);
 		}
 

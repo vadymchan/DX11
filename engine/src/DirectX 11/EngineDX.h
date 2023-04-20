@@ -1,5 +1,6 @@
 #pragma once
 #include "source/MeshSystem/MeshSystem.h"
+#include "source/Light/LightSystem.h"
 #include "source/Controller/ModelManager.h"
 #include "source/Controller/TextureManager.h"
 #include "source/Controller/BufferManager.h"
@@ -8,7 +9,7 @@
 #include "source/Math/Movement/MeshMover.h"
 #include "window/WindowDX.h"
 #include "source/Utils/Camera.h"
-#include "source/Renderer.h"
+#include "source/Render/Renderer.h"
 
 
 
@@ -30,8 +31,13 @@ namespace engine::DX
 		/// <param name="fov">in degrees</param>
 		void initCamera(const float3& position, const float3& direction, const float3& cameraUp, float fov, float aspect, float zNear, float zFar);
 
-		void addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndex, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<float4x4>& instances);
-
+		std::vector<TransformSystem::ID> addInstancedModel(
+			uint32_t opaqueInstanceID,
+			const std::shared_ptr<Model>& model,
+			const std::vector<size_t>& meshIndex,
+			const std::shared_ptr<OpaqueInstances::Material>& material,
+			const std::vector<float4x4>& instanceMatrices,
+			const std::vector<float4>& color = {});
 
 
 		/**
@@ -39,7 +45,7 @@ namespace engine::DX
 		*
 		* @return an ID of opaque instance.
 		*/
-		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames);
+		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames);
 
 		void castRay();
 
@@ -50,9 +56,7 @@ namespace engine::DX
 
 		void moveCapturedObject(const float3& offset);
 
-
 		Camera& getCamera() { return camera; };
-
 
 		Renderer& getRenderer() { return renderer; };
 
@@ -63,11 +67,17 @@ namespace engine::DX
 
 		void render();
 
+		Engine()
+		{
+			LightSystem::getInstance().setCamera(camera);
+		}
 
 	private:
 		Renderer renderer;
 		Window window;
 		Camera camera;
+
+		
 
 		void checkAspectRatio();
 

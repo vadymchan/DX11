@@ -30,11 +30,6 @@ namespace engine
 				ANISOTROPIC_WRAP,
 			};
 
-			//as an alternative to the enum class BindSlot
-			/*const static UINT g_pointBindSlot;
-			const static UINT g_linearBindSlot;
-			const static UINT g_anisotropicBindSlot;*/
-
 		private:
 
 			UINT m_bindSlot;

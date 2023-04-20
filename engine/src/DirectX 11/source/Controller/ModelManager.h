@@ -20,6 +20,8 @@ namespace engine::DX
 
 		const static std::string cubeTag;
 		const static std::string debugCubeTag;
+		const static std::string sphereTag;
+		const static std::string flatSphereTag;
 		const static std::filesystem::path modelDirectory;
 
 		static ModelManager& getInstance()

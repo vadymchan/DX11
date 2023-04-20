@@ -92,7 +92,10 @@ namespace engine::DX
 
 		void updateOctree()
 		{
-
+			for (size_t i = 0; i < vertices.size(); i++)
+			{
+				box.expand(vertices[i].position);
+			}
 		}
 
 	private:

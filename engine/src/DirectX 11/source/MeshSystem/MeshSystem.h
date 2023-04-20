@@ -4,6 +4,7 @@
 #include "../Controller/ModelManager.h"
 #include "../../../general/utils/timer/FPSTimerRC.h"	 
 #include "../Utils/Camera.h"
+#include "../Light/LightSystem.h"
 
 namespace engine::DX
 {
@@ -33,7 +34,7 @@ namespace engine::DX
 			const std::shared_ptr<Model>& model,
 			const std::vector<size_t>& meshIndex,
 			const std::shared_ptr<OpaqueInstances::Material>& material,
-			const std::vector<TransformSystem::ID>& transformID);
+			const std::vector<Instance>& transformID);
 
 		/// <summary>
 		/// creates new Opaque Instance
@@ -41,8 +42,6 @@ namespace engine::DX
 		/// <param name = "shaderFileNames">0 - vertex, 1 - hull shader, 2 - domain shader, 3 - geometry shader, 4 - pixel shader file names</param>
 		/// <returns>ID to access to created opaque instance</returns>
 		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames);
-		
-
 	
 
 		ConstantBuffer<DirectX::SimpleMath::Vector4> cameraPosition;
@@ -55,7 +54,6 @@ namespace engine::DX
 			time.initBuffer(PER_DRAW_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 		};
 		std::vector<std::shared_ptr<OpaqueInstances>> opaqueInstances{};
-		std::vector<std::shared_ptr<OpaqueInstances>> lightInstances{};
 		std::vector<std::shared_ptr<ModelTriangleOctree>> triangleOctrees{};
 
 		struct ModelIntersection
@@ -71,7 +69,9 @@ namespace engine::DX
 		{
 			DEFAULT,
 			NORMAL_VISUALISER,
-			HOLOGRAM
+			HOLOGRAM,
+			BLINN_PHONG,
+			POINT_SPHERE
 		};
 
 		template<RenderMode Mode>
@@ -103,6 +103,18 @@ namespace engine::DX
 			camera->setCameraBufferGeometryShader();
 		}
 
+		template<>
+		void SetRenderMode<RenderMode::BLINN_PHONG>(OpaqueInstances* opaqueInstance, Camera* camera)
+		{
+			opaqueInstance->SetTexture(true);
+		}
+
+		template<>
+		void SetRenderMode<RenderMode::POINT_SPHERE>(OpaqueInstances* opaqueInstance, Camera* camera)
+		{
+			opaqueInstance->SetTexture(false);
+		}
+
 		RenderMode getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup);
 
 		void setShaders(const OpaqueInstances::ShaderGroup& shaderGroup);
@@ -110,5 +122,7 @@ namespace engine::DX
 		void setPrimitiveTopology(const OpaqueInstances::ShaderGroup& shaderGroup);
 
 	};
+
+
 
 }

@@ -162,6 +162,7 @@ namespace engine::DX
 	{
 		if (viewUpdated) return;
 		view = float4x4(DirectX::XMMatrixLookAtLH(transform.position, target, worldUp)) * float4x4::CreateFromQuaternion(transform.rotation);
+		
 		viewUpdated = true;
 	}
 

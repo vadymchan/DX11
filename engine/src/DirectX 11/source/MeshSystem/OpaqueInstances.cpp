@@ -7,7 +7,7 @@ namespace engine::DX
 		if (instanceBufferUpdated)
 			return;
 
-		std::vector<float4x4> instances;
+		std::vector<InstanceData> instances;
 		for (const auto& model : perModel)
 		{
 			for (const auto& mesh : model.perMesh)
@@ -16,13 +16,13 @@ namespace engine::DX
 				{
 					for (const auto& instance : material.instances)
 					{
-						instances.emplace_back(TransformSystem::getInstance().getTransform(instance.worldMatrixID));
+						instances.emplace_back(InstanceData{ TransformSystem::getInstance().getTransform(instance.worldMatrixID), instance.color });
 					}
 				}
 			}
 		}
 
-		instanceBuffer.initBuffer(INSTANCE_INPUT_SLOT_1, std::vector<UINT>{sizeof(float4x4)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE, instances);
+		instanceBuffer.initBuffer(INSTANCE_INPUT_SLOT_1, std::vector<UINT>{sizeof(InstanceData)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE, instances);
 		instanceBufferUpdated = true;
 	}
 
@@ -52,6 +52,16 @@ namespace engine::DX
 				[](const std::wstring& shaderName) { return shaderName.find(L"hologram") != std::wstring::npos; }))
 			{
 				shaderGroup.type = RenderType::HOLOGRAM;
+			}
+			else if (std::any_of(shaderBatches[i].begin(), shaderBatches[i].end(),
+				[](const std::wstring& shaderName) { return shaderName.find(L"Blinn-Phong") != std::wstring::npos; }))
+			{
+				shaderGroup.type = RenderType::BLINN_PHONG;
+			}
+			else if (std::any_of(shaderBatches[i].begin(), shaderBatches[i].end(),
+				[](const std::wstring& shaderName) { return shaderName.find(L"pointLight") != std::wstring::npos; }))
+			{
+				shaderGroup.type = RenderType::POINT_SPHERE;
 			}
 			else
 			{

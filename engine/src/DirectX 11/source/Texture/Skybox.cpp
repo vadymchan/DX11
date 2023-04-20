@@ -48,8 +48,7 @@ namespace engine::DX
 				PrintError(result, L"Depth disabled in skybox rendering");
 			}
 		}
-		//TODO::add check for D3D11_DEPTH_STENCIL_DESC is the same in both  skyboxDepthStencilState and original one
-
+		
 		g_devcon->OMSetDepthStencilState(skyboxDepthStencilState.Get(), stencilRef);
 
 		camera.setInvCameraBufferVertexShader();

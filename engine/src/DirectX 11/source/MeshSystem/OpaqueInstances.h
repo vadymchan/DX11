@@ -10,12 +10,13 @@
 #include "../Controller/ShaderManager.h"
 #include "../Controller/BufferManager.h"
 #include "../Controller/TextureManager.h"
-#include "../TransformSystem.h"
+#include "../Math/Transform/TransformSystem.h"
 #include <variant>
 
 
 namespace engine::DX
 {
+
 	class OpaqueInstances
 	{
 	public:
@@ -36,6 +37,8 @@ namespace engine::DX
 			DEFAULT,
 			NORMAL_VISUALIZER,
 			HOLOGRAM,
+			BLINN_PHONG,
+			POINT_SPHERE
 		};
 
 
@@ -51,23 +54,21 @@ namespace engine::DX
 		};
 
 		struct Material
-		{
-			
+		{			
 			std::variant<float3, std::wstring> material; // float3 - color, std::wsting  - skin folder
-			
 		};
 
 		struct Instance
 		{
 			TransformSystem::ID worldMatrixID;
-			//float4x4 toWorldMatrix;
+			float4 color;
 		};
+
 	protected:
 
 		struct PerMaterial
 		{
 			std::shared_ptr<Material> material;
-			//std::vector<std::shared_ptr<Instance>> instances{};
 			std::vector<Instance> instances{};
 		};
 
@@ -82,12 +83,16 @@ namespace engine::DX
 			std::vector<PerMesh> perMesh{};
 		};
 
-		
+		struct InstanceData
+		{
+			float4x4 worldMatrix;
+			float4 color;
+		};
 
 
 		std::vector<PerModel> perModel{};
 		//VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
-		VertexBuffer<float4x4> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
+		VertexBuffer<InstanceData> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;
 
@@ -99,7 +104,7 @@ namespace engine::DX
 
 		void needToUpdateInstanceBuffer();
 
-		void setShaders(const std::vector<std::array<std::wstring, 5>>& shaderBatches);
+		void setShaders(const std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>>& shaderBatches);
 
 		void SetTexture(bool useTexture);
 
@@ -121,6 +126,7 @@ namespace engine::DX
 
 
 	};
-}
+
+} // namespace engine::DX
 
 

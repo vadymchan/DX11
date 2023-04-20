@@ -20,14 +20,6 @@ namespace engine::DX
 
 		void bind()
 		{
-			/*if (shaderBinary == nullptr)
-			{
-				compileShader();
-			}
-			if (shader.Get() == nullptr)
-			{
-				createShader();
-			}*/
 			createInputLayout();
 			setInputLayout();
 			g_devcon->VSSetShader(shader.Get(), 0, 0);

@@ -62,14 +62,6 @@ namespace engine
 
 				//set texture description
 				m_texture->GetDesc(&m_textureDescription);
-
-				//set texture subresource
-				/*D3D11_MAPPED_SUBRESOURCE subresource;
-				g_devcon->Map(m_texture.Get(), 0, D3D11_MAP_READ, 0, &subresource);
-				m_textureSubresourceData.pSysMem = subresource.pData;
-				m_textureSubresourceData.SysMemPitch = subresource.RowPitch;
-				m_textureSubresourceData.SysMemSlicePitch = subresource.DepthPitch;
-				g_devcon->Unmap(m_texture.Get(), 0);*/
 			}
 
 			const D3D11_TEXTURE2D_DESC& getTextureDesc() const

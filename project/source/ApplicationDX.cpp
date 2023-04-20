@@ -9,6 +9,7 @@ using engine::DX::MeshSystem;
 using engine::DX::ModelManager;
 using engine::DX::ShaderManager;
 using engine::DX::TextureManager;
+using engine::DX::LightSystem;
 
 void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 {
@@ -16,19 +17,31 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const int windowHeight{ 800 };
 	const int windowStartX{ 0 };
 	const int windowStartY{ 0 };
+
 	const std::wstring normalVertexShaderFileName{ L"normalVisualiser/normalVisualizerVertexShader.hlsl" };
 	const std::wstring normalGeometryShaderFileName{ L"normalVisualiser/normalVisualizerGeometryShader.hlsl" };
 	const std::wstring normalPixelShaderFileName{ L"normalVisualiser/normalVisualizerPixelShader.hlsl" };
+
 	const std::wstring colorVertexShaderFileName{ L"texture/colorVertexShader.hlsl" };
 	const std::wstring colorPixelShaderFileName{ L"texture/colorPixelShader.hlsl" };
+
 	const std::wstring hologramVertexShaderFileName{ L"hologram/hologramVertexShader.hlsl" };
 	const std::wstring hologramGeometryShaderFileName{ L"hologram/hologramGeometryShader.hlsl" };
 	const std::wstring hologramHullShaderFileName{ L"hologram/hologramHullShader.hlsl" };
 	const std::wstring hologramDomainShaderFileName{ L"hologram/hologramDomainShader.hlsl" };
 	const std::wstring hologramPixelShaderFileName{ L"hologram/hologramPixelShader.hlsl" };
 
+	const std::wstring pointLightVertexShaderFileName{ L"pointLight/pointLightVertexShader.hlsl" };
+	const std::wstring pointLightPixelShaderFileName{ L"pointLight/pointLightPixelShader.hlsl" };
+
+	const std::wstring blinnPhongVertexShaderFileName{ L"Blinn-Phong/Blinn-PhongVertexShader.hlsl" };
+	const std::wstring blinnPhongPixelShaderFileName{ L"Blinn-Phong/Blinn-PhongPixelShader.hlsl" };
+
+
 	//const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
 	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/grass_field.dds" };
+
+	const std::wstring flashLight	{ engine::DX::textureDirectory / L"flashLight/flashlight.dds" };
 
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;
@@ -36,6 +49,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	cameraMinPitch = DirectX::XMConvertToRadians(-89.0f);
 	wireframeMode = false;
 	deltaExposure = 1.f;
+	flashLightAttached = true;
 #ifdef _DEBUG
 	engine::general::initConsole();
 #endif
@@ -60,20 +74,34 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		//model vertex buffer
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(2), D3D11_INPUT_PER_VERTEX_DATA, 0},
 		//instance vertex buffer
 		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> pointLightInputElementDesc
+	{
+		// per-vertex data
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		// per-instance data
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"EMISSION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+	};
+
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> hologramInputElementDesc
 	{
 		//model vertex buffer
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
 		//instance vertex buffer
 		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
@@ -81,16 +109,25 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
+	//vertex shader
 	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addVertexShader(colorVertexShaderFileName, inputElementDesc);
+	ShaderManager::getInstance().addVertexShader(blinnPhongVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, hologramInputElementDesc);
+	ShaderManager::getInstance().addVertexShader(pointLightVertexShaderFileName, pointLightInputElementDesc);
+	//hull shader
 	ShaderManager::getInstance().addHullShader(hologramHullShaderFileName);
+	//domain shader
 	ShaderManager::getInstance().addDomainShader(hologramDomainShaderFileName);
+	//geometry shader
 	ShaderManager::getInstance().addGeometryShader(normalGeometryShaderFileName);
 	ShaderManager::getInstance().addGeometryShader(hologramGeometryShaderFileName);
+	//pixel shader
 	ShaderManager::getInstance().addPixelShader(normalPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(colorPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(hologramPixelShaderFileName);
+	ShaderManager::getInstance().addPixelShader(blinnPhongPixelShaderFileName);
+	ShaderManager::getInstance().addPixelShader(pointLightPixelShaderFileName);
 
 	//textures & sampler 
 	//---------------------------------------------------------------------------------------------------
@@ -104,18 +141,27 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	// opaque instance
 	//---------------------------------------------------------------------------------------------------
 
-	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {blinnPhongVertexShaderFileName, L"", L"", L"",blinnPhongPixelShaderFileName} /*{colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}*/, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	uint32_t sphereOpaqueInstance = engine.createOpaqueInstance({ {pointLightVertexShaderFileName, L"", L"", L"",pointLightPixelShaderFileName} /*{colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}*/, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
 	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", /*hologramHullShaderFileName, hologramDomainShaderFileName,*/ hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/ });
+
+
+	
+	//light
+	//---------------------------------------------------------------------------------------------------
+	
+	std::vector<engine::DX::float4> pointLightEmissions{ {0,1,0,0} };
 
 
 	// models
 	//---------------------------------------------------------------------------------------------------
 	std::shared_ptr<Model> cube = ModelManager::getInstance().getModel(ModelManager::cubeTag);
+	std::shared_ptr<Model> sphere = ModelManager::getInstance().getModel(ModelManager::sphereTag);
+	std::shared_ptr<Model> flatSphere = ModelManager::getInstance().getModel(ModelManager::flatSphereTag);
 	std::shared_ptr<Model> samurai = ModelManager::getInstance().getModel("Samurai/Samurai.fbx");
 	std::shared_ptr<Model> eastTower = ModelManager::getInstance().getModel("EastTower/EastTower.fbx");
 	std::shared_ptr<Model> knight = ModelManager::getInstance().getModel("Knight/Knight.fbx");
 	std::shared_ptr<Model> knightHorse = ModelManager::getInstance().getModel("KnightHorse/KnightHorse.fbx");
-
 
 
 
@@ -174,13 +220,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<engine::DX::float4x4> obsidianCubeInstance
-	{
-	};
+	std::vector<engine::DX::float4x4> obsidianCubeInstance{};
 
-	std::vector<engine::DX::float4x4> diamondInstance
-	{
-	};
+	std::vector<engine::DX::float4x4> diamondInstance{};
 
 	for (size_t i = 0; i < 16; i++)
 	{
@@ -206,7 +248,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 				 engine::DX::float4x4 {
 					{1,0,0,x },
 					{0,1,0,y },
-					{0,0,1,10},
+					{0,0,1,5},
 					{0,0,0,1},
 				};
 
@@ -236,16 +278,18 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		samuraiMeshIndices.emplace_back(i);
 	}
 
-	engine.addInstancedModel(normalOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
+	//engine.addInstancedModel(normalOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
+	std::vector<engine::DX::TransformSystem::ID> pointLightInstanceIDs = 
+		engine.addInstancedModel(sphereOpaqueInstance, flatSphere, { 0 }, noMaterial, knightHorseInstances, pointLightEmissions);
 
-
+	
 
 	std::vector<size_t> eastTowerMeshIndices;
 	for (size_t i = 0; i < eastTower.get()->getMeshesCount(); ++i)
 	{
 		eastTowerMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
+	//engine.addInstancedModel(normalOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
 
 
 	std::vector<size_t> knightMeshIndices;
@@ -253,22 +297,18 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		knightMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
+	//engine.addInstancedModel(normalOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)
 	{
 		knightHorseMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
-
-
-
-
+	//engine.addInstancedModel(normalOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3& position{ 0, 0, -5 };
+	const engine::DX::float3& position{ 0, 0, 0 };
 	const engine::DX::float3& direction{ 0, 0,  1 };
 	const engine::DX::float3& cameraUp{ 0,1,0 };
 
@@ -278,8 +318,52 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	float zFar{ 100 };
 
 	engine.initCamera(position, direction, cameraUp, fov, aspect, zNear, zFar);
-	//-----------------------------------------------------------------------------------------------------------------
 
+	// light 
+	//---------------------------------------------------------------------------------------------------
+
+
+
+	LightSystem& lightSystem = LightSystem::getInstance();
+	//lightSystem.addDirectionalLight({ 1,1, 1 }, 5, { -0.5, 0, -0.5 ,  0 });
+
+	engine::DX::float4x4 pointLight = engine::DX::float4x4::Identity;
+	pointLight._14 = 0;
+	pointLight._24 = 10;
+	pointLight._34 = -100;
+	engine::DX::TransformSystem::ID pointLightID = engine::DX::TransformSystem::getInstance().addTransform(pointLight);
+
+	//lightSystem.addPointLight(pointLightID, {1,1,1}, 5, { 0.045, 0.0075, 0.000175 });
+
+	lightSystem.addSpotLight(
+		engine.getCamera().position(),
+		engine.getCamera().forward(),
+		{ 0,1,0 },
+		5,
+		DirectX::XMConvertToRadians(20.0f),
+		DirectX::XMConvertToRadians(30.0f),
+		{ 1.0, 0.045, 0.0075 }
+	);
+
+
+	cameraFlashLight = lightSystem.addFlashLight(
+		{ 1,1,1 },
+		10,
+		DirectX::XMConvertToRadians(20.0f),
+		DirectX::XMConvertToRadians(30.0f),
+		{ 1.0, 0.045, 0.0075 },
+		flashLight
+	);
+
+	for (auto& instance : pointLightInstanceIDs)
+	{
+		/*lightSystem.addPointLight(
+			instance,
+			{ 1,0,0 },
+			10,
+			{ 1.0, 0.045, 0.0075 });*/
+
+	};
 
 
 	return;
@@ -389,6 +473,10 @@ bool ApplicationDX::ProcessInputs()
 			case 0x45: // E
 				wireframeMode = !wireframeMode;
 				engine.getRenderer().changeWireframe(wireframeMode);
+				break;
+			case 0x46: // F
+				flashLightAttached = !flashLightAttached;
+				LightSystem::getInstance().getFlashLight(cameraFlashLight).attachedToCamera = flashLightAttached;
 				break;
 			case VK_SPACE:
 				cameraMovingDirections[MoveDirection::UP] = true;

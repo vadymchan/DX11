@@ -25,19 +25,31 @@ namespace engine::DX
 			camera.initBuffer(PER_VIEW_SHADER, INV_PER_VIEW_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
 		}
 
-		void Engine::addInstancedModel(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<float4x4>& instances)
+		std::vector<TransformSystem::ID> Engine::addInstancedModel(
+			uint32_t opaqueInstanceID, 
+			const std::shared_ptr<Model>& model,
+			const std::vector<size_t>& meshIndices,
+			const std::shared_ptr<OpaqueInstances::Material>& material,
+			const std::vector<float4x4>& instanceMatrices,
+			const std::vector<float4>& color)
 		{
+			assert((color.empty() || instanceMatrices.size() == color.size()) && "Size of instances and color should be the same");
+
 			std::vector<TransformSystem::ID> instanceMatrixIDs;
-			instanceMatrixIDs.resize(instances.size());
-			for (size_t i = 0; i < instances.size(); i++)
+			instanceMatrixIDs.reserve(instanceMatrices.size());
+			std::vector<Instance> instances;
+			instances.resize(instanceMatrices.size());
+			for (size_t i = 0; i < instanceMatrices.size(); i++)
 			{
-				instanceMatrixIDs[i] = TransformSystem::getInstance().addTransform(instances[i]);
-
+				Instance instance;
+				instance.color = color.empty() ? float4{ -1,-1,-1,-1 } : color[i];
+				instance.worldMatrixID = instanceMatrixIDs.emplace_back(
+					TransformSystem::getInstance().addTransform(instanceMatrices[i]));
+				instances[i] = instance;
 			}
-		
 
-
-			MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndices, material, instanceMatrixIDs);
+			MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndices, material, instances);
+			return instanceMatrixIDs;
 		}
 
 
