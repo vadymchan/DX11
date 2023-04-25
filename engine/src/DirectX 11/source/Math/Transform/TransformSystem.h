@@ -1,5 +1,6 @@
 #pragma once
 #include "../../Utils/SolidVector.h"
+#include "../../D3D/D3D.h"
 
 namespace engine::DX
 {

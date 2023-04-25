@@ -3,6 +3,7 @@
 
 using Instance = engine::DX::OpaqueInstances::Instance;
 using Material = engine::DX::OpaqueInstances::Material;
+using Attenuation = engine::DX::LightSystem::Attenuation;
 using engine::DX::Model;
 using engine::DX::Mesh;
 using engine::DX::MeshSystem;
@@ -38,10 +39,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const std::wstring blinnPhongPixelShaderFileName{ L"Blinn-Phong/Blinn-PhongPixelShader.hlsl" };
 
 
-	//const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
-	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/grass_field.dds" };
+	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
+	//const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/grass_field.dds" };
 
-	const std::wstring flashLight	{ engine::DX::textureDirectory / L"flashLight/flashlight.dds" };
+	const std::wstring flashLight	{ engine::DX::textureDirectory / L"flashLight/dragonslake.dds" };
 
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;
@@ -150,7 +151,11 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//light
 	//---------------------------------------------------------------------------------------------------
 	
-	std::vector<engine::DX::float4> pointLightEmissions{ {0,1,0,0} };
+	//point light 
+	std::vector<engine::DX::float4> pointLightEmissions{ {0,1,0,0}, {1,1,0,0}, {0,1,1,0}, {0,0,1,0} };
+	std::vector<float> pointLightIntensities{ 10, 10, 10, 10 };
+	std::vector<engine::DX::float3> pointLightColors{ {1,0,1}, {0,0,1}, {1,0,0}, {1,1,0}, };
+	std::vector<Attenuation> pointLightAttenuations{ { 1.0, 0.045, 0.0075 } };
 
 
 	// models
@@ -168,11 +173,11 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::vector<engine::DX::float4x4> samuraiInstance
 	{
-		
+
 			 engine::DX::float4x4 {
-				{2.5,0,0,-2},
-				{0,2.5,0,0},
-				{0,0,2.5,0},
+				{1,0,0,-2},
+				{0,1,0,0},
+				{0,0,1,0},
 				{0,0,0,1},
 			} ,
 	};
@@ -180,7 +185,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::vector<engine::DX::float4x4> eastTowerInstances
 	{
-		
+
 			engine::DX::float4x4
 			{{{1,0,0,2},
 			{0,1,0,0},
@@ -192,22 +197,47 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::vector<engine::DX::float4x4> knightInstances
 	{
 
-		
+
 			engine::DX::float4x4
 			{{{1,0,0,-4},
+			{0,1,0,0},
 			{0,0,1,0},
-			{0,-1,0,0},
 			{0,0,0,1},}}
 		,
 	};
 
 	std::vector<engine::DX::float4x4> knightHorseInstances
 	{
-		
+
 			engine::DX::float4x4
 			{{{1,0,0,-6},
 			{0,1,0,0},
 			{0,0,1,0},
+			{0,0,0,1},}},
+	};
+
+	std::vector<engine::DX::float4x4> spherePointLightInstances
+	{
+
+		engine::DX::float4x4
+			{{{pointLightIntensities[0] * 0.05f,0,0,-10},
+			{0,pointLightIntensities[0] * 0.05f,0,10},
+			{0,0,pointLightIntensities[0] * 0.05f,0},
+			{0,0,0,1},}},
+		engine::DX::float4x4
+			{{{pointLightIntensities[0] * 0.05f,0,0,10},
+			{0,pointLightIntensities[0] * 0.05f,0,10},
+			{0,0,pointLightIntensities[0] * 0.05f,0},
+			{0,0,0,1},}},
+		engine::DX::float4x4
+			{{{pointLightIntensities[0] * 0.05f,0,0,-10},
+			{0,pointLightIntensities[0] * 0.05f,0,-10},
+			{0,0,pointLightIntensities[0] * 0.05f,0},
+			{0,0,0,1},}},
+		engine::DX::float4x4
+			{{{pointLightIntensities[0] * 0.05f,0,0,10},
+			{0,pointLightIntensities[0] * 0.05f,0,-10},
+			{0,0,pointLightIntensities[0] * 0.05f,0},
 			{0,0,0,1},}},
 	};
 
@@ -244,13 +274,13 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 			float x = ((float)j - 0) * (8 + 8) / (15 - 0) - 8;
 			float y = ((float)i - 0) * (-8 - 8) / (15 - 0) + 8;
-			auto instance = 
-				 engine::DX::float4x4 {
-					{1,0,0,x },
-					{0,1,0,y },
-					{0,0,1,5},
-					{0,0,0,1},
-				};
+			auto instance =
+				engine::DX::float4x4{
+				   {1,0,0,x },
+				   {0,1,0,y },
+				   {0,0,1,5},
+				   {0,0,0,1},
+			};
 
 			if (j & 1)
 			{
@@ -278,18 +308,26 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		samuraiMeshIndices.emplace_back(i);
 	}
 
-	//engine.addInstancedModel(normalOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
-	std::vector<engine::DX::TransformSystem::ID> pointLightInstanceIDs = 
-		engine.addInstancedModel(sphereOpaqueInstance, flatSphere, { 0 }, noMaterial, knightHorseInstances, pointLightEmissions);
+	engine.addInstancedModel(normalOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
 
-	
+
+	std::vector<size_t> pointLightMeshIndeices;
+	for (size_t i = 0; i < sphere.get()->getMeshesCount(); ++i)
+	{
+		pointLightMeshIndeices.emplace_back(i);
+	}
+
+	std::vector<engine::DX::TransformSystem::ID> pointLightInstanceIDs =
+		engine.addInstancedModel(sphereOpaqueInstance, sphere, pointLightMeshIndeices, noMaterial, spherePointLightInstances, pointLightEmissions);
+
+
 
 	std::vector<size_t> eastTowerMeshIndices;
 	for (size_t i = 0; i < eastTower.get()->getMeshesCount(); ++i)
 	{
 		eastTowerMeshIndices.emplace_back(i);
 	}
-	//engine.addInstancedModel(normalOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
+	engine.addInstancedModel(normalOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
 
 
 	std::vector<size_t> knightMeshIndices;
@@ -297,18 +335,18 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		knightMeshIndices.emplace_back(i);
 	}
-	//engine.addInstancedModel(normalOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
+	engine.addInstancedModel(normalOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)
 	{
 		knightHorseMeshIndices.emplace_back(i);
 	}
-	//engine.addInstancedModel(normalOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
+	engine.addInstancedModel(normalOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3& position{ 0, 0, 0 };
+	const engine::DX::float3& position{ 0, 0, -5 };
 	const engine::DX::float3& direction{ 0, 0,  1 };
 	const engine::DX::float3& cameraUp{ 0,1,0 };
 
@@ -325,43 +363,37 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 	LightSystem& lightSystem = LightSystem::getInstance();
-	//lightSystem.addDirectionalLight({ 1,1, 1 }, 5, { -0.5, 0, -0.5 ,  0 });
 
-	engine::DX::float4x4 pointLight = engine::DX::float4x4::Identity;
-	pointLight._14 = 0;
-	pointLight._24 = 10;
-	pointLight._34 = -100;
-	engine::DX::TransformSystem::ID pointLightID = engine::DX::TransformSystem::getInstance().addTransform(pointLight);
-
-	//lightSystem.addPointLight(pointLightID, {1,1,1}, 5, { 0.045, 0.0075, 0.000175 });
-
-	lightSystem.addSpotLight(
-		engine.getCamera().position(),
-		engine.getCamera().forward(),
-		{ 0,1,0 },
-		5,
-		DirectX::XMConvertToRadians(20.0f),
-		DirectX::XMConvertToRadians(30.0f),
-		{ 1.0, 0.045, 0.0075 }
-	);
-
+	lightSystem.addDirectionalLight({ 1,1, 1 }, 0.5, { 0, -0.5, -0.5 ,  0 });
 
 	cameraFlashLight = lightSystem.addFlashLight(
 		{ 1,1,1 },
 		10,
 		DirectX::XMConvertToRadians(20.0f),
 		DirectX::XMConvertToRadians(30.0f),
-		{ 1.0, 0.045, 0.0075 },
+		pointLightAttenuations[0],
 		flashLight
 	);
 
-	for (auto& instance : pointLightInstanceIDs)
+	
+
+	lightSystem.addSpotLight(
+		{ 0, 0, 17 },
+		{ 0, 0,  -1 },
+		{ 0.69,0,0 },
+		10,
+		DirectX::XMConvertToRadians(30.0f),
+		DirectX::XMConvertToRadians(30.0f),
+		pointLightAttenuations[0]
+	);
+
+	for (int i = 0; i < pointLightInstanceIDs.size(); ++i)
 	{
-		/*lightSystem.addPointLight(
-			instance,
-			{ 1,0,0 },
-			10,
-			{ 1.0, 0.045, 0.0075 });*/
+		lightSystem.addPointLight(
+			pointLightInstanceIDs[i],
+			pointLightColors[i],
+			pointLightIntensities[i],
+			pointLightAttenuations[0]);
 
 	};
 

@@ -34,24 +34,25 @@ Output main(Input input)
 {
     Output output;
 
-    output.WorldPosition = mul(mul(float4(input.position, 1),
-    meshToModel), input.instance);
+    output.WorldPosition = mul( mul(
+        float4(input.position, 1),
+        meshToModel), 
+        input.instance);
+    
     output.ViewPosition = mul(output.WorldPosition, View);
+    
     output.Position = mul(output.ViewPosition, Proj);
     
-    //output.ViewPosition = mul(mul(float4(input.position, 1),
-    //meshToModel), input.instance);
-    //output.Position = mul(mul(output.ViewPosition, View), Proj);
-    
-    
-    output.Normal = mul(mul(mul(float4(input.normal, 0),
-    meshToModel),
-    input.instance),
-    View);
-    
-    output.WorldNormal = mul(mul(float4(input.normal, 0),
-    meshToModel),
-    input.instance);
+    output.Normal = normalize(mul(mul(mul(
+        float4(input.normal, 0),
+        meshToModel),
+        input.instance),
+        View));
+   
+    output.WorldNormal = normalize(mul(mul(
+        float4(input.normal, 0),
+        meshToModel),
+        input.instance));
     
     output.UV = input.texCoord;
     return output;

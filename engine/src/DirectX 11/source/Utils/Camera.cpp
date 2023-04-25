@@ -164,6 +164,9 @@ namespace engine::DX
 		view = float4x4(DirectX::XMMatrixLookAtLH(transform.position, target, worldUp)) * float4x4::CreateFromQuaternion(transform.rotation);
 		
 		viewUpdated = true;
+
+		std::cout << "forward: " << forward().x << "\t" << forward().y << "\t" << forward().z << "\t" << std::endl;
+		std::cout << "position: " << position().x << "\t" << position().y << "\t" << position().z << "\t" << std::endl;
 	}
 
 	void Camera::updatePerspectiveMatrix()

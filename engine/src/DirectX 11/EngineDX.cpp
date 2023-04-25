@@ -77,7 +77,7 @@ namespace engine::DX
 #endif // color of intersection point
 
 			ray ray = rayToWorld(xPos, yPos);
-			Instance instance{-1};
+			Instance instance{UINT32_MAX};
 			Intersection intersection;
 			intersection.reset();
 			if (MeshSystem::getInstance().findIntersection(ray, instance, intersection))
@@ -102,7 +102,7 @@ namespace engine::DX
 			bool returnResult{};
 			/*if (!instance.expired())
 			{*/
-			if (instance.worldMatrixID != -1)
+			if (instance.worldMatrixID != UINT32_MAX)
 			{
 				MeshMover::getInstance().setInstance(instance);
 				returnResult = true;

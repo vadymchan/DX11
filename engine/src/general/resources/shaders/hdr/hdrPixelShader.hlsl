@@ -45,10 +45,6 @@ float3 correctGamma(float3 color, float gamma)
 }
 
 
-float3 correctGamma1(float3 color, float gamma)
-{
-    return pow(color, gamma);
-}
 
 
 

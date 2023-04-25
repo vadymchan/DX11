@@ -2,7 +2,8 @@
 file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp")
 file(GLOB_RECURSE ENGINE_HEADERS "src/*.h")
 
-
+list(FILTER ENGINE_SOURCES EXCLUDE REGEX "general/dependencies/.*")
+list(FILTER ENGINE_HEADERS EXCLUDE REGEX "general/dependencies/.*")
 
 include(ExternalProject)
 
