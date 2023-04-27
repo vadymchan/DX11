@@ -52,7 +52,7 @@ namespace engine::DX
 		struct Material
 		{
 			
-			std::variant<float3, std::wstring> material; // float3 - color, std::wsting  - skin folder
+			std::wstring material; // std::wsting  - skin folder 
 			
 		};
 

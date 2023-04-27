@@ -36,8 +36,8 @@ namespace engine::DX
 	void OpaqueInstances::setShaders(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderBatches)
 	{
 		shaders.clear();
-		shaders.resize(shaderBatches.size()); 
-		
+		shaders.resize(shaderBatches.size());
+
 		for (size_t i = 0; i < shaderBatches.size(); ++i)
 		{
 			ShaderGroup shaderGroup;
@@ -82,7 +82,7 @@ namespace engine::DX
 
 			shaders[i] = shaderGroup;
 		}
-		
+
 	}
 
 
@@ -127,40 +127,15 @@ namespace engine::DX
 					if (perMaterial.instances.empty())
 						continue;
 
-
-					if (m_hasTexture)
-					{ 
-						const auto& textureFolder = perMaterial.material.get()->material;
-
-						if (std::holds_alternative<float3>(textureFolder))
-						{
-							materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
-							materialData.setPixelShaderBuffer();
-						}
-						else if (std::holds_alternative<std::wstring>(textureFolder))
-						{
-							const auto& textures = mesh.getMaterialNames(std::get<std::wstring>(textureFolder));
-							for (const auto& texture : textures)
-							{
-								texture.lock()->bind();
-							}
-
-
-
-
-						}
-
-						
-						
-
-						
+					// Bind textures (material data)
+					const auto& textures = mesh.getMaterialNames(perMaterial.material.get()->material);
+					for (const auto& texture : textures)
+					{
+						texture.lock()->bind();
 					}
 
-					
-					
-					
+					// Draw instances
 					g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedModelIndexes, renderedModelVertexes, renderedInstance);
-
 
 					renderedInstance += perMaterial.instances.size();
 				}

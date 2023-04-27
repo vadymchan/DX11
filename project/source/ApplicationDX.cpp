@@ -103,7 +103,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//---------------------------------------------------------------------------------------------------
 
 	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", /*hologramHullShaderFileName, hologramDomainShaderFileName,*/ hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/ });
+	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/ });
 
 
 	// models
@@ -235,7 +235,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		samuraiMeshIndices.emplace_back(i);
 	}
 
-	engine.addInstancedModel(normalOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
+	engine.addInstancedModel(hologramOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
 
 
 
