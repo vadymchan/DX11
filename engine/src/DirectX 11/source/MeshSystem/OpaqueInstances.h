@@ -55,7 +55,7 @@ namespace engine::DX
 
 		struct Material
 		{			
-			std::variant<float3, std::wstring> material; // float3 - color, std::wsting  - skin folder
+			std::wstring material; // skin folder
 		};
 
 		struct Instance
@@ -86,6 +86,7 @@ namespace engine::DX
 		struct InstanceData
 		{
 			float4x4 worldMatrix;
+			float4x4 invWorldMatrix;
 			float4 color;
 		};
 
@@ -98,15 +99,13 @@ namespace engine::DX
 
 		std::vector<ShaderGroup> shaders;
 		bool instanceBufferUpdated{};
-		bool m_hasTexture{};
+
 	public:
 		void updateInstanceBuffer();
 
 		void needToUpdateInstanceBuffer();
 
 		void setShaders(const std::vector<std::array<std::wstring, (int)ShaderType::SHADER_TYPE_NUM>>& shaderBatches);
-
-		void SetTexture(bool useTexture);
 
 		const std::vector<ShaderGroup>& getShaders() const
 		{

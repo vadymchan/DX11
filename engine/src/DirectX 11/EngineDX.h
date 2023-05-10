@@ -60,6 +60,8 @@ namespace engine::DX
 
 		Renderer& getRenderer() { return renderer; };
 
+		Window& getWindow() { return window; };
+
 		void normalVisualization(bool isVisible)
 		{
 			renderer.setVisualizeNormal(isVisible);

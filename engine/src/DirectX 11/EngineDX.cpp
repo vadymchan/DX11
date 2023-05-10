@@ -18,9 +18,9 @@ namespace engine::DX
 		/// <param name="fov">in degrees</param>
 
 
-		void Engine::initCamera(const float3& position, const float3& direction, const float3& cameraUp, float fov, float aspect, float zNear, float zFar)
+		void Engine::initCamera(const float3& position, const float3& direction, const float3& worldUp, float fov, float aspect, float zNear, float zFar)
 		{
-			camera.setView(position, direction, cameraUp);
+			camera.setView(position, direction, worldUp);
 			camera.setPerspective(DirectX::XMConvertToRadians(fov), aspect, zNear, zFar);
 			camera.initBuffer(PER_VIEW_SHADER, INV_PER_VIEW_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
 		}
@@ -73,7 +73,7 @@ namespace engine::DX
 		bool Engine::castRay(float xPos, float yPos)
 		{
 #ifdef INTERSECTION_TEST
-			std::shared_ptr<OpaqueInstances::Material> mat = std::make_shared<OpaqueInstances::Material>(OpaqueInstances::Material{ float4{ 0,1,0,0 } });
+			std::shared_ptr<OpaqueInstances::Material> diamond = std::make_shared<OpaqueInstances::Material>(OpaqueInstances::Material{L"diamond"});
 #endif // color of intersection point
 
 			ray ray = rayToWorld(xPos, yPos);
@@ -87,29 +87,24 @@ namespace engine::DX
 				std::cout << intersection.point.x << " " << intersection.point.y << " " << intersection.point.z << std::endl;
 
 #ifdef INTERSECTION_TEST
-				addInstancedModel(0, ModelManager::getInstance().getModel(ModelManager::debugCubeTag), { 0 }, mat,
-					{ std::make_shared<Instance>(Instance {engine::DX::float4x4
+				addInstancedModel(0, ModelManager::getInstance().getModel(ModelManager::debugCubeTag), { 0 }, diamond,
+					{ engine::DX::float4x4
 					{ { { 0.01,0,0,intersection.point.x},
 					{ 0,0.01,0,intersection.point.y},
 					{ 0,0,0.01,intersection.point.z},
-					{ 0,0,0,1 }, } }
-					}) });
+					{ 0,0,0,1 }, } } });
 #endif // add intersection point
 
 
 
 			}
 			bool returnResult{};
-			/*if (!instance.expired())
-			{*/
+
 			if (instance.worldMatrixID != UINT32_MAX)
 			{
 				MeshMover::getInstance().setInstance(instance);
 				returnResult = true;
 			}
-
-			//}
-
 
 			return returnResult;
 		}
@@ -117,14 +112,14 @@ namespace engine::DX
 		/// <param name="offset">offset in screen space (mouse offset)</param>
 
 
-		void Engine::dragCapturedObject(float xPos, float yPos)
+		void Engine::dragCapturedObject(float xScreenOffset, float yScreenOffset)
 		{
 
 
 			float3 cameraPos = camera.position();
 			float4 intersectionVec{ MeshMover::getInstance().getIntersectionPoint() - float4(cameraPos.x, cameraPos.y, cameraPos.z, 1) };
-			float nearPlaneOffsetX = 2 * tanf(camera.getFov() / 2) * camera.getZNear() * camera.getAspectRatio() * xPos / window.GetViewport().Width;
-			float nearPlaneOffsetY = 2 * tanf(camera.getFov() / 2) * camera.getZNear() * yPos / window.GetViewport().Height;
+			float nearPlaneOffsetX = 2 * tanf(camera.getFov() / 2) * camera.getZNear() * camera.getAspectRatio() * xScreenOffset / window.GetViewport().Width;
+			float nearPlaneOffsetY = 2 * tanf(camera.getFov() / 2) * camera.getZNear() * yScreenOffset / window.GetViewport().Height;
 			intersectionVec = float4::Transform(intersectionVec, camera.getViewMatrix());
 			float worldOffsetX = nearPlaneOffsetX * intersectionVec.z / camera.getZNear();
 			float worldOffsetY = nearPlaneOffsetY * intersectionVec.z / camera.getZNear();
@@ -132,10 +127,11 @@ namespace engine::DX
 
 			DirectX::SimpleMath::Matrix worldMatrix = TransformSystem::getInstance().getTransform(MeshMover::getInstance().getMat().worldMatrixID);
 			DirectX::SimpleMath::Vector3 worldSpaceScale;
-			worldSpaceScale.x = worldMatrix.Right().Length();
-			worldSpaceScale.y = worldMatrix.Up().Length();
-			worldSpaceScale.z = worldMatrix.Backward().Length();
-			moveOffset *= worldSpaceScale;
+			//worldSpaceScale.x = worldMatrix.Right().Length();
+			//worldSpaceScale.y = worldMatrix.Up().Length();
+			//worldSpaceScale.z = worldMatrix.Backward().Length();
+			//moveOffset *= worldSpaceScale;
+
 			MeshMover::getInstance().moveMesh(moveOffset);
 		}
 
@@ -176,7 +172,6 @@ namespace engine::DX
 			float4 farPointWorld = float4::Transform(farPointNDC, IPV);
 			nearPointWorld /= nearPointWorld.w;
 			farPointWorld /= farPointWorld.w;
-
 
 			float4 direction = farPointWorld - nearPointWorld;
 			direction.Normalize();

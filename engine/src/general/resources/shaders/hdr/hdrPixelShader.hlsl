@@ -1,11 +1,10 @@
-#include "../globals.hlsl"
+#include "../globals.hlsli"
 Texture2D hdrTexture : register(t0);
 
 cbuffer PostProcess : register(b0)
 {
     float EV100;
     float Gamma;
-    float2 paddingPostProcess;
 };
 
 

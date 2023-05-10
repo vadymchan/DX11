@@ -16,7 +16,7 @@ namespace engine::DX
 				{
 					for (const auto& instance : material.instances)
 					{
-						instances.emplace_back(InstanceData{ TransformSystem::getInstance().getTransform(instance.worldMatrixID), instance.color });
+						instances.emplace_back(InstanceData{ TransformSystem::getInstance().getTransform(instance.worldMatrixID), TransformSystem::getInstance().getTransform(instance.worldMatrixID).Invert(),  instance.color });
 					}
 				}
 			}
@@ -36,8 +36,8 @@ namespace engine::DX
 	void OpaqueInstances::setShaders(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderBatches)
 	{
 		shaders.clear();
-		shaders.resize(shaderBatches.size()); 
-		
+		shaders.resize(shaderBatches.size());
+
 		for (size_t i = 0; i < shaderBatches.size(); ++i)
 		{
 			ShaderGroup shaderGroup;
@@ -92,13 +92,7 @@ namespace engine::DX
 
 			shaders[i] = shaderGroup;
 		}
-		
-	}
 
-
-	void OpaqueInstances::SetTexture(bool useTexture)
-	{
-		m_hasTexture = useTexture;
 	}
 
 	void OpaqueInstances::render()
@@ -137,27 +131,13 @@ namespace engine::DX
 					if (perMaterial.instances.empty())
 						continue;
 
+					const auto& textureFolder = perMaterial.material.get()->material;
+					const auto& textures = mesh.getMaterialNames(textureFolder);
 
-					if (m_hasTexture)
-					{ 
-						const auto& textureFolder = perMaterial.material.get()->material;
 
-						if (std::holds_alternative<float3>(textureFolder))
-						{
-							materialData.setBufferData(std::vector<Material>{ *perMaterial.material.get() });
-							materialData.setPixelShaderBuffer();
-						}
-						else if (std::holds_alternative<std::wstring>(textureFolder))
-						{
-							const auto& textures = mesh.getMaterialNames(std::get<std::wstring>(textureFolder));
-							for (const auto& texture : textures)
-							{
-								texture.lock()->bind();
-							}
-
-						}
-
-						
+					for (const auto& texture : textures)
+					{
+						texture.lock()->bind();
 					}
 
 					g_devcon->DrawIndexedInstanced(meshRange.indexNum, perMaterial.instances.size(), renderedModelIndexes, renderedModelVertexes, renderedInstance);
@@ -168,8 +148,8 @@ namespace engine::DX
 				renderedModelIndexes += meshRange.indexNum;
 				renderedModelVertexes += meshRange.vertexNum;
 			}
-		}
 
+		}
 	}
 
 	void OpaqueInstances::addInstances(const std::shared_ptr<Model>& model, size_t meshIndex, const std::shared_ptr<Material>& material, const std::vector<Instance>& instances)

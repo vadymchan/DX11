@@ -17,6 +17,7 @@ namespace engine::DX
 		void initWindow(const LPCSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 		void clearWindow();
 		void clearDepthStencil() { g_devcon->ClearDepthStencilView(depthStencilBuffer.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0.0f); }
+		void clearBlend() { float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; g_devcon->OMSetBlendState(nullptr, blendFactor, 0xFFFFFFFF); }
 		void windowResize(float width, float height);
 		void setBackgroundColor(float r, float g, float b, float a);
 		void setVSync(bool value) { vsync = value; }
@@ -44,11 +45,13 @@ namespace engine::DX
 		void initRenderTargetView();
 		void initViewport();
 		void initDepthStencil();
+		void initBlendState();
 		HWND hwnd;
 		WNDCLASSEX wc;
 		ComPtr<IDXGISwapChain1> swapchain;
 		ComPtr<ID3D11Texture2D> backBuffer;
 		ComPtr<ID3D11RenderTargetView> renderTargetView;
+		ComPtr<ID3D11BlendState> blendState;
 		DepthStencilBuffer depthStencilBuffer;
 		D3D11_VIEWPORT viewport;
 		D3D11_TEXTURE2D_DESC backBufferDesc;

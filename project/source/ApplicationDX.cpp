@@ -15,7 +15,7 @@ using engine::DX::LightSystem;
 void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 {
 	const int windowWidth{ 1000 };
-	const int windowHeight{ 800 };
+	const int windowHeight{ 1000 };
 	const int windowStartX{ 0 };
 	const int windowStartY{ 0 };
 
@@ -38,11 +38,13 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const std::wstring blinnPhongVertexShaderFileName{ L"Blinn-Phong/Blinn-PhongVertexShader.hlsl" };
 	const std::wstring blinnPhongPixelShaderFileName{ L"Blinn-Phong/Blinn-PhongPixelShader.hlsl" };
 
+	const std::wstring pbrVertexShaderFileName{ L"PBR/PBR_VertexShader.hlsl" };
+	const std::wstring pbrPixelShaderFileName{ L"PBR/PBR_PixelShader.hlsl" };
 
-	const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
+	const std::wstring skyboxTexture{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
 	//const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/grass_field.dds" };
 
-	const std::wstring flashLight	{ engine::DX::textureDirectory / L"flashLight/dragonslake.dds" };
+	const std::wstring flashLight{ engine::DX::textureDirectory / L"flashLight/dragonslake.dds" };
 
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;
@@ -74,14 +76,55 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDesc
 	{
 		//model vertex buffer
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(2), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(2), D3D11_INPUT_PER_VERTEX_DATA, 0},
 		//instance vertex buffer
-		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,							 D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		//{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,  D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		//{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		//{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		//{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+	};
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDescNormal
+	{
+		//model vertex buffer
+		{"POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(2), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//instance vertex buffer
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+	};
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> pbrInputElementDesc
+	{
+		//model vertex buffer
+		{"POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(2), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(3), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(4), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//instance vertex buffer
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,  D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 96, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 112, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+
 	};
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> pointLightInputElementDesc
@@ -90,11 +133,11 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
 		// per-instance data
-		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		{"EMISSION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0 , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 16 , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 32 , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48 , D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"EMISSION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 128 , D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
 
@@ -111,9 +154,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	};
 
 	//vertex shader
-	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDesc);
+	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDescNormal);
 	ShaderManager::getInstance().addVertexShader(colorVertexShaderFileName, inputElementDesc);
-	ShaderManager::getInstance().addVertexShader(blinnPhongVertexShaderFileName, inputElementDesc);
+	ShaderManager::getInstance().addVertexShader(blinnPhongVertexShaderFileName, inputElementDescNormal);
+	ShaderManager::getInstance().addVertexShader(pbrVertexShaderFileName, pbrInputElementDesc);
 	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, hologramInputElementDesc);
 	ShaderManager::getInstance().addVertexShader(pointLightVertexShaderFileName, pointLightInputElementDesc);
 	//hull shader
@@ -129,6 +173,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	ShaderManager::getInstance().addPixelShader(hologramPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(blinnPhongPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(pointLightPixelShaderFileName);
+	ShaderManager::getInstance().addPixelShader(pbrPixelShaderFileName);
 
 	//textures & sampler 
 	//---------------------------------------------------------------------------------------------------
@@ -143,25 +188,29 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//---------------------------------------------------------------------------------------------------
 
 	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {blinnPhongVertexShaderFileName, L"", L"", L"",blinnPhongPixelShaderFileName} /*{colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}*/, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	uint32_t pbrOpaqueInstance = engine.createOpaqueInstance({ {pbrVertexShaderFileName, L"", L"", L"",pbrPixelShaderFileName} /*{colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}*/, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
 	uint32_t sphereOpaqueInstance = engine.createOpaqueInstance({ {pointLightVertexShaderFileName, L"", L"", L"",pointLightPixelShaderFileName} /*{colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}*/, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
 	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", /*hologramHullShaderFileName, hologramDomainShaderFileName,*/ hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/ });
 
 
-	
+
 	//light
 	//---------------------------------------------------------------------------------------------------
-	
+
 	//point light 
-	std::vector<engine::DX::float4> pointLightEmissions{ {0,1,0,0}, {1,1,0,0}, {0,1,1,0}, {0,0,1,0} };
-	std::vector<float> pointLightIntensities{ 10, 10, 10, 10 };
-	std::vector<engine::DX::float3> pointLightColors{ {1,0,1}, {0,0,1}, {1,0,0}, {1,1,0}, };
-	std::vector<Attenuation> pointLightAttenuations{ { 1.0, 0.045, 0.0075 } };
+	std::vector<engine::DX::float4> pointLightEmissions{ {0,1,0,0}, {1,0,0,0}, {0,0,1,0}, {1,1,0,0}, };
+	std::vector<float> pointLightIntensities{ 100, 100, 100, 100 };
+	std::vector<engine::DX::float3> pointLightColors{ {1, 1, 1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, };
+	std::vector<Attenuation> pointLightAttenuations{ { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, };
+	std::vector<float> pointLightRadiuses{ 0.5, 0.5, 0.5, 0.5, };
+
 
 
 	// models
 	//---------------------------------------------------------------------------------------------------
 	std::shared_ptr<Model> cube = ModelManager::getInstance().getModel(ModelManager::cubeTag);
 	std::shared_ptr<Model> sphere = ModelManager::getInstance().getModel(ModelManager::sphereTag);
+	std::shared_ptr<Model> floor = ModelManager::getInstance().getModel(ModelManager::floorTag);
 	std::shared_ptr<Model> flatSphere = ModelManager::getInstance().getModel(ModelManager::flatSphereTag);
 	std::shared_ptr<Model> samurai = ModelManager::getInstance().getModel("Samurai/Samurai.fbx");
 	std::shared_ptr<Model> eastTower = ModelManager::getInstance().getModel("EastTower/EastTower.fbx");
@@ -173,11 +222,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::vector<engine::DX::float4x4> samuraiInstance
 	{
-
 			 engine::DX::float4x4 {
-				{1,0,0,-2},
+				{1,0,0,2},
 				{0,1,0,0},
-				{0,0,1,0},
+				{0,0,1,2},
 				{0,0,0,1},
 			} ,
 	};
@@ -185,23 +233,19 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::vector<engine::DX::float4x4> eastTowerInstances
 	{
-
 			engine::DX::float4x4
-			{{{1,0,0,2},
+			{{{1,0,0,5},
 			{0,1,0,0},
-			{0,0,1,0},
-			{0,0,0,1},}}
-		,
+			{0,0,1,2},
+			{0,0,0,1},}},
 	};
 
 	std::vector<engine::DX::float4x4> knightInstances
 	{
-
-
 			engine::DX::float4x4
-			{{{1,0,0,-4},
+			{{{1,0,0,-2},
 			{0,1,0,0},
-			{0,0,1,0},
+			{0,0,1,2},
 			{0,0,0,1},}}
 		,
 	};
@@ -210,35 +254,50 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 
 			engine::DX::float4x4
-			{{{1,0,0,-6},
+			{{{1,0,0,-4},
 			{0,1,0,0},
-			{0,0,1,0},
+			{0,0,1,2},
 			{0,0,0,1},}},
 	};
 
 	std::vector<engine::DX::float4x4> spherePointLightInstances
 	{
 
+		
 		engine::DX::float4x4
-			{{{pointLightIntensities[0] * 0.05f,0,0,-10},
-			{0,pointLightIntensities[0] * 0.05f,0,10},
-			{0,0,pointLightIntensities[0] * 0.05f,0},
+			{{{pointLightRadiuses[0],0,0,5},
+			{0,pointLightRadiuses[0],0,5},
+			{0,0,pointLightRadiuses[0],-3},
 			{0,0,0,1},}},
 		engine::DX::float4x4
-			{{{pointLightIntensities[0] * 0.05f,0,0,10},
-			{0,pointLightIntensities[0] * 0.05f,0,10},
-			{0,0,pointLightIntensities[0] * 0.05f,0},
+			{{{pointLightRadiuses[1],0,0,-5},
+			{0,pointLightRadiuses[1],0,5},
+			{0,0,pointLightRadiuses[1],-4},
 			{0,0,0,1},}},
 		engine::DX::float4x4
-			{{{pointLightIntensities[0] * 0.05f,0,0,-10},
-			{0,pointLightIntensities[0] * 0.05f,0,-10},
-			{0,0,pointLightIntensities[0] * 0.05f,0},
+			{{{pointLightRadiuses[2],0,0,-5},
+			{0,pointLightRadiuses[2],0,0},
+			{0,0,pointLightRadiuses[2],-2},
 			{0,0,0,1},}},
 		engine::DX::float4x4
-			{{{pointLightIntensities[0] * 0.05f,0,0,10},
-			{0,pointLightIntensities[0] * 0.05f,0,-10},
-			{0,0,pointLightIntensities[0] * 0.05f,0},
+			{{{pointLightRadiuses[3],0,0,5},
+			{0,pointLightRadiuses[3],0,0},
+			{0,0,pointLightRadiuses[3],-4},
 			{0,0,0,1},}},
+
+	};
+
+	std::vector<engine::DX::float4x4> floorInstances
+	{
+
+		engine::DX::float4x4
+		{{
+			{100,0,0,0},
+			{0,1,0, -1},
+			{0,0,100,0},
+			{0,0,0,1},
+		}},
+
 	};
 
 
@@ -250,57 +309,38 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<engine::DX::float4x4> obsidianCubeInstance{};
-
-	std::vector<engine::DX::float4x4> diamondInstance{};
-
-	for (size_t i = 0; i < 16; i++)
+	std::vector<engine::DX::float4x4> vinesCubeInstances
 	{
-		std::vector<engine::DX::float4x4>* first;
-		std::vector<engine::DX::float4x4>* second;
-		if (i & 1)
-		{
-			first = &obsidianCubeInstance;
-			second = &diamondInstance;
-		}
-		else
-		{
-			first = &diamondInstance;
-			second = &obsidianCubeInstance;
-		}
+		engine::DX::float4x4
+		{{{1,0,0, 1},
+		  {0,1,0, 0},
+		  {0,0,1, 1},
+		  {0,0,0, 1},}},
+	};
 
-		for (size_t j = 0; j < 16; j++)
-		{
+	std::vector<engine::DX::float4x4> peacockCubeInstances
+	{
+		engine::DX::float4x4
+		{{{1,0,0, -1},
+		  {0,1,0, 0},
+		  {0,0,1, 1},
+		  {0,0,0, 1},}},
+	};
 
-			float x = ((float)j - 0) * (8 + 8) / (15 - 0) - 8;
-			float y = ((float)i - 0) * (-8 - 8) / (15 - 0) + 8;
-			auto instance =
-				engine::DX::float4x4{
-				   {1,0,0,x },
-				   {0,1,0,y },
-				   {0,0,1,5},
-				   {0,0,0,1},
-			};
 
-			if (j & 1)
-			{
-				first->push_back(instance);
-			}
-			else
-			{
-				second->push_back(instance);
-			}
-		}
-	}
 
 	std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond" });
 	std::shared_ptr<Material> obsidian = std::make_shared<Material>(Material{ L"obsidian" });
+	std::shared_ptr<Material> grass = std::make_shared<Material>(Material{ L"Grass" });
+	std::shared_ptr<Material> peacock = std::make_shared<Material>(Material{ L"Peacock" });
+	std::shared_ptr<Material> vines = std::make_shared<Material>(Material{ L"Vines" });
+	std::shared_ptr<Material> normalDebug = std::make_shared<Material>(Material{ L"normalDebug" });
 	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
 	std::shared_ptr<Material> defaultSkin = std::make_shared<Material>(Material{ L"default" });
 
-	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, diamond, diamondInstance);
-	engine.addInstancedModel(normalOpaqueInstance, cube, cubeMeshIndices, obsidian, obsidianCubeInstance);
-
+	engine.addInstancedModel(pbrOpaqueInstance, cube, cubeMeshIndices, peacock, peacockCubeInstances);
+	engine.addInstancedModel(pbrOpaqueInstance, cube, cubeMeshIndices, vines, vinesCubeInstances);
+	engine.addInstancedModel(pbrOpaqueInstance, floor, { 0 }, grass, floorInstances);
 
 	std::vector<size_t> samuraiMeshIndices;
 	for (size_t i = 0; i < samurai.get()->getMeshesCount(); ++i)
@@ -308,7 +348,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		samuraiMeshIndices.emplace_back(i);
 	}
 
-	engine.addInstancedModel(normalOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
+	engine.addInstancedModel(pbrOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
 
 
 	std::vector<size_t> pointLightMeshIndeices;
@@ -327,7 +367,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		eastTowerMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
+	engine.addInstancedModel(pbrOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
 
 
 	std::vector<size_t> knightMeshIndices;
@@ -335,27 +375,29 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		knightMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
+	engine.addInstancedModel(pbrOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)
 	{
 		knightHorseMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(normalOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
+	engine.addInstancedModel(pbrOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3& position{ 0, 0, -5 };
-	const engine::DX::float3& direction{ 0, 0,  1 };
-	const engine::DX::float3& cameraUp{ 0,1,0 };
+	const engine::DX::float3 position{ 0, 2, -2 };
+	engine::DX::float3 direction{ 0, 0, 1 };
+	direction.Normalize();
+	const engine::DX::float3 worldUp{ 0, 1, 0 };
 
-	float fov{ 90 };
+
+	float fov{ 60 };
 	float aspect{ (float)windowWidth / windowHeight };
 	float zNear{ 0.01 };
 	float zFar{ 100 };
 
-	engine.initCamera(position, direction, cameraUp, fov, aspect, zNear, zFar);
+	engine.initCamera(position, direction, worldUp, fov, aspect, zNear, zFar);
 
 	// light 
 	//---------------------------------------------------------------------------------------------------
@@ -364,26 +406,26 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	LightSystem& lightSystem = LightSystem::getInstance();
 
-	lightSystem.addDirectionalLight({ 1,1, 1 }, 0.5, { 0, -0.5, -0.5 ,  0 });
+	lightSystem.addDirectionalLight({ 1, 1, 1 }, 10, { 0, -0.5, -0.5 }, 1);
 
 	cameraFlashLight = lightSystem.addFlashLight(
 		{ 1,1,1 },
-		10,
-		DirectX::XMConvertToRadians(20.0f),
-		DirectX::XMConvertToRadians(30.0f),
+		1000,
+		DirectX::XMConvertToRadians(10.0f),
+		DirectX::XMConvertToRadians(15.0f),
+		0.1,
 		pointLightAttenuations[0],
 		flashLight
 	);
 
-	
-
 	lightSystem.addSpotLight(
-		{ 0, 0, 17 },
-		{ 0, 0,  -1 },
+		{ 0, 3, 5 },
+		{ 0, -1, 0 },
 		{ 0.69,0,0 },
 		10,
 		DirectX::XMConvertToRadians(30.0f),
 		DirectX::XMConvertToRadians(30.0f),
+		1,
 		pointLightAttenuations[0]
 	);
 
@@ -393,7 +435,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 			pointLightInstanceIDs[i],
 			pointLightColors[i],
 			pointLightIntensities[i],
-			pointLightAttenuations[0]);
+			pointLightRadiuses[i],
+			pointLightAttenuations[i]);
 
 	};
 
@@ -421,9 +464,9 @@ bool ApplicationDX::ProcessInputs()
 	float xPos{ lastMousePos.x };
 	float yPos{ lastMousePos.y };
 
-	
-		
-	
+
+
+
 	while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
 		switch (msg.message)
@@ -566,12 +609,11 @@ bool ApplicationDX::ProcessInputs()
 			break;
 		}
 
-		
+
 
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);
 	}
-
 
 
 	AddCameraDirection();
@@ -579,6 +621,8 @@ bool ApplicationDX::ProcessInputs()
 	{
 		objectCaptured = engine.castRay(xPos, yPos);
 #ifdef INTERSECTION_TEST
+		engine.castRay(engine.getWindow().GetWidth() / 2, engine.getWindow().GetHeight() / 2);
+		//cast the grid of rays
 		engine.castRay();
 #endif // INTERSECTION_TEST
 	}
@@ -704,7 +748,7 @@ std::vector<engine::DX::float4x4> ApplicationDX::generateRandomInstances(size_t 
 		float y = std::generate_canonical<float, 10>(gen) > 0.5 ? distPos(gen) : distNeg(gen);
 		float z = std::generate_canonical<float, 10>(gen) > 0.5 ? distPos(gen) : distNeg(gen);
 
-		instances.at(j) = engine::DX::float4x4 {
+		instances.at(j) = engine::DX::float4x4{
 			{{1,0,0,x},
 			{0,1,0,y},
 			{0,0,1,z},

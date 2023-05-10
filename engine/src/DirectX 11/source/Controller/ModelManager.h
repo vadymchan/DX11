@@ -22,6 +22,7 @@ namespace engine::DX
 		const static std::string debugCubeTag;
 		const static std::string sphereTag;
 		const static std::string flatSphereTag;
+		const static std::string floorTag;
 		const static std::filesystem::path modelDirectory;
 
 		static ModelManager& getInstance()
@@ -41,11 +42,14 @@ namespace engine::DX
 
 		void createCube(const std::string& modelFileName);
 
+		void createFloor(const std::string& modelFileName);
+
 		void addTextureFiles(Mesh& mesh, const D3D11_TEXTURE2D_DESC& textureDesc, const std::filesystem::path& texturePath);
 
-		void initUnitSphereFlat();
+		void createUnitSphereFlat();
 
-		void initUnitSphere();
+		void createUnitSphere();
+
 
 	};
 }

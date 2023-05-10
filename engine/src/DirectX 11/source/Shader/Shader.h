@@ -19,7 +19,7 @@ namespace engine::DX
 		{
 			
 
-			HRESULT result = D3DCompileFromFile((pathToShader).c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint.c_str(), shaderVersion.c_str(), 0, 0, &shaderBinary, errorMessage.ReleaseAndGetAddressOf());
+			HRESULT result = D3DCompileFromFile((pathToShader).c_str(), 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint.c_str(), shaderVersion.c_str(), D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION, 0, &shaderBinary, errorMessage.ReleaseAndGetAddressOf());
 			
 			
 			if (FAILED(result))

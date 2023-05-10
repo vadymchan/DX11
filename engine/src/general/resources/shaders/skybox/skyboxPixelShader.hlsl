@@ -1,4 +1,4 @@
-#include "../globals.hlsl"
+#include "../globals.hlsli"
 TextureCube SkyboxTexture : register(t0);
 
 

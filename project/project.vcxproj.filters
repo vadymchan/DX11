@@ -1,33 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="C:\Users\v.chan\Downloads\vchan\project\source\ApplicationRC.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\project\source\ApplicationRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\v.chan\Downloads\vchan\project\source\ApplicationDX.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\project\source\ApplicationDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\v.chan\Downloads\vchan\project\source\main.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\project\source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="C:\Users\v.chan\Downloads\vchan\project\source\ApplicationRC.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\project\source\ApplicationRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\v.chan\Downloads\vchan\project\source\ApplicationDX.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\project\source\ApplicationDX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\v.chan\Downloads\vchan\project\CMakeLists.txt" />
+    <CustomBuild Include="C:\Users\vadym\source\repos\vchan\project\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{03382D9C-F6F9-3DE8-A514-5F4F20C81D2F}</UniqueIdentifier>
+      <UniqueIdentifier>{E7A125E6-A25E-3F42-9036-9C256C4AB04A}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{9E884F1C-687C-3F9C-968F-E0131402416B}</UniqueIdentifier>
+      <UniqueIdentifier>{38381219-B6EC-3154-9CAB-EA4C74ADE7F8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

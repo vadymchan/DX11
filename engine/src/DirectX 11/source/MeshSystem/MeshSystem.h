@@ -77,22 +77,11 @@ namespace engine::DX
 		template<RenderMode Mode>
 		void SetRenderMode(OpaqueInstances* opaqueInstance = nullptr, Camera* camera = nullptr) {};
 
-		template<>
-		void SetRenderMode<RenderMode::DEFAULT>(OpaqueInstances* opaqueInstance, Camera* camera)
-		{
-			opaqueInstance->SetTexture(true);
-		}
-
-		template<>
-		void SetRenderMode<RenderMode::NORMAL_VISUALISER>(OpaqueInstances* opaqueInstance, Camera* camera)
-		{
-			opaqueInstance->SetTexture(false);
-		}
+		
 
 		template<>
 		void SetRenderMode<RenderMode::HOLOGRAM>(OpaqueInstances* opaqueInstance, Camera* camera)
 		{
-			opaqueInstance->SetTexture(false);
 
 			time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {general::FPSTimer::getCurrentTick() - general::FPSTimer::initTick, 0, 0, 0}});
 			time.setBuffer();
@@ -103,17 +92,6 @@ namespace engine::DX
 			camera->setCameraBufferGeometryShader();
 		}
 
-		template<>
-		void SetRenderMode<RenderMode::BLINN_PHONG>(OpaqueInstances* opaqueInstance, Camera* camera)
-		{
-			opaqueInstance->SetTexture(true);
-		}
-
-		template<>
-		void SetRenderMode<RenderMode::POINT_SPHERE>(OpaqueInstances* opaqueInstance, Camera* camera)
-		{
-			opaqueInstance->SetTexture(false);
-		}
 
 		RenderMode getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup);
 

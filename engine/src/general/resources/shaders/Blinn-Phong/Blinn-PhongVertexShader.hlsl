@@ -16,6 +16,7 @@ struct Input
     float3 normal : NORMAL;
     float2 texCoord : TEXCOORD0;
     float4x4 instance : INSTANCE;
+    float4x4 invInvstance : INVINSTANCE;
 };
 
 struct Output
@@ -26,7 +27,7 @@ struct Output
     float3 Normal : NORMAL;
     float3 WorldNormal : WORLDNORMAL;
     float2 UV : TEXCOORD;
-
+    float2 test : TEXCOORD1;
 };
 
 
@@ -38,6 +39,11 @@ Output main(Input input)
         float4(input.position, 1),
         meshToModel), 
         input.instance);
+    
+    float test = View._21;
+    float test1 = View._12;
+    
+    output.test = float2(test, test1);
     
     output.ViewPosition = mul(output.WorldPosition, View);
     

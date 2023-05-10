@@ -4,13 +4,16 @@
 
 bool engine::DX::ModelTriangleOctree::intersect(ray r, Intersection& intersection, Instance& instance)
 {
-	/*ray oldray = r;*/ //for debug
+	ray oldray = r; //for debug 
 	ray modelRay = r;
-	//float4x4 invModelMatrix = instance.get()->toWorldMatrix.Transpose().Invert();
-	float4x4 invModelMatrix = TransformSystem::getInstance().getTransform(instance.worldMatrixID).Transpose().Invert();
-	modelRay.position = float3::Transform(modelRay.position, invModelMatrix);
-	modelRay.direction = float3::TransformNormal(modelRay.direction, invModelMatrix);
-	modelRay.direction.Normalize();
+    //transpose matrix since matrix is stored in column-space (but we need row-major for computation)
+    float4x4 worldMatrix = TransformSystem::getInstance().getTransform(instance.worldMatrixID).Transpose();
+    float4x4 invModelMatrix = worldMatrix.Invert();
+
+    modelRay.position = float3::Transform(modelRay.position, invModelMatrix);
+    modelRay.direction = float3::TransformNormal(modelRay.direction, invModelMatrix);
+    //modelRay.direction.Normalize();
+
 
 	float boxT = intersection.t;
 	if (!box.hit(modelRay, boxT))
@@ -27,4 +30,10 @@ bool engine::DX::ModelTriangleOctree::intersect(ray r, Intersection& intersectio
 	}
 
 	return hitAny;
+
+	//ray box intersection test
+	/*intersection.t = boxT;
+	intersection.point = oldray.position + oldray.direction * boxT;
+
+	return true;*/
 }

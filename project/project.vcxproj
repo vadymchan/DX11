@@ -22,9 +22,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7237967F-F80E-3EFD-A618-4B0B9676DF53}</ProjectGuid>
+    <ProjectGuid>{94A945C9-4569-317D-BB6C-6F8008583E44}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.22621.0</WindowsTargetPlatformVersion>
     <Platform>x64</Platform>
     <ProjectName>project</ProjectName>
     <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
@@ -59,38 +59,38 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\v.chan\Downloads\vchan\project\Debug\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\vadym\source\repos\vchan\project\Debug\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">project.dir\Debug\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">project</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</GenerateManifest>
-    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:/Users/v.chan/Downloads/vchan</LocalDebuggerWorkingDirectory>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\v.chan\Downloads\vchan\project\Release\</OutDir>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:/Users/vadym/source/repos/vchan</LocalDebuggerWorkingDirectory>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\vadym\source\repos\vchan\project\Release\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">project.dir\Release\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">project</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</GenerateManifest>
-    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:/Users/v.chan/Downloads/vchan</LocalDebuggerWorkingDirectory>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\v.chan\Downloads\vchan\project\MinSizeRel\</OutDir>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:/Users/vadym/source/repos/vchan</LocalDebuggerWorkingDirectory>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\vadym\source\repos\vchan\project\MinSizeRel\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">project.dir\MinSizeRel\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">project</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</GenerateManifest>
-    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:/Users/v.chan/Downloads/vchan</LocalDebuggerWorkingDirectory>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\v.chan\Downloads\vchan\project\RelWithDebInfo\</OutDir>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:/Users/vadym/source/repos/vchan</LocalDebuggerWorkingDirectory>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\vadym\source\repos\vchan\project\RelWithDebInfo\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">project.dir\RelWithDebInfo\</IntDir>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">project</TargetName>
     <TargetExt Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">.exe</TargetExt>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</GenerateManifest>
-    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:/Users/v.chan/Downloads/vchan</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:/Users/vadym/source/repos/vchan</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/v.chan/Downloads/vchan/project/../engine/src" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -107,10 +107,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\v.chan\Downloads\vchan\project\..\engine\src;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\glm;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\v.chan\Downloads\vchan\project\..\engine\src;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\glm;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -123,8 +123,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/v.chan/Downloads/vchan/project/Debug/project.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/v.chan/Downloads/vchan/project/Debug/project.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/vadym/source/repos/vchan/project/Debug/project.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/vadym/source/repos/vchan/project/Debug/project.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
     <ProjectReference>
@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/v.chan/Downloads/vchan/project/../engine/src" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
@@ -150,10 +150,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\v.chan\Downloads\vchan\project\..\engine\src;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\glm;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\v.chan\Downloads\vchan\project\..\engine\src;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\glm;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -166,8 +166,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/v.chan/Downloads/vchan/project/Release/project.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/v.chan/Downloads/vchan/project/Release/project.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/vadym/source/repos/vchan/project/Release/project.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/vadym/source/repos/vchan/project/Release/project.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
     <ProjectReference>
@@ -176,7 +176,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/v.chan/Downloads/vchan/project/../engine/src" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
@@ -193,10 +193,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\v.chan\Downloads\vchan\project\..\engine\src;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\glm;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\v.chan\Downloads\vchan\project\..\engine\src;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\glm;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -209,8 +209,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/v.chan/Downloads/vchan/project/MinSizeRel/project.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/v.chan/Downloads/vchan/project/MinSizeRel/project.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/vadym/source/repos/vchan/project/MinSizeRel/project.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/vadym/source/repos/vchan/project/MinSizeRel/project.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
     <ProjectReference>
@@ -219,7 +219,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/v.chan/Downloads/vchan/project/../engine/src" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/v.chan/Downloads/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -235,10 +235,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\v.chan\Downloads\vchan\project\..\engine\src;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\glm;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\v.chan\Downloads\vchan\project\..\engine\src;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\glm;C:\Users\v.chan\Downloads\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -251,8 +251,8 @@
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <ImportLibrary>C:/Users/v.chan/Downloads/vchan/project/RelWithDebInfo/project.lib</ImportLibrary>
-      <ProgramDataBaseFile>C:/Users/v.chan/Downloads/vchan/project/RelWithDebInfo/project.pdb</ProgramDataBaseFile>
+      <ImportLibrary>C:/Users/vadym/source/repos/vchan/project/RelWithDebInfo/project.lib</ImportLibrary>
+      <ProgramDataBaseFile>C:/Users/vadym/source/repos/vchan/project/RelWithDebInfo/project.pdb</ProgramDataBaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
     <ProjectReference>
@@ -260,11 +260,12 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="C:\Users\v.chan\Downloads\vchan\project\CMakeLists.txt">
+    <CustomBuild Include="C:\Users\vadym\source\repos\vchan\project\CMakeLists.txt">
       <UseUtf8Encoding>Always</UseUtf8Encoding>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/v.chan/Downloads/vchan/project/CMakeLists.txt</Message>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/vadym/source/repos/vchan/project/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/v.chan/Downloads/vchan -BC:/Users/v.chan/Downloads/vchan --check-stamp-file C:/Users/v.chan/Downloads/vchan/project/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/vadym/source/repos/vchan -BC:/Users/vadym/source/repos/vchan --check-stamp-file C:/Users/vadym/source/repos/vchan/project/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -273,11 +274,12 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\v.chan\Downloads\vchan\project\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\vadym\source\repos\vchan\project\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/v.chan/Downloads/vchan/project/CMakeLists.txt</Message>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/vadym/source/repos/vchan/project/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/v.chan/Downloads/vchan -BC:/Users/v.chan/Downloads/vchan --check-stamp-file C:/Users/v.chan/Downloads/vchan/project/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/vadym/source/repos/vchan -BC:/Users/vadym/source/repos/vchan --check-stamp-file C:/Users/vadym/source/repos/vchan/project/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -286,11 +288,12 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\v.chan\Downloads\vchan\project\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\vadym\source\repos\vchan\project\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/v.chan/Downloads/vchan/project/CMakeLists.txt</Message>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/vadym/source/repos/vchan/project/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/v.chan/Downloads/vchan -BC:/Users/v.chan/Downloads/vchan --check-stamp-file C:/Users/v.chan/Downloads/vchan/project/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/vadym/source/repos/vchan -BC:/Users/vadym/source/repos/vchan --check-stamp-file C:/Users/vadym/source/repos/vchan/project/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -299,11 +302,12 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\v.chan\Downloads\vchan\project\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\vadym\source\repos\vchan\project\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/v.chan/Downloads/vchan/project/CMakeLists.txt</Message>
+      <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</BuildInParallel>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/vadym/source/repos/vchan/project/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/v.chan/Downloads/vchan -BC:/Users/v.chan/Downloads/vchan --check-stamp-file C:/Users/v.chan/Downloads/vchan/project/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/vadym/source/repos/vchan -BC:/Users/vadym/source/repos/vchan --check-stamp-file C:/Users/vadym/source/repos/vchan/project/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -312,26 +316,26 @@ exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\v.chan\Downloads\vchan\project\CMakeFiles\generate.stamp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\vadym\source\repos\vchan\project\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="C:\Users\v.chan\Downloads\vchan\project\source\ApplicationRC.cpp" />
-    <ClCompile Include="C:\Users\v.chan\Downloads\vchan\project\source\ApplicationDX.cpp" />
-    <ClCompile Include="C:\Users\v.chan\Downloads\vchan\project\source\main.cpp" />
-    <ClInclude Include="C:\Users\v.chan\Downloads\vchan\project\source\ApplicationRC.h" />
-    <ClInclude Include="C:\Users\v.chan\Downloads\vchan\project\source\ApplicationDX.h" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\project\source\ApplicationRC.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\project\source\ApplicationDX.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\project\source\main.cpp" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\project\source\ApplicationRC.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\project\source\ApplicationDX.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="C:\Users\v.chan\Downloads\vchan\ZERO_CHECK.vcxproj">
-      <Project>{568499B7-756B-3742-BF67-A352934CE240}</Project>
+    <ProjectReference Include="C:\Users\vadym\source\repos\vchan\ZERO_CHECK.vcxproj">
+      <Project>{44273B3C-F1D7-3E03-97C2-F63D2C912798}</Project>
       <Name>ZERO_CHECK</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\v.chan\Downloads\vchan\engine\engine.vcxproj">
-      <Project>{75CE48FF-E5BA-3A63-A66C-63C5A8B472C4}</Project>
+    <ProjectReference Include="C:\Users\vadym\source\repos\vchan\engine\engine.vcxproj">
+      <Project>{C8D15B6F-2C63-3B6B-BFE3-90D14E8F5A39}</Project>
       <Name>engine</Name>
     </ProjectReference>
   </ItemGroup>

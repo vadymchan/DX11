@@ -1,4 +1,4 @@
-#include "../globals.hlsl"
+
 
 cbuffer PerView : register(b0)
 {

@@ -1,4 +1,4 @@
-#include "../globals.hlsl"
+#include "../globals.hlsli"
 
 Texture2D modelTexture : register(t0);
 
@@ -11,6 +11,8 @@ struct Input
     float3 Normal : NORMAL;
     float3 WorldNormal : WORLDNORMAL;
     float2 UV : TEXCOORD;
+    float2 test : TEXCOORD1;
+    
 };
 
 
@@ -42,25 +44,25 @@ float4 main(Input input) : SV_TARGET
     
     for (int i = 0; i < g_numDirectionalLights; ++i)
     {
-        float3 lightResult = CalculateDirectionalLight(normal, g_directionalLights[i], position );
+        float3 lightResult = CalculateDirectionalLightBlinnPhong(normal, g_directionalLights[i], position);
         finalColor += texColor.rgb * lightResult;
     }
 
     for (int j = 0; j < g_numPointLights; ++j)
     {
-        float3 lightResult = CalculatePointLight(normal, position, g_pointLights[j]);
+        float3 lightResult = CalculatePointLightBlinnPhong(normal, position, g_pointLights[j]);
         finalColor += texColor.rgb * lightResult;
     }
     
     for (int m = 0; m < g_numSpotLights; ++m)
     {
-        float3 lightResult = CalculateSpotLight(normal, position, g_spotLights[m]);
+        float3 lightResult = CalculateSpotLightBlinnPhong(normal, position, g_spotLights[m]);
         finalColor += texColor.rgb * lightResult;
     }
 
     for (int k = 0; k < g_numFlashLights; ++k)
     {
-        float3 lightResult = CalculateFlashLight(input.WorldNormal, input.WorldPosition.xyz, g_flashLights[k]);
+        float3 lightResult = CalculateFlashLightBlinnPhong(input.WorldNormal, input.WorldPosition.xyz, g_flashLights[k]);
         finalColor += texColor.rgb * lightResult;
     }
 

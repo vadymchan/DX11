@@ -14,7 +14,7 @@ namespace engine::DX
 		return mesh.getVertices().at(mesh.getIndices().at(triangleIndex * 3 + vertexIndex)).position;
 	}
 
-	
+
 
 	void MeshTriangleOctree::countTriangles(MeshTriangleOctree* tri, int& count, std::vector<int>& triangles)
 	{
@@ -214,25 +214,142 @@ namespace engine::DX
 
 	static ray oldray;
 
+    //-----------------------------------------------------------------------------
+    // Compute the intersection of a ray (Origin, Direction) with a triangle
+    // (V0, V1, V2).  Return true if there is an intersection and also set *pDist
+    // to the distance along the ray to the intersection.
+    //
+    // The algorithm is based on Moller, Tomas and Trumbore, "Fast, Minimum Storage
+    // Ray-Triangle Intersection", Journal of Graphics Tools, vol. 2, no. 1,
+    // pp 21-28, 1997.
+    //-----------------------------------------------------------------------------
+	bool MeshTriangleOctree::intersects(
+		const float3& Origin,
+		const float3& Direction,
+		const float3& V0,
+		const float3& V1,
+		const float3& V2,
+		float& Dist) const noexcept
+	{
+		float3 Zero(0, 0, 0);
+
+		float3 e1 = V1 - V0;
+		//e1.Normalize();
+		float3 e2 = V2 - V0;
+		//e2.Normalize();
+
+		float3 DirectionNormalized = Direction;
+		//DirectionNormalized.Normalize();
+		float3 p = Direction.Cross(e2);
+
+		// det = e1 * p;
+		float det = e1.Dot(p);
+		float u, v, t;
+		{
+			if (det >= 1e-20f)
+			{
+				// Determinate is positive (front side of the triangle).
+				float3 s = Origin - V0;
+
+				// u = s * p;
+				u = s.Dot(p);
+
+				if (u < 0.0f || u > det)
+				{
+					Dist = 0.f;
+					return false;
+				}
+
+				// q = s ^ e1;
+				float3 q = s.Cross(e1);
+
+				// v = Direction * q;
+				v = DirectionNormalized.Dot(q);
+
+				if (v < 0.0f || u + v > det)
+				{
+					Dist = 0.f;
+					return false;
+				}
+
+				// t = e2 * q;
+				t = e2.Dot(q);
+
+				if (t < 0.0f)
+				{
+					Dist = 0.f;
+					return false;
+				}
+			}
+			else if (det <= -1e-20f)
+			{
+				// Determinate is negative (back side of the triangle).
+				float3 s = Origin - V0;
+
+				// u = s * p;
+				u = s.Dot(p);
+
+				if (u > 0.0f || u < det)
+				{
+					Dist = 0.f;
+					return false;
+				}
+
+				// q = s ^ e1;
+				float3 q = s.Cross(e1);
+
+				// v = DirectionNormalized * q;
+				v = DirectionNormalized.Dot(q);
+
+				if (v > 0.0f || u + v < det)
+				{
+					Dist = 0.f;
+					return false;
+				}
+
+				// t = e2 * q;
+				t = e2.Dot(q);
+
+				if (t > 0.0f)
+				{
+					Dist = 0.f;
+					return false;
+				}
+			}
+			else
+			{
+				// Parallel ray.
+				Dist = 0.f;
+				return false;
+			}
+
+			t /= det;
+
+			// (u / det) and (v / det) are the barycentric coordinates of the intersection.
+			// Store the x-component to *pDist
+			Dist = t;
+
+			return true;
+		}
+
+	}
 
 	bool MeshTriangleOctree::intersect(ray r, Intersection& nearest, Instance& instance) const
 	{
 
 		oldray = r;
 
-		float4x4 meshToWorld{ (TransformSystem::getInstance().getTransform(instance.worldMatrixID) * m_mesh->getMeshToModelMat(0)).Transpose()};
+		float4x4 meshToWorld{ (TransformSystem::getInstance().getTransform(instance.worldMatrixID) * m_mesh->getMeshToModelMat(0)).Transpose() };
 		auto rayToMesh{ meshToWorld.Invert() };
 
 		r.position = float3::Transform(r.position, rayToMesh);
-		r.direction = (float3::TransformNormal(r.direction, rayToMesh));
-		r.direction.Normalize();
-
+		r.direction = float3::TransformNormal(r.direction, rayToMesh);
+		//r.direction.Normalize(); // not works when world matrix contains scale
 		float boxT = nearest.t;
 		if (!m_box.hit(r, boxT))
 		{
 			return false;
 		}
-		
 
 		return intersectInternal(r, nearest);
 	}
@@ -255,7 +372,7 @@ namespace engine::DX
 			const float3& V3 = getPos(*m_mesh, m_triangles[i], 2);
 
 			float t = nearest.t;
-			if (ray.Intersects(V1, V2, V3, t)) // ray-triangle intersection in current box
+			if (intersects(ray.position, ray.direction, V1, V2, V3, t)) // ray-triangle intersection in current box
 			{
 				if (t < nearest.t)
 				{

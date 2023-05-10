@@ -19,8 +19,6 @@ namespace engine::DX
 	class LightSystem {
 	public:
 
-		
-
 		struct Attenuation
 		{
 			float constantAttenuation;
@@ -37,13 +35,15 @@ namespace engine::DX
 		struct DirectionalLight
 		{
 			BaseLight base;
-			float4 direction;
+			float3 direction;
+			float solidAngle;
 		};
 
 		struct PointLight
 		{
 			BaseLight base;
 			TransformSystem::ID transformID;
+			float radius;
 			Attenuation attenuation;
 		};
 
@@ -54,6 +54,7 @@ namespace engine::DX
 			TransformSystem::ID transformID;
 			float innerAngle;
 			float outerAngle;
+			float radius;
 			Attenuation attenuation;
 		};
 
@@ -62,6 +63,7 @@ namespace engine::DX
 			BaseLight base;
 			float innerAngle;
 			float outerAngle;
+			float radius;
 			Attenuation attenuation;
 			bool attachedToCamera;
 			float3 currentPosition;
@@ -80,7 +82,8 @@ namespace engine::DX
 			struct DirectionalLight
 			{
 				BaseLight base;
-				float4 direction;
+				float3 direction;
+				float solidAngle;
 			};
 
 
@@ -88,9 +91,9 @@ namespace engine::DX
 			{
 				BaseLight base;
 				float3 position;
-				float padding1;
+				float radius;
 				Attenuation attenuation;
-				float padding2;
+				float padding1;
 
 			};
 
@@ -102,10 +105,11 @@ namespace engine::DX
 				float innerAngle;
 				float3 direction;
 				float outerAngle;
+				float radius;
 				Attenuation attenuation;
-				float padding;
 
 			};
+
 
 			struct FlashLight // currently the same as SpotLight (but may change in the future)
 			{
@@ -114,8 +118,8 @@ namespace engine::DX
 				float innerAngle;
 				float3 direction;
 				float outerAngle;
+				float radius;
 				Attenuation attenuation;
-				float padding;
 			};
 
 			int g_numDirectionalLights;
@@ -160,10 +164,12 @@ namespace engine::DX
 			TransformSystem::ID transformID,
 			const float3& color,
 			float intensity,
+			float radius,
 			const Attenuation& attenuation);
 
-		
-		DirectionalLightID addDirectionalLight(const float3& color, float intensity, const float4& direction);
+
+		/// <param name="solidAngle">in steradians</param>
+		DirectionalLightID addDirectionalLight(const float3& color, float intensity, const float3& direction, float solidAngle);
 
 		/// <param name="outerAngle"> pass cosine of degrees in radians (cos(radians(degrees)))</param>
 		/// <param name="textureMask"> pass cosine of degrees in radians (cos(radians(degrees)))</param>
@@ -174,6 +180,7 @@ namespace engine::DX
 			float intensity,
 			float innerAngle,
 			float outerAngle,
+			float radius,
 			const Attenuation& attenuation);
 
 
@@ -185,6 +192,7 @@ namespace engine::DX
 			float intensity,
 			float innerAngle,
 			float outerAngle,
+			float radius,
 			const Attenuation& attenuation,
 			const std::wstring& textureMask);
 
@@ -253,61 +261,7 @@ namespace engine::DX
 
 		void updatePointLightConstantBuffer(const PointLight& src, LightConstantBuffer::PointLight& dst);
 
-		void updateBuffer()
-		{
-
-			if (camera != nullptr)
-			{
-				m_buffer.createBuffer(); // creates buffer if it's not created yet
-
-				LightConstantBuffer lightConstantBuffer;
-
-				//add camera position
-				//--------------------------------------------------------
-				const float3& cameraPos = camera->position();
-				lightConstantBuffer.g_cameraPosition = float4(cameraPos.x, cameraPos.y, cameraPos.z, 1);
-				//--------------------------------------------------------
-
-				//add flashlight
-				//--------------------------------------------------------
-				lightConstantBuffer.g_numFlashLights = flashLights.size();
-				for (size_t i = 0; i < flashLights.size(); i++)
-				{
-					updateFlashLightConstantBuffer(flashLights[i], lightConstantBuffer.g_flashLights[i]);
-				}
-				//--------------------------------------------------------
-
-				//directional lights
-				//--------------------------------------------------------
-				lightConstantBuffer.g_numDirectionalLights = directionalLights.size();
-				for (size_t i = 0; i < directionalLights.size(); i++)
-				{
-					updateDirectionalLightConstantBuffer(directionalLights[i], lightConstantBuffer.g_directionalLights[i]);
-				}
-				//--------------------------------------------------------
-
-				//pointLights
-				//--------------------------------------------------------
-				lightConstantBuffer.g_numPointLights = pointLights.size();
-				for (size_t i = 0; i < pointLights.size(); i++)
-				{
-					updatePointLightConstantBuffer(pointLights[i], lightConstantBuffer.g_pointLights[i]);
-				}
-				//--------------------------------------------------------
-
-				//spotlights
-				//--------------------------------------------------------
-				lightConstantBuffer.g_numSpotLights = spotLights.size();
-				for (size_t i = 0; i < spotLights.size(); i++)
-				{
-					updateSpotLightConstantBuffer(spotLights[i], lightConstantBuffer.g_spotLights[i]);					
-				}
-				//--------------------------------------------------------
-
-				m_buffer.updateData({ lightConstantBuffer });
-
-			}
-		}
+		void updateBuffer();
 
 		// Store lights in separate containers for each type
 		SolidVector<PointLight> pointLights;

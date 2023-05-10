@@ -8,7 +8,7 @@ namespace engine::DX
 	void Renderer::render(Window& window, Camera& camera)
 	{
 
-
+		
 		ImGuiManager::getInstance().NewFrame();
 		static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
@@ -27,6 +27,8 @@ namespace engine::DX
 
 		setSampleState();
 
+
+		window.clearBlend();
 		MeshSystem::getInstance().render(camera, visualizeNormal);
 
 		if (m_skybox.get() != nullptr)
@@ -48,6 +50,7 @@ namespace engine::DX
 
 		g_devcon->ClearDepthStencilView(m_offscreenDSB.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 		window.clearDepthStencil();
+	
 
 	}
 

@@ -46,7 +46,13 @@ namespace engine::DX
 		Box m_box;
 		Box m_initialBox;
 
+#pragma region utility functions
 		void countTriangles(MeshTriangleOctree* tri, int& count, std::vector<int>& triangles);
+		//ray-triangle interseciton
+		bool intersects(const float3& Origin, const float3& Direction, const float3& V0, const float3& V1, const float3& V2, float& Dist) const noexcept;
+#pragma endregion
+
+
 		const float3& getPos(const Mesh& mesh, size_t triangleIndex, size_t vertexIndex) const;
 		void initialize(Mesh& mesh, const Box& parentBox, const float3& parentCenter, int octetIndex);
 		bool addTriangle(size_t triangleIndex, const float3& V1, const float3& V2, const float3& V3, const float3& center);
