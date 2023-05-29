@@ -3,6 +3,21 @@
 
 namespace engine::DX
 {
+	struct PerFrameIBL
+	{
+		bool useDiffuseReflection;
+		char padding1[3];
+		bool useSpecularReflection;
+		char padding2[3];
+		bool useIBL;
+		char padding3[3];
+		bool useRoughnessOverwriting;
+		char padding4[3];
+		float overwrittenRoughnessValue;
+		float3 padding5;
+	};
+
+
 	template<typename T>
 	class ConstantBuffer : public Buffer<T>
 	{

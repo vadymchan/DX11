@@ -16,7 +16,7 @@ namespace engine::DX
 
 		void initRasterizator(const D3D11_RASTERIZER_DESC& rasterizerDesc, const std::shared_ptr<Skybox>& skybox = std::shared_ptr<Skybox>());
 
-		void changeRenderState(SampleState::BindSlot bindSlot);
+		void changeRenderState(SamplerState::BindSlot bindSlot);
 
 		void changeWireframe(bool wireframeEnabled);
 
@@ -38,7 +38,6 @@ namespace engine::DX
 
 		void initHDRTexture(D3D11_TEXTURE2D_DESC backBufferTex);
 
-
 		void setSampleState();
 
 		void initSamplers();
@@ -47,9 +46,9 @@ namespace engine::DX
 
 		void createRasterizerState();
 
-		SampleState g_pointWrap;
-		SampleState g_linearWrap;
-		SampleState g_anisotropicWrap;
+		SamplerState g_pointWrap;
+		SamplerState g_linearWrap;
+		SamplerState g_anisotropicWrap;
 		struct constantBufferSamplerState
 		{
 			UINT currentSampleState;
@@ -58,7 +57,7 @@ namespace engine::DX
 			float padding3;
 		};
 		ConstantBuffer<constantBufferSamplerState> samplerStateIndexBuffer; // float3 for adding paddings
-		SampleState::BindSlot currentSampleState{ SampleState::BindSlot::ANISOTROPIC_WRAP };
+		SamplerState::BindSlot currentSampleState{ SamplerState::BindSlot::ANISOTROPIC_WRAP };
 
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
@@ -70,6 +69,8 @@ namespace engine::DX
 		PostProcess m_postProcess;
 
 		std::shared_ptr<Skybox> m_skybox;
+
+		std::shared_ptr<ConstantBuffer<PerFrameIBL>> m_perFrameIBLbuffer;
 
 		bool visualizeNormal{};
 		bool needToUpdateRasterizer{};

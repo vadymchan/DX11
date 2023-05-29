@@ -57,9 +57,6 @@ FetchContent_Declare(glm
   SOURCE_DIR ${DEPENDENCIES_DIR}/glm
 )
 
-
-
-
 # Fetch the glm external project
 FetchContent_GetProperties(glm)
 if(NOT glm_POPULATED)
@@ -110,8 +107,23 @@ set (IMGUI_SOURCES
 )
 
 
-#-----------------------------------------------------------------------
+#directx tex -----------------------------------------------------------------
 
+ExternalProject_Add(DirectXTex
+  GIT_REPOSITORY https://github.com/microsoft/DirectXTex.git
+  GIT_TAG apr2023
+  PREFIX ${DEPENDENCIES_DIR}/DirectXTex/DirectXTex-prefix
+  SOURCE_DIR ${DEPENDENCIES_DIR}/DirectXTex/source
+  BINARY_DIR ${DEPENDENCIES_DIR}/DirectXTex/build
+  CMAKE_ARGS
+    -DCMAKE_INSTALL_PREFIX=${DEPENDENCIES_DIR}/DirectXTex/DirectXTex-out
+  BUILD_COMMAND ${CMAKE_COMMAND} --build . --target install
+  UPDATE_COMMAND ""
+  INSTALL_COMMAND ""
+)
+set_target_properties(DirectXTex PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+#-----------------------------------------------------------------------
 
  add_library(engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} ${IMGUI_SOURCES})
 
@@ -126,6 +138,11 @@ target_include_directories(engine SYSTEM PUBLIC ${DEPENDENCIES_DIR}/assimp/assim
 add_dependencies(engine DirectXTK)
 target_link_libraries(engine PRIVATE ${DEPENDENCIES_DIR}/DirectXTK/DirectXTK-out/lib/DirectXTK.lib)
 target_include_directories(engine SYSTEM PUBLIC ${DEPENDENCIES_DIR}/DirectXTK/DirectXTK-out/include/directxtk)
+
+# Link with DirectX Tex
+add_dependencies(engine DirectXTex)
+target_link_libraries(engine PRIVATE ${DEPENDENCIES_DIR}/DirectXTex/DirectXTex-out/lib/DirectXTex.lib)
+target_include_directories(engine SYSTEM PUBLIC ${DEPENDENCIES_DIR}/DirectXTex/DirectXTex-out/include)
 
 # Link with GLM
 target_include_directories(engine SYSTEM PUBLIC ${DEPENDENCIES_DIR}/glm)

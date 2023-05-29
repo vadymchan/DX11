@@ -4,7 +4,7 @@
 namespace engine::DX
 {
 
-	void MeshSystem::render(Camera& camera, bool showNormal)
+	void MeshSystem::render(Camera& camera)
 	{
 		for (const auto& opaqueInstance : opaqueInstances)
 		{
@@ -13,13 +13,15 @@ namespace engine::DX
 			{
 				RenderMode renderModeType = getRenderMode(shaderGroup);
 
+				setShaders(shaderGroup);
+
 				switch (renderModeType)
 				{
 				case RenderMode::DEFAULT:
 					SetRenderMode<RenderMode::DEFAULT>(opaqueInstance.get(), &camera);
 					break;
 				case RenderMode::NORMAL_VISUALISER:
-					if (!showNormal)
+					if (!m_showNormal)
 						continue;
 					SetRenderMode<RenderMode::NORMAL_VISUALISER>(opaqueInstance.get(), &camera);
 					break;
@@ -32,10 +34,15 @@ namespace engine::DX
 				case RenderMode::POINT_SPHERE:
 					SetRenderMode<RenderMode::POINT_SPHERE>(opaqueInstance.get(), &camera);
 					break;
-
+				case RenderMode::PBR:
+					SetRenderMode<RenderMode::PBR>(opaqueInstance.get(), &camera);
+					break;
+				case RenderMode::IBL:
+					SetRenderMode<RenderMode::IBL>(opaqueInstance.get(), &camera);
+					break;
 				}
 
-				setShaders(shaderGroup);
+				
 				LightSystem::getInstance().setBuffer();
 
 				setPrimitiveTopology(shaderGroup);
@@ -43,6 +50,20 @@ namespace engine::DX
 
 				opaqueInstance->render();
 			}
+		}
+
+		//render UI component
+		ImGuiManager::getInstance().RenderCheckbox("useIBL", m_perFrameIBL.useIBL);
+		if (m_perFrameIBL.useIBL)
+		{
+			ImGuiManager::getInstance().RenderCheckbox("useDiffuseReflection", m_perFrameIBL.useDiffuseReflection);
+			ImGuiManager::getInstance().RenderCheckbox("useSpecularReflection", m_perFrameIBL.useSpecularReflection);
+		}
+		
+		ImGuiManager::getInstance().RenderCheckbox("useRoughnessOverwriting", m_perFrameIBL.useRoughnessOverwriting);
+		if (m_perFrameIBL.useRoughnessOverwriting)
+		{
+			ImGuiManager::getInstance().RenderSlider("overwrittenRoughnessValue", m_perFrameIBL.overwrittenRoughnessValue, 0.0f, 1.0f);
 		}
 	}
 
@@ -158,6 +179,10 @@ namespace engine::DX
 			return RenderMode::BLINN_PHONG;
 		case OpaqueInstances::RenderType::POINT_SPHERE:
 			return RenderMode::POINT_SPHERE;
+		case OpaqueInstances::RenderType::PBR:
+			return RenderMode::PBR;
+		case OpaqueInstances::RenderType::IBL:
+			return RenderMode::IBL;
 		default:
 			return RenderMode::DEFAULT;
 		}
@@ -202,6 +227,17 @@ namespace engine::DX
 
 		//pixel shader
 		shaderGroup.pixelShader.lock()->bind();
+
+
+		//set additional resources for the shader
+		for (auto& shaderResource : shaderGroup.shaderResources)
+		{
+			if (!shaderResource.expired())
+			{
+				shaderResource.lock()->bind();
+			}
+		}
+
 	}
 
 	void MeshSystem::setPrimitiveTopology(const OpaqueInstances::ShaderGroup& shaderGroup)

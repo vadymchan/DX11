@@ -62,6 +62,27 @@ namespace engine::DX
         
     }
 
+    void ImGuiManager::RenderCheckbox(const std::string& identifier, bool& value)
+    {
+        // wrapped all elements in a main menu bar
+        if (ImGui::BeginMainMenuBar())
+        {
+            if (ImGui::BeginMenu("Debug"))
+            {
+                bool oldValue = value;
+                if (ImGui::Checkbox(identifier.c_str(), &value) && value != oldValue)
+                {
+                    for (const auto& callback : valueChangedCallbacks)
+                    {
+                        callback(identifier, (float)value);
+                    }
+                }
+
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+    }
 
 
 }

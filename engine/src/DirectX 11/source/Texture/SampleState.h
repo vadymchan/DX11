@@ -6,7 +6,7 @@ namespace engine
 	namespace DX
 	{
 
-		class SampleState
+		class SamplerState
 		{
 		public:
 

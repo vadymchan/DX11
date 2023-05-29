@@ -1,9 +1,8 @@
 #include "Renderer.h"
+#include "../Texture/ReflectionCapture.h"
 
 namespace engine::DX
 {
-
-
 
 	void Renderer::render(Window& window, Camera& camera)
 	{
@@ -27,9 +26,10 @@ namespace engine::DX
 
 		setSampleState();
 
-
 		window.clearBlend();
-		MeshSystem::getInstance().render(camera, visualizeNormal);
+		MeshSystem::getInstance().setShowNormal(visualizeNormal);
+		MeshSystem::getInstance().setPerFrameIBLbuffer(m_perFrameIBLbuffer);
+		MeshSystem::getInstance().render(camera);
 
 		if (m_skybox.get() != nullptr)
 		{
@@ -40,17 +40,12 @@ namespace engine::DX
 		m_HDRtexture.bind();
 		m_postProcess.resolve(m_HDRtexture.getShaderResourceView(), window.GetRenderTargetView());
 
-
-
-
 		ImGuiManager::getInstance().Render();
 
 		window.flush();
 
-
 		g_devcon->ClearDepthStencilView(m_offscreenDSB.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 		window.clearDepthStencil();
-	
 
 	}
 
@@ -63,9 +58,15 @@ namespace engine::DX
 		m_postProcess.init();
 
 		m_skybox = skybox;
+		MeshSystem::getInstance().setSkybox(skybox);
+
+		m_perFrameIBLbuffer = std::make_shared<ConstantBuffer<PerFrameIBL>>();
+		m_perFrameIBLbuffer->initBuffer(PER_FRAME_IBL_BIND_SLOT, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+		m_perFrameIBLbuffer->setBufferData({ {} });
+		m_perFrameIBLbuffer->createBuffer();
 	}
 
-	void Renderer::changeRenderState(SampleState::BindSlot bindSlot)
+	void Renderer::changeRenderState(SamplerState::BindSlot bindSlot)
 	{
 		currentSampleState = bindSlot;
 		updateConstantBufferSamplerState = true;
@@ -89,6 +90,7 @@ namespace engine::DX
 	void Renderer::setSkybox(const std::shared_ptr<Skybox>& skybox)
 	{
 		m_skybox = skybox;
+		MeshSystem::getInstance().setSkybox(skybox);
 	}
 
 	void Renderer::updateRasterizer()
@@ -160,13 +162,13 @@ namespace engine::DX
 	{
 		switch (currentSampleState)
 		{
-		case SampleState::BindSlot::POINT_WRAP:
+		case SamplerState::BindSlot::POINT_WRAP:
 			g_pointWrap.bind();
 			break;
-		case SampleState::BindSlot::LINEAR_WRAP:
+		case SamplerState::BindSlot::LINEAR_WRAP:
 			g_linearWrap.bind();
 			break;
-		case SampleState::BindSlot::ANISOTROPIC_WRAP:
+		case SamplerState::BindSlot::ANISOTROPIC_WRAP:
 			g_anisotropicWrap.bind();
 			break;
 		default:
@@ -205,12 +207,12 @@ namespace engine::DX
 		samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
 		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-		g_pointWrap.initSampleState((UINT)SampleState::BindSlot::POINT_WRAP, samplerDesc);
+		g_pointWrap.initSampleState((UINT)SamplerState::BindSlot::POINT_WRAP, samplerDesc);
 		samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-		g_linearWrap.initSampleState((UINT)SampleState::BindSlot::LINEAR_WRAP, samplerDesc);
+		g_linearWrap.initSampleState((UINT)SamplerState::BindSlot::LINEAR_WRAP, samplerDesc);
 		samplerDesc.MaxAnisotropy = 16;
 		samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-		g_anisotropicWrap.initSampleState((UINT)SampleState::BindSlot::ANISOTROPIC_WRAP, samplerDesc);
+		g_anisotropicWrap.initSampleState((UINT)SamplerState::BindSlot::ANISOTROPIC_WRAP, samplerDesc);
 	}
 
 	void Renderer::initRasterizerDesc(const D3D11_RASTERIZER_DESC& rasterizerDesc)

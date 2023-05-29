@@ -10,7 +10,8 @@
 #include "window/WindowDX.h"
 #include "source/Utils/Camera.h"
 #include "source/Render/Renderer.h"
-
+#include "source/Math/Integration/FibonacciPointDistribution.h"
+#include "source/Texture/ReflectionCapture.h"
 
 
 namespace engine::DX

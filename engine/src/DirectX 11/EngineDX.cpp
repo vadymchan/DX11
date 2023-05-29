@@ -127,10 +127,6 @@ namespace engine::DX
 
 			DirectX::SimpleMath::Matrix worldMatrix = TransformSystem::getInstance().getTransform(MeshMover::getInstance().getMat().worldMatrixID);
 			DirectX::SimpleMath::Vector3 worldSpaceScale;
-			//worldSpaceScale.x = worldMatrix.Right().Length();
-			//worldSpaceScale.y = worldMatrix.Up().Length();
-			//worldSpaceScale.z = worldMatrix.Backward().Length();
-			//moveOffset *= worldSpaceScale;
 
 			MeshMover::getInstance().moveMesh(moveOffset);
 		}

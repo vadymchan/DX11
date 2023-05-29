@@ -41,8 +41,11 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const std::wstring pbrVertexShaderFileName{ L"PBR/PBR_VertexShader.hlsl" };
 	const std::wstring pbrPixelShaderFileName{ L"PBR/PBR_PixelShader.hlsl" };
 
-	const std::wstring skyboxTexture{ engine::DX::textureDirectory / L"skybox/hdr/night_street.dds" };
-	//const std::wstring skyboxTexture			{ engine::DX::textureDirectory / L"skybox/hdr/grass_field.dds" };
+	const std::wstring iblVertexShaderFileName{ L"IBL/IBL_VertexShader.hlsl" };
+	const std::wstring iblPixelShaderFileName{ L"IBL/IBL_PixelShader.hlsl" };
+
+	const std::wstring skyboxNightStreet{ engine::DX::textureDirectory / L"skybox/hdr" / "night_street.dds" };
+	const std::wstring skyboxGrassField{ engine::DX::textureDirectory / L"skybox/hdr" / "grass_field.dds" };
 
 	const std::wstring flashLight{ engine::DX::textureDirectory / L"flashLight/dragonslake.dds" };
 
@@ -57,8 +60,53 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	engine::general::initConsole();
 #endif
 
+	// compute integral of cosine over the hemisphere using Fibonacci hemisphere point distribution
+	// --------------------------------------------------------------------------------------------
+	std::cout << "Integral over the hemisphere: " << engine::hemisphereIntegral(1000000) << std::endl;
+	// --------------------------------------------------------------------------------------------
+
 	engine::DX::D3D::Init();
 
+	D3D11_TEXTURE2D_DESC textureDesc1{};
+	textureDesc1.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureDesc1.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc1.CPUAccessFlags = 0;
+	textureDesc1.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	//engine::DX::TextureManager::getInstance().addTexture2D(skyboxGrassField, 0, textureDesc1);
+	//auto texture = engine::DX::TextureManager::getInstance().getTexture2D(skyboxGrassField);
+
+	//engine::DX::ReflectionCapture reflectionCapture;
+
+	D3D11_TEXTURE2D_DESC textureDesc2{};
+	textureDesc2.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureDesc2.Usage = D3D11_USAGE_IMMUTABLE;
+	textureDesc2.CPUAccessFlags = 0;
+
+
+	D3D11_TEXTURE2D_DESC textureDesc3{};
+	textureDesc3.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	textureDesc3.Usage = D3D11_USAGE_IMMUTABLE;
+	textureDesc3.CPUAccessFlags = 0;
+	textureDesc3.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+
+
+	//auto test = reflectionCapture.GetBRDFLookupTexture(L"lutCookTorrance.dds", 0, textureDesc2);
+	//auto test1 = reflectionCapture.GetIrradianceMap(L"grass_field_Irradiance.dds", 0, textureDesc3);
+	//auto test2 = reflectionCapture.GetPrefilteredEnvMap(L"grass_field_Prefiltered.dds", 0, textureDesc3);
+
+	/*reflectionCapture.CreateBRDFLookupTexture(L"IBL_Precompute/LUT/lutVertexShader.hlsl", L"IBL_Precompute/LUT/lutPixelShader.hlsl", L"LUT_Cook-Torrance.dds");
+
+	reflectionCapture.GenerateIrradianceMap(
+		L"IBL_Precompute/Irradiance/IrradianceVertexShader.hlsl",
+		L"IBL_Precompute/Irradiance/IrradiancePixelShader.hlsl",
+		L"IrradianceMap.dds",
+		texture->getShaderResourceView());
+
+	reflectionCapture.GeneratePrefilteredEnvMap(
+		L"IBL_Precompute/Prefilter/PrefilterVertexShader.hlsl",
+		L"IBL_Precompute/Prefilter/PrefilterPixelShader.hlsl",
+		L"PrefilteredEnvMap.dds",
+		texture->getShaderResourceView());*/
 
 	engine.initWindow("DirectX 11 Model", windowStartX, windowStartY, windowWidth, windowHeight, appHandle, windowShowParams);
 
@@ -68,7 +116,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	rasterizerDesc.DepthClipEnable = true;
 
 	engine::DX::Skybox skybox;
-	skybox.initSkybox(skyboxTexture);
+	//skybox.initSkybox(engine::DX::ReflectionCapture::PRECOMPUTE_IRRADIANCE_PATH / L"grass_field_Irradiance.dds");
+	skybox.initSkybox(skyboxGrassField);
 
 	engine.initRenderer(rasterizerDesc, std::make_shared<engine::DX::Skybox>(skybox));
 	//shaders & input layout
@@ -84,10 +133,6 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		//{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,  D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		//{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		//{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-		//{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputElementDescNormal
@@ -158,6 +203,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	ShaderManager::getInstance().addVertexShader(colorVertexShaderFileName, inputElementDesc);
 	ShaderManager::getInstance().addVertexShader(blinnPhongVertexShaderFileName, inputElementDescNormal);
 	ShaderManager::getInstance().addVertexShader(pbrVertexShaderFileName, pbrInputElementDesc);
+	ShaderManager::getInstance().addVertexShader(iblVertexShaderFileName, pbrInputElementDesc);
 	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, hologramInputElementDesc);
 	ShaderManager::getInstance().addVertexShader(pointLightVertexShaderFileName, pointLightInputElementDesc);
 	//hull shader
@@ -174,6 +220,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	ShaderManager::getInstance().addPixelShader(blinnPhongPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(pointLightPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(pbrPixelShaderFileName);
+	ShaderManager::getInstance().addPixelShader(iblPixelShaderFileName);
 
 	//textures & sampler 
 	//---------------------------------------------------------------------------------------------------
@@ -187,9 +234,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	// opaque instance
 	//---------------------------------------------------------------------------------------------------
 
-	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {blinnPhongVertexShaderFileName, L"", L"", L"",blinnPhongPixelShaderFileName} /*{colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}*/, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t pbrOpaqueInstance = engine.createOpaqueInstance({ {pbrVertexShaderFileName, L"", L"", L"",pbrPixelShaderFileName} /*{colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}*/, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t sphereOpaqueInstance = engine.createOpaqueInstance({ {pointLightVertexShaderFileName, L"", L"", L"",pointLightPixelShaderFileName} /*{colorVertexShaderFileName, L"", L"", L"",colorPixelShaderFileName}*/, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {blinnPhongVertexShaderFileName, L"", L"", L"",blinnPhongPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	uint32_t pbrOpaqueInstance = engine.createOpaqueInstance({ {pbrVertexShaderFileName, L"", L"", L"",pbrPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	uint32_t iblOpaqueInstance = engine.createOpaqueInstance({ {iblVertexShaderFileName, L"", L"", L"",iblPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	uint32_t sphereOpaqueInstance = engine.createOpaqueInstance({ {pointLightVertexShaderFileName, L"", L"", L"",pointLightPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
 	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", /*hologramHullShaderFileName, hologramDomainShaderFileName,*/ hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/ });
 
 
@@ -198,12 +246,11 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//---------------------------------------------------------------------------------------------------
 
 	//point light 
-	std::vector<engine::DX::float4> pointLightEmissions{ {0,1,0,0}, {1,0,0,0}, {0,0,1,0}, {1,1,0,0}, };
+	std::vector<engine::DX::float4> pointLightEmissions{ {1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {1,1,1,0}, };
 	std::vector<float> pointLightIntensities{ 100, 100, 100, 100 };
-	std::vector<engine::DX::float3> pointLightColors{ {1, 1, 1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, };
+	std::vector<engine::DX::float3> pointLightColors{ {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 1, 1}, };
 	std::vector<Attenuation> pointLightAttenuations{ { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, };
 	std::vector<float> pointLightRadiuses{ 0.5, 0.5, 0.5, 0.5, };
-
 
 
 	// models
@@ -263,7 +310,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::vector<engine::DX::float4x4> spherePointLightInstances
 	{
 
-		
+
 		engine::DX::float4x4
 			{{{pointLightRadiuses[0],0,0,5},
 			{0,pointLightRadiuses[0],0,5},
@@ -298,6 +345,15 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 			{0,0,0,1},
 		}},
 
+		//floor rotated 90 degrees
+		/*engine::DX::float4x4
+		{{
+			{100,0,0,0},
+			{0,0,100, -1},
+			{0,-1,0,0},
+			{0,0,0,1},
+		}},*/
+
 	};
 
 
@@ -309,19 +365,30 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	std::vector<engine::DX::float4x4> vinesCubeInstances
+
+
+	std::vector<engine::DX::float4x4> mirrorSphere
 	{
 		engine::DX::float4x4
-		{{{1,0,0, 1},
+		{{{1,0,0, 0},
 		  {0,1,0, 0},
 		  {0,0,1, 1},
 		  {0,0,0, 1},}},
 	};
 
-	std::vector<engine::DX::float4x4> peacockCubeInstances
+	std::vector<engine::DX::float4x4> shinyConductorSphere
 	{
 		engine::DX::float4x4
-		{{{1,0,0, -1},
+		{{{1,0,0, 2},
+		  {0,1,0, 0},
+		  {0,0,1, 1},
+		  {0,0,0, 1},}},
+	};
+
+	std::vector<engine::DX::float4x4> roughDielectricSphere
+	{
+		engine::DX::float4x4
+		{{{1,0,0, -2},
 		  {0,1,0, 0},
 		  {0,0,1, 1},
 		  {0,0,0, 1},}},
@@ -335,12 +402,18 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::shared_ptr<Material> peacock = std::make_shared<Material>(Material{ L"Peacock" });
 	std::shared_ptr<Material> vines = std::make_shared<Material>(Material{ L"Vines" });
 	std::shared_ptr<Material> normalDebug = std::make_shared<Material>(Material{ L"normalDebug" });
+	std::shared_ptr<Material> mirror = std::make_shared<Material>(Material{ L"Mirror" });
+	std::shared_ptr<Material> shinyConductor = std::make_shared<Material>(Material{ L"Shiny Conductor" });
+	std::shared_ptr<Material> roughDielectric = std::make_shared<Material>(Material{ L"Rough Dielectric" });
 	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
 	std::shared_ptr<Material> defaultSkin = std::make_shared<Material>(Material{ L"default" });
 
-	engine.addInstancedModel(pbrOpaqueInstance, cube, cubeMeshIndices, peacock, peacockCubeInstances);
-	engine.addInstancedModel(pbrOpaqueInstance, cube, cubeMeshIndices, vines, vinesCubeInstances);
-	engine.addInstancedModel(pbrOpaqueInstance, floor, { 0 }, grass, floorInstances);
+	engine.addInstancedModel(iblOpaqueInstance, sphere, cubeMeshIndices, mirror, mirrorSphere);
+	engine.addInstancedModel(iblOpaqueInstance, sphere, cubeMeshIndices, shinyConductor, shinyConductorSphere);
+	engine.addInstancedModel(iblOpaqueInstance, sphere, cubeMeshIndices, roughDielectric, roughDielectricSphere);
+
+
+	engine.addInstancedModel(iblOpaqueInstance, floor, { 0 }, mirror, floorInstances);
 
 	std::vector<size_t> samuraiMeshIndices;
 	for (size_t i = 0; i < samurai.get()->getMeshesCount(); ++i)
@@ -348,7 +421,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		samuraiMeshIndices.emplace_back(i);
 	}
 
-	engine.addInstancedModel(pbrOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
+	engine.addInstancedModel(iblOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
 
 
 	std::vector<size_t> pointLightMeshIndeices;
@@ -361,13 +434,12 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		engine.addInstancedModel(sphereOpaqueInstance, sphere, pointLightMeshIndeices, noMaterial, spherePointLightInstances, pointLightEmissions);
 
 
-
 	std::vector<size_t> eastTowerMeshIndices;
 	for (size_t i = 0; i < eastTower.get()->getMeshesCount(); ++i)
 	{
 		eastTowerMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(pbrOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
+	engine.addInstancedModel(iblOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
 
 
 	std::vector<size_t> knightMeshIndices;
@@ -375,14 +447,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		knightMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(pbrOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
+	engine.addInstancedModel(iblOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)
 	{
 		knightHorseMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(pbrOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
+	engine.addInstancedModel(iblOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
@@ -406,28 +478,28 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	LightSystem& lightSystem = LightSystem::getInstance();
 
-	lightSystem.addDirectionalLight({ 1, 1, 1 }, 10, { 0, -0.5, -0.5 }, 1);
+	//lightSystem.addDirectionalLight({ 1, 1, 1 }, 10, { 0, -0.5, -0.5 }, 1);
 
-	cameraFlashLight = lightSystem.addFlashLight(
-		{ 1,1,1 },
-		1000,
-		DirectX::XMConvertToRadians(10.0f),
-		DirectX::XMConvertToRadians(15.0f),
-		0.1,
-		pointLightAttenuations[0],
-		flashLight
-	);
+	//cameraFlashLight = lightSystem.addFlashLight(
+	//	{ 1,1,1 },
+	//	1000,
+	//	DirectX::XMConvertToRadians(10.0f),
+	//	DirectX::XMConvertToRadians(15.0f),
+	//	0.1,
+	//	pointLightAttenuations[0],
+	//	flashLight
+	//);
 
-	lightSystem.addSpotLight(
-		{ 0, 3, 5 },
-		{ 0, -1, 0 },
-		{ 0.69,0,0 },
-		10,
-		DirectX::XMConvertToRadians(30.0f),
-		DirectX::XMConvertToRadians(30.0f),
-		1,
-		pointLightAttenuations[0]
-	);
+	//lightSystem.addSpotLight(
+	//	{ 0, 3, 5 },
+	//	{ 0, -1, 0 },
+	//	{ 0.69,0,0 },
+	//	10,
+	//	DirectX::XMConvertToRadians(30.0f),
+	//	DirectX::XMConvertToRadians(30.0f),
+	//	1,
+	//	pointLightAttenuations[0]
+	//);
 
 	for (int i = 0; i < pointLightInstanceIDs.size(); ++i)
 	{
@@ -519,15 +591,15 @@ bool ApplicationDX::ProcessInputs()
 				break;
 			case VK_NUMPAD1:
 			case '1':
-				engine.getRenderer().changeRenderState(engine::DX::SampleState::BindSlot::POINT_WRAP);
+				engine.getRenderer().changeRenderState(engine::DX::SamplerState::BindSlot::POINT_WRAP);
 				break;
 			case VK_NUMPAD2:
 			case '2':
-				engine.getRenderer().changeRenderState(engine::DX::SampleState::BindSlot::LINEAR_WRAP);
+				engine.getRenderer().changeRenderState(engine::DX::SamplerState::BindSlot::LINEAR_WRAP);
 				break;
 			case VK_NUMPAD3:
 			case '3':
-				engine.getRenderer().changeRenderState(engine::DX::SampleState::BindSlot::ANISOTROPIC_WRAP);
+				engine.getRenderer().changeRenderState(engine::DX::SamplerState::BindSlot::ANISOTROPIC_WRAP);
 				break;
 			case 0x57: // W
 				cameraMovingDirections[MoveDirection::FORWARD] = true;
@@ -551,7 +623,14 @@ bool ApplicationDX::ProcessInputs()
 				break;
 			case 0x46: // F
 				flashLightAttached = !flashLightAttached;
-				LightSystem::getInstance().getFlashLight(cameraFlashLight).attachedToCamera = flashLightAttached;
+				if (cameraFlashLight != -1)
+				{
+					LightSystem::getInstance().getFlashLight(cameraFlashLight).attachedToCamera = flashLightAttached;
+				}
+				else
+				{
+					std::cerr << "Flashlight is not attached!\n";
+				}
 				break;
 			case VK_SPACE:
 				cameraMovingDirections[MoveDirection::UP] = true;

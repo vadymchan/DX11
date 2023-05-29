@@ -36,6 +36,7 @@ namespace engine::DX
         void Render();
 
         void RenderSlider(const std::string& identifier, float& value, float min, float max);
+        void RenderCheckbox(const std::string& identifier, bool& value);
 
 
     private:

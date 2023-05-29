@@ -38,13 +38,17 @@ namespace engine::DX
 			NORMAL_VISUALIZER,
 			HOLOGRAM,
 			BLINN_PHONG,
-			POINT_SPHERE
+			POINT_SPHERE,
+			PBR,
+			IBL,
 		};
 
 
 		struct ShaderGroup
 		{
 			RenderType type;
+
+			std::vector<std::weak_ptr<Texture2D>> shaderResources;
 
 			std::weak_ptr<VertexShader> vertexShader;
 			std::weak_ptr<HullShader> hullShader;
@@ -92,7 +96,6 @@ namespace engine::DX
 
 
 		std::vector<PerModel> perModel{};
-		//VertexBuffer<Instance> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		VertexBuffer<InstanceData> instanceBuffer; // mesh instances in GPU (for rendering one mesh several instances)
 		ConstantBuffer<float4x4> meshData; // e.g. mesh to model transformation matrix
 		ConstantBuffer<Material> materialData;

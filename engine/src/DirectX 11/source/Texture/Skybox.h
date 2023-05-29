@@ -22,6 +22,11 @@ namespace engine::DX
 			m_textureFileName = textureFileName;
 		}
 
+		const std::wstring& getTexture() const
+		{
+			return m_textureFileName;
+		}
+
 	private:
 		std::wstring m_textureFileName;
 		const static std::wstring VERTEX_SHADER_PATH;

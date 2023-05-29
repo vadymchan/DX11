@@ -4,19 +4,22 @@
 #include "../Texture/DDSTextureLoader11.h"
 #include "../D3D/D3D.h"
 #include <filesystem>
+#include <DirectXTex.h>
 
 namespace engine
 {
 	namespace DX
 	{
-#define COLOR_TEXTURE_BIND_SLOT 0
-#define ALBEDO_TEXTURE_BIND_SLOT 0 
-#define ROUGHNESS_TEXTURE_BIND_SLOT 1
-#define METALNESS_TEXTURE_BIND_SLOT 2
-#define NORMAL_TEXTURE_BIND_SLOT 3
-#define FLASHLIGHT_TEXTURE_BIND_SLOT 4
-		
-		
+		const UINT COLOR_TEXTURE_BIND_SLOT = 0;
+		const UINT ALBEDO_TEXTURE_BIND_SLOT = 0;
+		const UINT ROUGHNESS_TEXTURE_BIND_SLOT = 1;
+		const UINT METALNESS_TEXTURE_BIND_SLOT = 2;
+		const UINT NORMAL_TEXTURE_BIND_SLOT = 3;
+		const UINT FLASHLIGHT_TEXTURE_BIND_SLOT = 7;
+		const UINT IRRADIANCE_MAP_BIND_SLOT = 4;
+		const UINT PREFILTERED_MAP_BIND_SLOT = 5;
+		const UINT BRDF_LUT_BIND_SLOT = 6;
+
 
 
 		const std::filesystem::path textureDirectory = L"engine/src/general/resources/textures";
@@ -26,7 +29,6 @@ namespace engine
 		class TextureManager
 		{
 		public:
-
 			static TextureManager& getInstance()
 			{
 				static TextureManager instance;
@@ -36,7 +38,7 @@ namespace engine
 
 			/// <param name="fileName">file name including directory</param>
 			/// <param name="bindSlot">in which register in shader to bind</param>
-			/// <param name="textureDesc">only need to set BindFlags, CPUAccessFlags and MiscFlags. Don't forget to add D3D11_RESOURCE_MISC_TEXTURECUBE to MiscFlags when adding cubemap texture </param>
+			/// <param name="textureDesc">only need to set Usage, BindFlags, CPUAccessFlags and MiscFlags. Don't forget to add D3D11_RESOURCE_MISC_TEXTURECUBE to MiscFlags when adding cubemap texture </param>
 			void addTexture2D(
 				const std::wstring& fileName,
 				UINT bindSlot,
@@ -54,12 +56,25 @@ namespace engine
 
 			}
 
-			const std::shared_ptr<Texture2D>& getTexture2D(const std::wstring& fileName)
+
+			std::shared_ptr<Texture2D> getTexture2D(const std::wstring& fileName)
+			{
+				auto it = m_2dTextures.find(fileName);
+				if (it == m_2dTextures.end())
+				{
+					return nullptr; // texture is not found
+				}
+				return it->second;
+			}
+
+			/*const std::shared_ptr<Texture2D>& getTexture2D(const std::wstring& fileName)
 			{
 				assert(m_2dTextures.find(fileName) != m_2dTextures.end() && "Texture is not created! Error");
 
 				return m_2dTextures[fileName];
-			}
+			}*/
+
+
 
 
 		private:

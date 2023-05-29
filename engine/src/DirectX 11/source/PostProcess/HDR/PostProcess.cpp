@@ -47,7 +47,6 @@ namespace engine::DX
 			m_constBuffer.updateData({ { m_EV100 ,m_Gamma, 0,0 } });
 			m_updateConstantBuffer = false;
 		}
-
 	}
 
 	void PostProcess::resolve(ID3D11ShaderResourceView* src, ID3D11RenderTargetView* dst)

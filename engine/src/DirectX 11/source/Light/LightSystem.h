@@ -4,6 +4,7 @@
 #include "../Utils/SolidVector.h"
 #include "../D3D/D3D.h"
 #include "../Buffer/ConstantBuffer.h"
+#include "../Controller/BufferManager.h"
 #include "../Texture/Texture2D.h"
 #include "../Utils/Camera.h"
 #include "../Controller/TextureManager.h"
@@ -242,7 +243,7 @@ namespace engine::DX
 	protected:
 		LightSystem()
 		{
-			const UINT PER_FRAME_GLOBAL = 4;
+			
 			m_buffer.setBufferData({ LightConstantBuffer{} });
 			m_buffer.initBuffer(PER_FRAME_GLOBAL, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 

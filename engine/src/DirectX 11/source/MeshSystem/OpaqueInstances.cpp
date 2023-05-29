@@ -63,6 +63,16 @@ namespace engine::DX
 			{
 				shaderGroup.type = RenderType::POINT_SPHERE;
 			}
+			else if (std::any_of(shaderBatches[i].begin(), shaderBatches[i].end(),
+				[](const std::wstring& shaderName) { return shaderName.find(L"PBR") != std::wstring::npos; }))
+			{
+				shaderGroup.type = RenderType::PBR;
+			}
+			else if (std::any_of(shaderBatches[i].begin(), shaderBatches[i].end(),
+				[](const std::wstring& shaderName) { return shaderName.find(L"IBL") != std::wstring::npos; }))
+			{
+				shaderGroup.type = RenderType::IBL;
+			}
 			else
 			{
 				shaderGroup.type = RenderType::DEFAULT;

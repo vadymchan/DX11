@@ -78,7 +78,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTex/DirectXTex-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -95,10 +95,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -106,7 +106,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -123,7 +124,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTex/DirectXTex-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
@@ -140,10 +141,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -151,7 +152,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -168,7 +170,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTex/DirectXTex-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
@@ -185,10 +187,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -196,7 +198,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -213,7 +216,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTex/DirectXTex-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -229,10 +232,10 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -240,7 +243,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -269,7 +273,7 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent\CMakeLists.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent\CMakeLists.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-prefix\tmp\DirectXTex-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\vadym\source\repos\vchan\engine\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</BuildInParallel>
@@ -283,7 +287,7 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent\CMakeLists.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent\CMakeLists.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-prefix\tmp\DirectXTex-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\vadym\source\repos\vchan\engine\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">true</BuildInParallel>
@@ -297,7 +301,7 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent\CMakeLists.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent\CMakeLists.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-prefix\tmp\DirectXTex-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\vadym\source\repos\vchan\engine\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
       <BuildInParallel Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">true</BuildInParallel>
@@ -311,7 +315,7 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent\CMakeLists.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\RepositoryInfo.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\cfgcmd.txt.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\gitclone.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\ExternalProject\mkdirs.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FetchContent\CMakeLists.cmake.in;C:\Program Files\CMake\share\cmake-3.26\Modules\FindGit.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.26\Modules\FindPackageMessage.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-prefix\tmp\DirectXTK-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-prefix\tmp\DirectXTex-mkdirs.cmake;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-prefix\tmp\assimp-mkdirs.cmake;%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\vadym\source\repos\vchan\engine\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
     </CustomBuild>
@@ -326,6 +330,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Integration\FibonacciPointDistribution.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\MeshSystem.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Model.cpp" />
@@ -334,6 +339,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Render\Renderer.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\DDSTextureLoader11.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Skybox.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\TextureSave.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Utils\Camera.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\window\WindowDX.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\render\SceneRC.cpp" />
@@ -348,6 +354,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\console\Console.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Texture\ReflectionCapture.cpp" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\Buffer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\ConstantBuffer.h" />
@@ -364,6 +371,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\MeshTriangleOctreeDX.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Integration\FibonacciPointDistribution.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Movement\MeshMover.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Transform\TransformSystem.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.h" />
@@ -382,6 +390,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\SampleState.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Skybox.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Texture2D.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\TextureSave.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Utils\Camera.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Utils\SolidVector.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\window\WindowDX.h" />
@@ -427,6 +436,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx9.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx10.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx11.cpp" />
+    <ClInclude Include="src\DirectX 11\source\Texture\ReflectionCapture.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:\Users\vadym\source\repos\vchan\ZERO_CHECK.vcxproj">
@@ -438,6 +448,12 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ProjectReference Include="C:\Users\vadym\source\repos\vchan\engine\DirectXTK.vcxproj">
       <Project>{7686E545-68DB-3B28-9A73-125B5E8AD835}</Project>
       <Name>DirectXTK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\vadym\source\repos\vchan\engine\DirectXTex.vcxproj">
+      <Project>{620178B2-791E-36C7-B951-E4DDF9C89E28}</Project>
+      <Name>DirectXTex</Name>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </ProjectReference>

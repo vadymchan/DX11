@@ -28,6 +28,9 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Integration\FibonacciPointDistribution.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,6 +53,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\TextureSave.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Utils\Camera.cpp">
@@ -118,6 +124,7 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\DirectX 11\source\Texture\ReflectionCapture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.h">
@@ -166,6 +173,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Integration\FibonacciPointDistribution.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Movement\MeshMover.h">
@@ -220,6 +230,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\Texture2D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\TextureSave.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Utils\Camera.h">
@@ -333,6 +346,7 @@
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\DirectX 11\source\Texture\ReflectionCapture.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\vadym\source\repos\vchan\engine\CMakeLists.txt" />

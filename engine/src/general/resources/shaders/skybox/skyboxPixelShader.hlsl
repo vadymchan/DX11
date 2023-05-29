@@ -30,7 +30,5 @@ float4 main(Input input) : SV_TARGET
             color = SkyboxTexture.Sample(g_anisotropicWrap, input.texcoord);
             break;
     }
-    
-    //float4 color = SkyboxTexture.Sample(g_linearWrap, input.texcoord);
     return color;
 }

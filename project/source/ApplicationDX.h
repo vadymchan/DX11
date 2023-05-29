@@ -58,7 +58,7 @@ private:
 	engine::general::FPSTimer fpsTimer;
 	engine::DX::Engine engine;
 	MSG msg;
-	engine::DX::LightSystem::FlashLightID cameraFlashLight;
+	engine::DX::LightSystem::FlashLightID cameraFlashLight = -1;
 	float cameraSpeed{};
 	float cameraRotationSpeed{};
 	float cameraMaxPitch{};

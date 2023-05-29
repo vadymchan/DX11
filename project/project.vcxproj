@@ -90,7 +90,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTex/DirectXTex-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -107,10 +107,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_DEBUG;_WINDOWS;CMAKE_INTDIR=\"Debug\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -118,7 +118,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\engine\Debug\engine.lib;..\engine\src\general\dependencies\assimp\assimp-out\lib\assimp-vc143-mtd.lib;..\engine\src\general\dependencies\DirectXTK\DirectXTK-out\lib\DirectXTK.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\engine\Debug\engine.lib;..\engine\src\general\dependencies\assimp\assimp-out\lib\assimp-vc143-mtd.lib;..\engine\src\general\dependencies\DirectXTK\DirectXTK-out\lib\DirectXTK.lib;..\engine\src\general\dependencies\DirectXTex\DirectXTex-out\lib\DirectXTex.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -133,7 +133,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTex/DirectXTex-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
@@ -150,10 +150,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"Release\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -161,7 +161,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\engine\Release\engine.lib;..\engine\src\general\dependencies\assimp\assimp-out\lib\assimp-vc143-mtd.lib;..\engine\src\general\dependencies\DirectXTK\DirectXTK-out\lib\DirectXTK.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\engine\Release\engine.lib;..\engine\src\general\dependencies\assimp\assimp-out\lib\assimp-vc143-mtd.lib;..\engine\src\general\dependencies\DirectXTK\DirectXTK-out\lib\DirectXTK.lib;..\engine\src\general\dependencies\DirectXTex\DirectXTex-out\lib\DirectXTex.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -176,7 +176,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTex/DirectXTex-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ExceptionHandling>Sync</ExceptionHandling>
       <ExternalWarningLevel>TurnOffAllWarnings</ExternalWarningLevel>
@@ -193,10 +193,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"MinSizeRel\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -204,7 +204,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\engine\MinSizeRel\engine.lib;..\engine\src\general\dependencies\assimp\assimp-out\lib\assimp-vc143-mtd.lib;..\engine\src\general\dependencies\DirectXTK\DirectXTK-out\lib\DirectXTK.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\engine\MinSizeRel\engine.lib;..\engine\src\general\dependencies\assimp\assimp-out\lib\assimp-vc143-mtd.lib;..\engine\src\general\dependencies\DirectXTK\DirectXTK-out\lib\DirectXTK.lib;..\engine\src\general\dependencies\DirectXTex\DirectXTex-out\lib\DirectXTex.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -219,7 +219,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
     <ClCompile>
-      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
+      <AdditionalOptions>%(AdditionalOptions) /external:I "C:/Users/vadym/source/repos/vchan/project/../engine/src" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTK/DirectXTK-out/include/directxtk" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/DirectXTex/DirectXTex-out/include" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/glm" /external:I "C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/imgui"</AdditionalOptions>
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -235,10 +235,10 @@
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>%(PreprocessorDefinitions);WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\"RelWithDebInfo\"</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <Midl>
-      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\vadym\source\repos\vchan\project\..\engine\src;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\assimp\assimp-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTK\DirectXTK-out\include\directxtk;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\DirectXTex\DirectXTex-out\include;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\glm;C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -246,7 +246,7 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <Link>
-      <AdditionalDependencies>..\engine\RelWithDebInfo\engine.lib;..\engine\src\general\dependencies\assimp\assimp-out\lib\assimp-vc143-mtd.lib;..\engine\src\general\dependencies\DirectXTK\DirectXTK-out\lib\DirectXTK.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
+      <AdditionalDependencies>..\engine\RelWithDebInfo\engine.lib;..\engine\src\general\dependencies\assimp\assimp-out\lib\assimp-vc143-mtd.lib;..\engine\src\general\dependencies\DirectXTK\DirectXTK-out\lib\DirectXTK.lib;..\engine\src\general\dependencies\DirectXTex\DirectXTex-out\lib\DirectXTex.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;comdlg32.lib;advapi32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalOptions>%(AdditionalOptions) /machine:x64</AdditionalOptions>
       <GenerateDebugInformation>true</GenerateDebugInformation>

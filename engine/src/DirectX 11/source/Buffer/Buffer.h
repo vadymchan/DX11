@@ -60,6 +60,7 @@ namespace engine::DX
 			UINT bindFlags = 0, UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
 			UINT sysMemPitch = 0, UINT sysMemSlicePitch = 0)
 		{
+			
 			initBufferDescription(bufferUsage, bindFlags, CPUAccessFlags, miscFlags, structureByteStride);
 			initBufferData(sysMemPitch, sysMemSlicePitch);
 			updateBuffer = true;
@@ -88,7 +89,7 @@ namespace engine::DX
 		D3D11_SUBRESOURCE_DATA bufferSubresourceData{};
 		ComPtr<ID3D11Buffer> buffer;
 		bool updateBuffer{ true };
-		std::vector<T> bufferData;
+		std::vector<T> bufferData{{}};
 
 	};
 

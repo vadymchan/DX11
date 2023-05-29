@@ -2,7 +2,6 @@
 #include "../D3D/D3D.h"
 #include "DDSTextureLoader11.h"
 
-
 namespace engine
 {
 	namespace DX
@@ -30,7 +29,7 @@ namespace engine
 
 
 			/// <param name="bindSlot">in which register in shader to bind</param>
-			/// <param name="textureDesc">only need to set BindFlags, CPUAccessFlags and MiscFlags </param>
+			/// <param name="textureDesc">only need to set Usage, BindFlags, CPUAccessFlags and MiscFlags </param>
 			void createTextureFromFile(
 				UINT bindSlot,
 				const std::wstring& fileName,
