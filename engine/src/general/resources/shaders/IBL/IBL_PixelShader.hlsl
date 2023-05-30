@@ -117,10 +117,30 @@ float GGX(float rough2, float NoH)
 }
  
 
-//=============================================================================================================
+//BEGIN: double horizon falloff factor
+//--------------------------------------------------------------------------------------------
+
+float DoubleFallOffFactor(float3 surfaceNormal, float3 normal, float3 lightDirection, float r)
+{
+    // Compute the dot products of the light direction with the normals
+    float NdotL_geo = dot(surfaceNormal, lightDirection);
+    float NdotL_map = dot(normal, lightDirection);
+
+    // Compute the falloff factors for the geometry and normal map normals
+    float falloff_geo = min(1.0, (NdotL_geo + r) / (2 * r));
+    float falloff_map = min(1.0, (NdotL_map + r) / (2 * r));
+
+    // Combine the falloff factors. This is just one possible way to combine them;
+    // the exact method will depend on the specific effect you're trying to achieve.
+    float falloff = min(falloff_geo, falloff_map);
+
+    return falloff;
+}
+
+//--------------------------------------------------------------------------------------------
+//END: double horizon falloff factor
 
 
-// ---------------- SPHERELIGHTS ----------------
 
 // May return direction pointing beneath surface horizon (dot(N, dir) < 0), use clampDirToHorizon to fix it.
 // sphereCos is cosine of the light source angular halfsize (2D angle, not solid angle).
@@ -150,6 +170,8 @@ void clampDirToHorizon(inout float3 dir, inout float NoD, float3 normal, float m
         NoD = minNoD;
     }
 }
+
+
 
 // [ de Carpentier 2017, "Decima Engine: Advances in Lighting and AA" ]
 // sphereSin and sphereCos are sin and cos of the light source angular halfsize (2D angle, not solid angle).
@@ -200,6 +222,46 @@ void SphereMaxNoH(float NoV, inout float NoL, inout float VoL, float sphereSin, 
     }
 }
 
+// [ de Carpentier 2017, "Decima Engine: Advances in Lighting and AA" ]
+float GetNoHSquared(float radiusTan, float NoL, float NoV, float VoL)
+{
+    // radiusCos can be precalculated if radiusTan is a directional light
+    float radiusCos = rsqrt(1.0 + radiusTan * radiusTan);
+    
+    // Early out if R falls within the disc
+    float RoL = 2.0 * NoL * NoV - VoL;
+    if (RoL >= radiusCos)
+        return 1.0;
+
+    float rOverLengthT = radiusCos * radiusTan * rsqrt(1.0 - RoL * RoL);
+    float NoTr = rOverLengthT * (NoV - RoL * NoL);
+    float VoTr = rOverLengthT * (2.0 * NoV * NoV - 1.0 - RoL * VoL);
+
+    // Calculate dot(cross(N, L), V). This could already be calculated and available.
+    float triple = sqrt(saturate(1.0 - NoL * NoL - NoV * NoV - VoL * VoL + 2.0 * NoL * NoV * VoL));
+    
+    // Do one Newton iteration to improve the bent light vector
+    float NoBr = rOverLengthT * triple, VoBr = rOverLengthT * (2.0 * triple * NoV);
+    float NoLVTr = NoL * radiusCos + NoV + NoTr, VoLVTr = VoL * radiusCos + 1.0 + VoTr;
+    float p = NoBr * VoLVTr, q = NoLVTr * VoLVTr, s = VoBr * NoLVTr;
+    float xNum = q * (-0.5 * p + 0.25 * VoBr * NoLVTr);
+    float xDenom = p * p + s * ((s - 2.0 * p)) + NoLVTr * ((NoL * radiusCos + NoV) * VoLVTr * VoLVTr +
+                   q * (-0.5 * (VoLVTr + VoL * radiusCos) - 0.5));
+    float twoX1 = 2.0 * xNum / (xDenom * xDenom + xNum * xNum);
+    float sinTheta = twoX1 * xDenom;
+    float cosTheta = 1.0 - twoX1 * xNum;
+    NoTr = cosTheta * NoTr + sinTheta * NoBr; // use new T to update NoTr
+    VoTr = cosTheta * VoTr + sinTheta * VoBr; // use new T to update VoTr
+    
+    // Calculate (N.H)^2 based on the bent light vector
+    float newNoL = NoL * radiusCos + NoTr;
+    float newVoL = VoL * radiusCos + VoTr;
+    float NoH = NoV + newNoL;
+    float HoH = 2.0 * newVoL + 2.0;
+    return max(0.0, NoH * NoH / HoH);
+}
+
+
 float3 CalculateLightPBR(
     float3 normal,
     float3 surfaceNormal,
@@ -213,32 +275,22 @@ float3 CalculateLightPBR(
     float metalness,
     float3 albedo)
 {
-    // Assuming N is the normal and L is the light direction
-    float3 N_geo = surfaceNormal; // Geometry normal (macronormal)
-    float3 N_map = normal; // Normal map normal (micronormal)
-    float3 L = lightDirection; // Light direction
-
-    // Compute the dot products of the light direction with the normals
-    float NdotL_geo = dot(N_geo, L);
-    float NdotL_map = dot(N_map, L);
-
-    // Compute the falloff factors for the geometry and normal map normals
-    float r = 1.0; // You need to define r based on your needs
-    float falloff_geo = min(1.0, (NdotL_geo + r) / (2 * r));
-    float falloff_map = min(1.0, (NdotL_map + r) / (2 * r));
-
-    // Combine the falloff factors. This is just one possible way to combine them;
-    // the exact method will depend on the specific effect you're trying to achieve.
-    float falloff = min(falloff_geo, falloff_map);
-
-    // Use the falloff factor in your lighting calculations
-    intensity *= falloff;
     
+    float lightDistance = length(lightDirection);
     
-    // Assuming incoming vectors are normalized
+    lightDirection = normalize(lightDirection);
+    
+    float minNoD = 0.001f;
+    float NdotL = dot(normal, lightDirection);
+    clampDirToHorizon(lightDirection, NdotL, normal, minNoD);
+    
+    float3 halfVector = normalize(viewDirection + lightDirection);
     float NdotV = max(0.001f, dot(normal, viewDirection));
-    float NdotL = max(0.001f, dot(normal, lightDirection));
-    float LdotV = max(0.001f, dot(lightDirection, viewDirection));
+    float NdotH = max(0.001f, dot(normal, halfVector));
+    float VdotH = max(0.001f, dot(viewDirection, halfVector));
+    float LdotH = max(0.001f, dot(lightDirection, halfVector));
+
+
     float F0 = lerp(0.04, albedo, metalness);
 
     // Diffuse component
@@ -246,36 +298,36 @@ float3 CalculateLightPBR(
     lambertian *= (float3(1, 1, 1) - Fresnel(NdotL, float3(F0, F0, F0)));
     lambertian *= NdotL;
 
-    // Closest sphere representative point
-    //------------------------------------------------------------------------------------
-    float3 sphereRelPos = lightDirection;
-    float3 sphereDir = normalize(sphereRelPos);
-    float sphereDist = length(sphereRelPos);
-    float sphereCos = dot(normal, sphereDir);
-
-    bool intersects;
-    float3 approxClosestSphereDir = approximateClosestSphereDir(intersects, viewDirection, sphereCos, sphereRelPos, sphereDir, sphereDist, 10);
-
-    float NdotD = dot(normal, approxClosestSphereDir);
-    clampDirToHorizon(approxClosestSphereDir, NdotD, normal, NdotL);
-
-    float sphereSin = sqrt(1 - sphereCos * sphereCos);
     
-    SphereMaxNoH(NdotV, NdotL, LdotV, sphereSin, sphereCos, true, NdotL, LdotV);
+    // sphere area light
+    // -------------------------------------------------------------
+    float radiusSin = lightRadius / lightDistance;
+    // gives the same result as:
+    //float thirdSide = sqrt(lightDistance * lightDistance - lightRadius * lightRadius);
+    //float radiusTan = lightRadius / thirdSide;
+    
+    float VdotL = dot(viewDirection, lightDirection);
+    NdotH = GetNoHSquared(radiusSin, NdotL, NdotV, VdotL);
 
-    float3 halfVector = normalize(viewDirection + lightDirection);
-    float NdotH = max(0.001f, dot(normal, halfVector));
-    float LdotH = max(0.001f, dot(lightDirection, halfVector));
-    //---------------------------------------------------------------------------------------------------------
+    //the same formula
+    //SphereMaxNoH(NdotV, NdotL, VdotL, radiusSin, sqrt(1 - radiusSin * radiusSin), true, NdotH, VdotH);
+    
+    // -------------------------------------------------------------
 
     // Specular component
     float roughness2 = roughness * roughness;
     float D = GGX(roughness2, NdotH);
+    NdotL = max(0.000f, NdotL);
     float G = Smith(roughness2, NdotV, NdotL);
     float3 F = Fresnel(LdotH, float3(F0, F0, F0));
-    float3 cook_torrance = (min(1, D * solidAngle / (4 * NdotL)) * G * F);
+    float3 cook_torrance = (min(1, D * solidAngle / (4 * NdotL)) * G * F );
 
-    return lightColor * intensity * (lambertian + cook_torrance);
+    float falloff = DoubleFallOffFactor( surfaceNormal, normal, lightDirection, lightRadius);
+    
+    return falloff * lightColor * intensity * (lambertian + cook_torrance);    
+    
+    
+   
 }
 
 
@@ -293,7 +345,7 @@ float3 CalculateDirectionalLightPBR(float3 normal, float3 macroNormal, Direction
 
 float3 CalculatePointLightPBR(float3 normal, float3 macroNormal, float3 position, PointLight g_pointLight, float roughness, float metalness, float3 albedo)
 {
-    float3 lightDirection = normalize(g_pointLight.position - position);
+    float3 lightDirection = g_pointLight.position - position;
     float3 viewDirection = normalize(-position);
 
     float distance = length(g_pointLight.position - position);
@@ -387,22 +439,9 @@ float4 main(Input input) : SV_TARGET
     float roughness;
     float metalness;
 
-    switch (g_samplerStateIndex)
-    {
-        case 0:
-            albedo = albedoTexture.Sample(g_pointWrap, input.UV);
-            break;
-        case 1:
-            albedo = albedoTexture.Sample(g_linearWrap, input.UV);
-            break;
-        case 2:
-            albedo = albedoTexture.Sample(g_anisotropicWrap, input.UV);
-            break;
-        default:
-            albedo = albedoTexture.Sample(g_anisotropicWrap, input.UV);
-            break;
-    }
+
     
+    albedo = albedoTexture.Sample(g_anisotropicWrap, input.UV);
     roughness = roughnessTexture.Sample(g_anisotropicWrap, input.UV).r;
     metalness = metalnessTexture.Sample(g_anisotropicWrap, input.UV).r;
 
@@ -427,7 +466,7 @@ float4 main(Input input) : SV_TARGET
 
     for (int j = 0; j < g_numPointLights; ++j)
     {
-        float3 lightResult = CalculatePointLightPBR(viewNormal,viewMacroNormal,  input.ViewPosition.xyz, g_pointLights[j], roughness, metalness, albedo.rgb);
+        float3 lightResult = CalculatePointLightPBR(viewNormal, viewMacroNormal, input.ViewPosition.xyz, g_pointLights[j], roughness, metalness, albedo.rgb);
         finalColor += lightResult;
     }
     

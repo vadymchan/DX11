@@ -7,7 +7,7 @@ namespace engine::DX
 	void Renderer::render(Window& window, Camera& camera)
 	{
 
-		
+
 		ImGuiManager::getInstance().NewFrame();
 		static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
@@ -160,21 +160,10 @@ namespace engine::DX
 
 	void Renderer::setSampleState()
 	{
-		switch (currentSampleState)
-		{
-		case SamplerState::BindSlot::POINT_WRAP:
-			g_pointWrap.bind();
-			break;
-		case SamplerState::BindSlot::LINEAR_WRAP:
-			g_linearWrap.bind();
-			break;
-		case SamplerState::BindSlot::ANISOTROPIC_WRAP:
-			g_anisotropicWrap.bind();
-			break;
-		default:
-			g_anisotropicWrap.bind();
-			break;
-		}
+
+		g_pointWrap.bind();
+		g_linearWrap.bind();
+		g_anisotropicWrap.bind();
 
 		if (updateConstantBufferSamplerState)
 		{

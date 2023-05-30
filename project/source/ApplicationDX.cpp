@@ -90,23 +90,6 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	textureDesc3.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
 
 
-	//auto test = reflectionCapture.GetBRDFLookupTexture(L"lutCookTorrance.dds", 0, textureDesc2);
-	//auto test1 = reflectionCapture.GetIrradianceMap(L"grass_field_Irradiance.dds", 0, textureDesc3);
-	//auto test2 = reflectionCapture.GetPrefilteredEnvMap(L"grass_field_Prefiltered.dds", 0, textureDesc3);
-
-	/*reflectionCapture.CreateBRDFLookupTexture(L"IBL_Precompute/LUT/lutVertexShader.hlsl", L"IBL_Precompute/LUT/lutPixelShader.hlsl", L"LUT_Cook-Torrance.dds");
-
-	reflectionCapture.GenerateIrradianceMap(
-		L"IBL_Precompute/Irradiance/IrradianceVertexShader.hlsl",
-		L"IBL_Precompute/Irradiance/IrradiancePixelShader.hlsl",
-		L"IrradianceMap.dds",
-		texture->getShaderResourceView());
-
-	reflectionCapture.GeneratePrefilteredEnvMap(
-		L"IBL_Precompute/Prefilter/PrefilterVertexShader.hlsl",
-		L"IBL_Precompute/Prefilter/PrefilterPixelShader.hlsl",
-		L"PrefilteredEnvMap.dds",
-		texture->getShaderResourceView());*/
 
 	engine.initWindow("DirectX 11 Model", windowStartX, windowStartY, windowWidth, windowHeight, appHandle, windowShowParams);
 
@@ -331,7 +314,6 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 			{0,pointLightRadiuses[3],0,0},
 			{0,0,pointLightRadiuses[3],-4},
 			{0,0,0,1},}},
-
 	};
 
 	std::vector<engine::DX::float4x4> floorInstances
