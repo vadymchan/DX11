@@ -12,9 +12,11 @@ cbuffer SamplerStateIndexBuffer : register(b3)
 Texture2D flashlightTexture : register(t7);
 
 #define MAX_DIRECTIONAL_LIGHTS 2
-#define MAX_POINT_LIGHTS 10
-#define MAX_SPOT_LIGHTS 10
+#define MAX_POINT_LIGHTS 4
+#define MAX_SPOT_LIGHTS 3
 #define MAX_FLASH_LIGHTS 1
+
+
 
 struct DirectionalLight
 {
@@ -24,6 +26,10 @@ struct DirectionalLight
     
     //for PBR shading
     float solidAngle;
+    
+    //for shadows
+    float4x4 shadowViewMatrix;
+    float4x4 shadowProjMatrix;
 };
 
 struct PointLight
@@ -37,6 +43,9 @@ struct PointLight
     float constantAttenuation;
     float linearAttenuation;
     float quadraticAttenuation;
+    
+    float4x4 shadowViewMatrices [6]; // 6 - number of faces of the cube map
+    float4x4 shadowProjMatrix; 
 };
 
 struct SpotLight
@@ -54,6 +63,9 @@ struct SpotLight
     float constantAttenuation;
     float linearAttenuation;
     float quadraticAttenuation;
+    
+    float4x4 shadowViewMatrix;
+    float4x4 shadowProjMatrix;
 };
 
 struct FlashLight // currently the same as SpotLight (but may change in the future)
@@ -71,6 +83,9 @@ struct FlashLight // currently the same as SpotLight (but may change in the futu
     float constantAttenuation;
     float linearAttenuation;
     float quadraticAttenuation;
+    
+    float4x4 shadowViewMatrix;
+    float4x4 shadowProjMatrix;
 };
 
 cbuffer PerFrame : register(b4)
@@ -207,7 +222,7 @@ float3 CalculateFlashLightBlinnPhong(float3 normal, float3 position, FlashLight 
     float u = Remap(fragPosLightSpace.x, -radius, radius, 0, 1);
     float v = Remap(fragPosLightSpace.y, -radius, radius, 1, 0);
 
-    float textureMask = flashlightTexture.Sample(g_linearWrap, float2(u, v)).rgb;
+    float3 textureMask = flashlightTexture.Sample(g_linearWrap, float2(u, v)).rgb;
 
     
     // Calculate attenuation

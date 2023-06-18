@@ -127,8 +127,8 @@ float DoubleFallOffFactor(float3 surfaceNormal, float3 normal, float3 lightDirec
     float NdotL_map = dot(normal, lightDirection);
 
     // Compute the falloff factors for the geometry and normal map normals
-    float falloff_geo = min(1.0, (NdotL_geo + r) / (2 * r));
-    float falloff_map = min(1.0, (NdotL_map + r) / (2 * r));
+    float falloff_geo = min(1.0, (NdotL_geo + r) / (2 * max(r, 0.5f)));
+    float falloff_map = min(1.0, (NdotL_map + r) / (2 * max(r, 0.5f)));
 
     // Combine the falloff factors. This is just one possible way to combine them;
     // the exact method will depend on the specific effect you're trying to achieve.
@@ -282,6 +282,7 @@ float3 CalculateLightPBR(
     
     float minNoD = 0.001f;
     float NdotL = dot(normal, lightDirection);
+    //float NdotL = max(0.001f, dot(normal, lightDirection));
     clampDirToHorizon(lightDirection, NdotL, normal, minNoD);
     
     float3 halfVector = normalize(viewDirection + lightDirection);
@@ -324,7 +325,7 @@ float3 CalculateLightPBR(
 
     float falloff = DoubleFallOffFactor( surfaceNormal, normal, lightDirection, lightRadius);
     
-    return falloff * lightColor * intensity * (lambertian + cook_torrance);    
+    return falloff * lightColor * intensity * (lambertian + cook_torrance);
     
     
    
@@ -338,7 +339,7 @@ float3 CalculateDirectionalLightPBR(float3 normal, float3 macroNormal, Direction
 {
     float3 lightDirection = normalize(-g_directionalLight.direction);
     float3 viewDirection = normalize(-position);
-    float lightRadius = 1;
+    float lightRadius = 0;
 
     return CalculateLightPBR(normal, macroNormal, lightDirection, viewDirection, g_directionalLight.color, g_directionalLight.solidAngle, lightRadius, g_directionalLight.intensity, roughness, metalness, albedo);
 }
@@ -360,19 +361,20 @@ float3 CalculatePointLightPBR(float3 normal, float3 macroNormal, float3 position
 
 float3 CalculateSpotLightPBR(float3 normal, float3 macroNormal, float3 position, SpotLight g_spotLight, float roughness, float metalness, float3 albedo)
 {
-    float3 lightDirection = normalize(g_spotLight.position - position);
+    float3 lightDirection = g_spotLight.position - position;
+    float3 lightDirectionNormalized = normalize(lightDirection);
     float3 viewDirection = normalize(-position);
     
     float outerConeCos = cos(g_spotLight.outerAngle);
     float innerConeCos = cos(g_spotLight.innerAngle);
-    float angleCos = dot(-lightDirection, g_spotLight.direction);
+    float angleCos = dot(-lightDirectionNormalized, g_spotLight.direction);
     
     float distance = length(g_spotLight.position - position);
     float solidAngle = 2 * PI * (1 - sqrt(1 - pow(g_spotLight.radius / distance, 2)));
     
     float spotEffect = smoothstep(outerConeCos, innerConeCos, angleCos);
 
-    float3 lightResult = CalculateLightPBR(normal, macroNormal, lightDirection, viewDirection, g_spotLight.color, solidAngle, g_spotLight.radius, g_spotLight.intensity, roughness, metalness, albedo);
+    float3 lightResult = CalculateLightPBR(normal, macroNormal, lightDirection, lightDirectionNormalized, g_spotLight.color, solidAngle, g_spotLight.radius, g_spotLight.intensity, roughness, metalness, albedo);
     return lightResult * spotEffect;
 }
 

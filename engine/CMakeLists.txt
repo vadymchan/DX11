@@ -2,6 +2,8 @@
 file(GLOB_RECURSE ENGINE_SOURCES "src/*.cpp")
 file(GLOB_RECURSE ENGINE_HEADERS "src/*.h")
 
+
+
 list(FILTER ENGINE_SOURCES EXCLUDE REGEX "general/dependencies/.*")
 list(FILTER ENGINE_HEADERS EXCLUDE REGEX "general/dependencies/.*")
 
@@ -128,6 +130,9 @@ set_target_properties(DirectXTex PROPERTIES EXCLUDE_FROM_ALL TRUE)
  add_library(engine STATIC ${ENGINE_SOURCES} ${ENGINE_HEADERS} ${IMGUI_SOURCES})
 
 #link libs -------------------------------------------------------------
+
+
+
 
 # Link with Assimp
 add_dependencies(engine assimp)

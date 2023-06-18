@@ -2,6 +2,15 @@
 
 namespace engine::DX
 {
+	const float4x4 Camera::reverseDepthMatrix = float4x4
+	{
+		{1, 0, 0, 0},
+		{ 0,1,0,0 },
+		{ 0,0,-1,0 },
+		{ 0,0,1,1 },
+
+	};
+
 	void Camera::initBuffer(UINT registerNumber, UINT invCameraRegisterNumber, D3D11_USAGE bufferUsage, UINT CPUAccessFlags, UINT miscFlags, UINT structureByteStride, UINT sysMemPitch, UINT sysMemSlicePitch)
 	{
 		cameraBuffer.initBuffer(registerNumber, bufferUsage,
@@ -23,7 +32,7 @@ namespace engine::DX
 	void Camera::setInvCameraBufferVertexShader()
 	{
 		updateMatrices();
-		invCameraBuffer.setBufferData(std::vector<ViewProjectionMatrix>{ {getViewMatrix().Transpose().Invert(), getPerspectiveMatrix().Transpose().Invert()} });
+		invCameraBuffer.setBufferData(std::vector<ViewProjectionMatrix>{ {getViewMatrix().Transpose().Invert(), getProjectionMatrix().Transpose().Invert()} });
 		invCameraBuffer.setVertexShaderBuffer();
 	}
 
@@ -65,7 +74,7 @@ namespace engine::DX
 	float4x4 Camera::getIPV()
 	{
 		updateMatrices();
-		return (getViewMatrix() * getPerspectiveMatrix()).Invert();;
+		return (getViewMatrix() * getProjectionMatrix()).Invert();;
 	}
 
 	const float4x4& Camera::getViewMatrix()
@@ -74,7 +83,7 @@ namespace engine::DX
 		return view;
 	}
 
-	const float4x4& Camera::getPerspectiveMatrix()
+	const float4x4& Camera::getProjectionMatrix()
 	{
 		updatePerspectiveMatrix();
 		return proj;
@@ -153,7 +162,7 @@ namespace engine::DX
 		updateMatrices();
 		if (!bufferUpdated)
 		{
-			cameraBuffer.setBufferData(std::vector<ViewProjectionMatrix>{ {getViewMatrix().Transpose(), getPerspectiveMatrix().Transpose()} });
+			cameraBuffer.setBufferData(std::vector<ViewProjectionMatrix>{ {getViewMatrix().Transpose(), getProjectionMatrix().Transpose()} });
 			bufferUpdated = true;
 		}
 	}
@@ -169,6 +178,7 @@ namespace engine::DX
 	{
 		if (projUpdated) return;
 		proj = float4x4(DirectX::XMMatrixPerspectiveFovLH(fov, aspect, zNear, zFar)) * reverseDepthMatrix;
+
 		projUpdated = true;
 	}
 

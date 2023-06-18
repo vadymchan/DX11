@@ -22,8 +22,8 @@ struct Input
 struct Output
 {
     float4 Position : SV_POSITION;
-    float4 ViewPosition : ViewPosition;
-    float4 WorldPosition : WorldPosition;
+    float4 ViewPosition : VIEWPOSITION;
+    float4 WorldPosition : WORLDPOSITION;
     float3 Normal : NORMAL;
     float3 WorldNormal : WORLDNORMAL;
     float2 UV : TEXCOORD;

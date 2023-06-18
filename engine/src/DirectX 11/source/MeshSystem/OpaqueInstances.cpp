@@ -69,6 +69,11 @@ namespace engine::DX
 				shaderGroup.type = RenderType::PBR;
 			}
 			else if (std::any_of(shaderBatches[i].begin(), shaderBatches[i].end(),
+				[](const std::wstring& shaderName) { return shaderName.find(L"IBL_Shadow") != std::wstring::npos; }))
+			{
+				shaderGroup.type = RenderType::IBL_SHADOW;
+			}
+			else if (std::any_of(shaderBatches[i].begin(), shaderBatches[i].end(),
 				[](const std::wstring& shaderName) { return shaderName.find(L"IBL") != std::wstring::npos; }))
 			{
 				shaderGroup.type = RenderType::IBL;

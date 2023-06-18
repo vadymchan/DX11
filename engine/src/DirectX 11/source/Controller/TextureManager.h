@@ -15,10 +15,14 @@ namespace engine
 		const UINT ROUGHNESS_TEXTURE_BIND_SLOT = 1;
 		const UINT METALNESS_TEXTURE_BIND_SLOT = 2;
 		const UINT NORMAL_TEXTURE_BIND_SLOT = 3;
-		const UINT FLASHLIGHT_TEXTURE_BIND_SLOT = 7;
 		const UINT IRRADIANCE_MAP_BIND_SLOT = 4;
 		const UINT PREFILTERED_MAP_BIND_SLOT = 5;
 		const UINT BRDF_LUT_BIND_SLOT = 6;
+		const UINT FLASHLIGHT_TEXTURE_BIND_SLOT = 7;
+		const UINT DIRECTIONAL_LIGHT_SHADOW_MAPS_SLOT = 8;
+		const UINT SPOT_LIGHT_SHADOW_MAPS_SLOT = 9;
+		const UINT POINT_LIGHT_SHADOW_MAPS_SLOT = 10;
+		const UINT FLASH_LIGHT_SHADOW_MAPS_SLOT = 10;
 
 
 
@@ -66,13 +70,6 @@ namespace engine
 				}
 				return it->second;
 			}
-
-			/*const std::shared_ptr<Texture2D>& getTexture2D(const std::wstring& fileName)
-			{
-				assert(m_2dTextures.find(fileName) != m_2dTextures.end() && "Texture is not created! Error");
-
-				return m_2dTextures[fileName];
-			}*/
 
 
 

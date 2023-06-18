@@ -12,6 +12,7 @@
 #include "source/Render/Renderer.h"
 #include "source/Math/Integration/FibonacciPointDistribution.h"
 #include "source/Texture/ReflectionCapture.h"
+#include "../general/utils/console/Console.h"
 
 
 namespace engine::DX
@@ -72,6 +73,11 @@ namespace engine::DX
 
 		Engine()
 		{
+#ifdef _DEBUG
+			general::initConsole();
+#endif
+			D3D::Init();
+
 			LightSystem::getInstance().setCamera(camera);
 		}
 
@@ -80,7 +86,7 @@ namespace engine::DX
 		Window window;
 		Camera camera;
 
-		
+
 
 		void checkAspectRatio();
 

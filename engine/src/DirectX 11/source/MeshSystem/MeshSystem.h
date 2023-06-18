@@ -26,6 +26,9 @@ namespace engine::DX
 
 		void render(Camera& camera);
 
+		void renderDepth2D();
+		void renderDepthCubemap();
+
 		bool findIntersection(const ray& r, Instance& instance, Intersection& intersection);
 
 		/// <param name="instance">instance, which is contained in opaqueInstance</param>
@@ -132,6 +135,8 @@ namespace engine::DX
 			POINT_SPHERE,
 			PBR,
 			IBL,
+			SHADOW_GENERATION,
+			IBL_SHADOW,
 		};
 
 		template<RenderMode Mode>
@@ -148,6 +153,14 @@ namespace engine::DX
 			cameraPosition.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {cameraPos.x, cameraPos.y, cameraPos.z, 1.0}});
 			cameraPosition.setPixelShaderBuffer();
 			camera->setCameraBufferGeometryShader();
+		}
+
+		template<>
+		void SetRenderMode<RenderMode::IBL_SHADOW>(OpaqueInstances* opaqueInstance, Camera* camera)
+		{
+			SetRenderMode<RenderMode::IBL>(opaqueInstance, camera);
+
+			LightSystem::getInstance().bindShadowMapTextures();
 		}
 
 		//set textures to pixel shader (irradiance, prefilteredEnvMap, brdfLUT)

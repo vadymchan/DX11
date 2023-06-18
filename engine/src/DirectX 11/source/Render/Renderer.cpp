@@ -6,30 +6,88 @@ namespace engine::DX
 
 	void Renderer::render(Window& window, Camera& camera)
 	{
-
-
+		
 		ImGuiManager::getInstance().NewFrame();
-		static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		updateOffScreenRenderer(window);
+
 		updateRasterizer();
-
-		setOffScreenRenderer();
-
 		g_devcon->RSSetState(rasterizerState.Get());
 
+		window.SetDepthStencilState();
+
+		//clearing renderTargetView
+		static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		window.clearWindow();
 		g_devcon->ClearRenderTargetView(m_offscreenRTV.Get(), offScreenBgColor);
 		//window.setViews();
 
-		camera.setCameraBufferVertexShader();
+		window.clearBlend();
 
+		//set global constant buffers
+		LightSystem& lightSystem = LightSystem::getInstance();
+		lightSystem.setBuffer();
+
+		//texture sampler
 		setSampleState();
 
-		window.clearBlend();
-		MeshSystem::getInstance().setShowNormal(visualizeNormal);
-		MeshSystem::getInstance().setPerFrameIBLbuffer(m_perFrameIBLbuffer);
-		MeshSystem::getInstance().render(camera);
+		MeshSystem& meshSystem = MeshSystem::getInstance();
+		//render shadow maps
+		
+		D3D11_VIEWPORT viewport{};
+		viewport.TopLeftX = 0;
+		viewport.TopLeftY = 0;
+		viewport.Width = SHADOW_MAP_SIZE;
+		viewport.Height = SHADOW_MAP_SIZE;
+		viewport.MinDepth = 0.0;
+		viewport.MaxDepth = 1.0;
+
+		g_devcon->RSSetViewports(1, &viewport);
+
+		//directional light
+		const int directionalLights = lightSystem.getCurrentDirectionalLights();
+		for (size_t i = 0; i < directionalLights; ++i)
+		{
+
+			lightSystem.setPerViewDirectionalLight(i);
+			meshSystem.renderDepth2D();
+		}
+		//
+		////spot light
+		const int spotLights = lightSystem.getCurrentSpotLights();
+		for (size_t i = 0; i < spotLights; ++i)
+		{
+			lightSystem.setPerViewSpotLight(i);
+			meshSystem.renderDepth2D();
+		}
+		//
+		////flash light
+		//const int flashLights = lightSystem.getCurrentFlashLights();
+		//for (size_t i = 0; i < flashLights; ++i)
+		//{
+		//	lightSystem.setPerViewFlashLight(i);
+		//	meshSystem.renderDepth2D();
+		//}
+
+		//point light
+		const int pointLights = lightSystem.getCurrentPointLights();
+		for (size_t i = 0; i < pointLights; ++i)
+		{
+			lightSystem.setPerViewPointLight(i);
+			meshSystem.renderDepthCubemap();
+		}
+
+		window.SetViewport();
+		
+		setOffScreenRenderer();
+
+
+		camera.setCameraBufferVertexShader();
+
+		meshSystem.setShowNormal(visualizeNormal);
+		meshSystem.setPerFrameIBLbuffer(m_perFrameIBLbuffer);
+		
+		meshSystem.render(camera);
 
 		if (m_skybox.get() != nullptr)
 		{
@@ -44,6 +102,7 @@ namespace engine::DX
 
 		window.flush();
 
+		//clear depth
 		g_devcon->ClearDepthStencilView(m_offscreenDSB.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 		window.clearDepthStencil();
 

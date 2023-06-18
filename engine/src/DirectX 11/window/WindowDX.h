@@ -26,6 +26,8 @@ namespace engine::DX
 		/// </summary>
 		void setViews(){ g_devcon->OMSetRenderTargets(1, renderTargetView.GetAddressOf(), depthStencilBuffer.getPDepthStencilView()); }
 		const D3D11_VIEWPORT& GetViewport() const { return viewport; }
+		void SetViewport() { g_devcon->RSSetViewports(1, &viewport); }
+		void SetDepthStencilState() { depthStencilBuffer.setDepthStencilState(); }
 		float GetAspectRatio()
 		{
 			backBuffer.Get()->GetDesc(&backBufferDesc);

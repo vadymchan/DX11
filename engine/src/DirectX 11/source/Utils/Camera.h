@@ -52,14 +52,7 @@ namespace engine::DX
 		bool matricesUpdated = false;
 		bool bufferUpdated = false;
 
-		const float4x4 reverseDepthMatrix
-		{
-			{1,0,0,0},
-			{0,1,0,0},
-			{0,0,-1,0},
-			{0,0,1,1},
-
-		};
+		
 
 		struct ViewProjectionMatrix
 		{
@@ -80,7 +73,7 @@ namespace engine::DX
 
 	public:
 
-		
+		const static float4x4 reverseDepthMatrix;
 
 		void initBuffer(UINT registerNumber, UINT invCameraRegisterNumber, D3D11_USAGE bufferUsage,
 			UINT CPUAccessFlags = 0, UINT miscFlags = 0, UINT structureByteStride = 0,
@@ -112,7 +105,7 @@ namespace engine::DX
 
 		const float4x4& getViewMatrix();
 
-		const float4x4& getPerspectiveMatrix();
+		const float4x4& getProjectionMatrix();
 
 		void setWorldOffset(const float3& offset);
 

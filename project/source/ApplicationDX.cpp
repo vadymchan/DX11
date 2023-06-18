@@ -4,6 +4,10 @@
 using Instance = engine::DX::OpaqueInstances::Instance;
 using Material = engine::DX::OpaqueInstances::Material;
 using Attenuation = engine::DX::LightSystem::Attenuation;
+using PointLight = engine::DX::LightSystem::PointLight;
+using BaseLight = engine::DX::LightSystem::BaseLight;
+using SpotLight = engine::DX::LightSystem::SpotLight;
+using DirectionalLight = engine::DX::LightSystem::DirectionalLight;
 using engine::DX::Model;
 using engine::DX::Mesh;
 using engine::DX::MeshSystem;
@@ -44,6 +48,16 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const std::wstring iblVertexShaderFileName{ L"IBL/IBL_VertexShader.hlsl" };
 	const std::wstring iblPixelShaderFileName{ L"IBL/IBL_PixelShader.hlsl" };
 
+	const std::wstring iblShadowVertexShaderFileName{ L"IBL/IBL_Shadow_VertexShader.hlsl" };
+	const std::wstring iblShadowPixelShaderFileName{ L"IBL/IBL_Shadow_PixelShader.hlsl" };
+
+	const std::wstring shadowMapVertexShaderFileName{ L"Shadow/2D/shadow2DVertexShader.hlsl" };
+	const std::wstring shadowMapPixelShaderFileName{ L"Shadow/2D/shadow2DPixelShader.hlsl" };
+
+	const std::wstring shadowCubeMapVertexShaderFileName{ L"Shadow/Omnidirectional/shadow3DVertexShader.hlsl" };
+	const std::wstring shadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DGeometryShader.hlsl" };
+	const std::wstring shadowCubeMapPixelShaderFileName{ L"Shadow/Omnidirectional/shadow3DPixelShader.hlsl" };
+
 	const std::wstring skyboxNightStreet{ engine::DX::textureDirectory / L"skybox/hdr" / "night_street.dds" };
 	const std::wstring skyboxGrassField{ engine::DX::textureDirectory / L"skybox/hdr" / "grass_field.dds" };
 
@@ -56,16 +70,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	wireframeMode = false;
 	deltaExposure = 1.f;
 	flashLightAttached = true;
-#ifdef _DEBUG
-	engine::general::initConsole();
-#endif
+
 
 	// compute integral of cosine over the hemisphere using Fibonacci hemisphere point distribution
 	// --------------------------------------------------------------------------------------------
 	std::cout << "Integral over the hemisphere: " << engine::hemisphereIntegral(1000000) << std::endl;
 	// --------------------------------------------------------------------------------------------
 
-	engine::DX::D3D::Init();
+
 
 	D3D11_TEXTURE2D_DESC textureDesc1{};
 	textureDesc1.BindFlags = D3D11_BIND_SHADER_RESOURCE;
@@ -97,9 +109,11 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	rasterizerDesc.FillMode = wireframeMode ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
 	rasterizerDesc.DepthClipEnable = true;
+	rasterizerDesc.DepthBias = -1; // adjust as needed (for depth bias)
+	rasterizerDesc.SlopeScaledDepthBias = -1; // adjust as needed (for depth bias)
+	rasterizerDesc.DepthBiasClamp = 0.0f; 
 
 	engine::DX::Skybox skybox;
-	//skybox.initSkybox(engine::DX::ReflectionCapture::PRECOMPUTE_IRRADIANCE_PATH / L"grass_field_Irradiance.dds");
 	skybox.initSkybox(skyboxGrassField);
 
 	engine.initRenderer(rasterizerDesc, std::make_shared<engine::DX::Skybox>(skybox));
@@ -181,6 +195,17 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
+	std::vector<D3D11_INPUT_ELEMENT_DESC> shadowInputElementDesc
+	{
+		//model vertex buffer
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//instance vertex buffer
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,  D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+	};
+
 	//vertex shader
 	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDescNormal);
 	ShaderManager::getInstance().addVertexShader(colorVertexShaderFileName, inputElementDesc);
@@ -189,6 +214,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	ShaderManager::getInstance().addVertexShader(iblVertexShaderFileName, pbrInputElementDesc);
 	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, hologramInputElementDesc);
 	ShaderManager::getInstance().addVertexShader(pointLightVertexShaderFileName, pointLightInputElementDesc);
+	ShaderManager::getInstance().addVertexShader(shadowMapVertexShaderFileName, shadowInputElementDesc);
+	ShaderManager::getInstance().addVertexShader(shadowCubeMapVertexShaderFileName, shadowInputElementDesc);
+	ShaderManager::getInstance().addVertexShader(iblShadowVertexShaderFileName, pbrInputElementDesc);
 	//hull shader
 	ShaderManager::getInstance().addHullShader(hologramHullShaderFileName);
 	//domain shader
@@ -196,6 +224,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//geometry shader
 	ShaderManager::getInstance().addGeometryShader(normalGeometryShaderFileName);
 	ShaderManager::getInstance().addGeometryShader(hologramGeometryShaderFileName);
+	ShaderManager::getInstance().addGeometryShader(shadowCubeMapGeometryShaderFileName);
 	//pixel shader
 	ShaderManager::getInstance().addPixelShader(normalPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(colorPixelShaderFileName);
@@ -204,6 +233,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	ShaderManager::getInstance().addPixelShader(pointLightPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(pbrPixelShaderFileName);
 	ShaderManager::getInstance().addPixelShader(iblPixelShaderFileName);
+	ShaderManager::getInstance().addPixelShader(shadowMapPixelShaderFileName);
+	ShaderManager::getInstance().addPixelShader(shadowCubeMapPixelShaderFileName);
+	ShaderManager::getInstance().addPixelShader(iblShadowPixelShaderFileName);
 
 	//textures & sampler 
 	//---------------------------------------------------------------------------------------------------
@@ -219,7 +251,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {blinnPhongVertexShaderFileName, L"", L"", L"",blinnPhongPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
 	uint32_t pbrOpaqueInstance = engine.createOpaqueInstance({ {pbrVertexShaderFileName, L"", L"", L"",pbrPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t iblOpaqueInstance = engine.createOpaqueInstance({ {iblVertexShaderFileName, L"", L"", L"",iblPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	uint32_t iblOpaqueInstance = engine.createOpaqueInstance({ {iblShadowVertexShaderFileName, L"", L"", L"",iblShadowPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
 	uint32_t sphereOpaqueInstance = engine.createOpaqueInstance({ {pointLightVertexShaderFileName, L"", L"", L"",pointLightPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
 	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", /*hologramHullShaderFileName, hologramDomainShaderFileName,*/ hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/ });
 
@@ -229,12 +261,86 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//---------------------------------------------------------------------------------------------------
 
 	//point light 
-	std::vector<engine::DX::float4> pointLightEmissions{ {1,0,0,0}, {0,1,0,0}, {0,0,1,0}, {1,1,1,0}, };
-	std::vector<float> pointLightIntensities{ 100, 100, 100, 100 };
-	std::vector<engine::DX::float3> pointLightColors{ {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 1, 1}, };
-	std::vector<Attenuation> pointLightAttenuations{ { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, { 1.0, 0.045, 0.0075 }, };
-	std::vector<float> pointLightRadiuses{ 0.5, 0.5, 0.5, 0.5, };
 
+	std::vector<engine::DX::float4> pointLightEmissions
+	{
+		{1, 1, 1, 0},
+		{1, 1, 1, 0},
+	};
+
+	std::vector<engine::DX::float3> pointLightPositions = {
+		{-5, 5, -4},
+		{5, 5, -2},
+
+	};
+
+
+
+	std::vector<PointLight> pointLights
+	{
+		
+		PointLight
+		{
+			{ {1, 1, 1}, 1000 },
+			{}, // will be updated after the insertion to the opaqueInstance 
+			0.5,
+			{ 1.0, 0.045, 0.0075 }
+		},
+		PointLight
+		{
+			{ {1, 1, 1}, 1000 },
+			{}, // will be updated after the insertion to the opaqueInstance 
+			0.5,
+			{ 1.0, 0.045, 0.0075 }
+		},
+
+	};
+
+
+
+	//spot light 
+
+	std::vector<engine::DX::float4> spotLightEmissions{ {1,0,0,0}, {1,0,0,0}, };
+	std::vector<engine::DX::float3> spotLightPositions{ {5,1.5, -3},  {-5,1.5, -3}, };
+
+
+	std::vector<SpotLight> spotLights
+	{
+		SpotLight
+		{
+			{ {1, 0, 0}, 1000 },
+			{}, // will be updated after the insertion to the opaqueInstance 
+			DirectX::XMConvertToRadians(30.0f),
+			DirectX::XMConvertToRadians(30.0f),
+			0.5,
+			{0,0,1},
+			{ 1.0, 0.045, 0.0075 }
+		},
+		SpotLight
+		{
+			{ {1, 0, 0}, 1000 },
+			{}, // will be updated after the insertion to the opaqueInstance 
+			DirectX::XMConvertToRadians(30.0f),
+			DirectX::XMConvertToRadians(30.0f),
+			0.5,
+			{0,0,1},
+			{ 1.0, 0.045, 0.0075 }
+		},
+	};
+
+
+	//directional light 
+
+	std::vector<DirectionalLight> directionalLights
+	{
+		DirectionalLight
+		{
+			{{ 1, 1, 1 }, 10, },
+			{ 0, -0.707, -0.707 },
+			1
+		},
+
+	};
 
 	// models
 	//---------------------------------------------------------------------------------------------------
@@ -253,9 +359,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::vector<engine::DX::float4x4> samuraiInstance
 	{
 			 engine::DX::float4x4 {
-				{1,0,0,2},
-				{0,1,0,0},
-				{0,0,1,2},
+				{3,0,0,2},
+				{0,3,0,-1},
+				{0,0,3,3},
 				{0,0,0,1},
 			} ,
 	};
@@ -265,17 +371,17 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 			engine::DX::float4x4
 			{{{1,0,0,5},
-			{0,1,0,0},
-			{0,0,1,2},
+			{0,1,0,-1},
+			{0,0,1,3},
 			{0,0,0,1},}},
 	};
 
 	std::vector<engine::DX::float4x4> knightInstances
 	{
 			engine::DX::float4x4
-			{{{1,0,0,-2},
-			{0,1,0,0},
-			{0,0,1,2},
+			{{{2,0,0,-2},
+			{0,2,0,-1},
+			{0,0,2,3},
 			{0,0,0,1},}}
 		,
 	};
@@ -285,36 +391,37 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 			engine::DX::float4x4
 			{{{1,0,0,-4},
-			{0,1,0,0},
-			{0,0,1,2},
+			{0,1,0,-1},
+			{0,0,1,3},
 			{0,0,0,1},}},
 	};
 
-	std::vector<engine::DX::float4x4> spherePointLightInstances
+	std::vector<engine::DX::float4x4> spherePointLightInstances;
+	for (int i = 0; i < pointLights.size(); i++)
 	{
+		spherePointLightInstances.emplace_back(engine::DX::float4x4
+			{
+				{pointLights[i].radius, 0, 0, pointLightPositions[i].x},
+				{0, pointLights[i].radius, 0, pointLightPositions[i].y},
+				{0, 0, pointLights[i].radius, pointLightPositions[i].z},
+				{0, 0, 0, 1}
+			});
+	}
+
+	std::vector<engine::DX::float4x4> sphereSpotLightInstances;
+	for (int i = 0; i < spotLights.size(); i++)
+	{
+		sphereSpotLightInstances.emplace_back(engine::DX::float4x4
+			{
+				{spotLights[i].radius, 0, 0, spotLightPositions[i].x},
+				{0, spotLights[i].radius, 0, spotLightPositions[i].y},
+				{0, 0, spotLights[i].radius, spotLightPositions[i].z},
+				{0, 0, 0, 1}
+			});
+	}
 
 
-		engine::DX::float4x4
-			{{{pointLightRadiuses[0],0,0,5},
-			{0,pointLightRadiuses[0],0,5},
-			{0,0,pointLightRadiuses[0],-3},
-			{0,0,0,1},}},
-		engine::DX::float4x4
-			{{{pointLightRadiuses[1],0,0,-5},
-			{0,pointLightRadiuses[1],0,5},
-			{0,0,pointLightRadiuses[1],-4},
-			{0,0,0,1},}},
-		engine::DX::float4x4
-			{{{pointLightRadiuses[2],0,0,-5},
-			{0,pointLightRadiuses[2],0,0},
-			{0,0,pointLightRadiuses[2],-2},
-			{0,0,0,1},}},
-		engine::DX::float4x4
-			{{{pointLightRadiuses[3],0,0,5},
-			{0,pointLightRadiuses[3],0,0},
-			{0,0,pointLightRadiuses[3],-4},
-			{0,0,0,1},}},
-	};
+
 
 	std::vector<engine::DX::float4x4> floorInstances
 	{
@@ -395,7 +502,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	engine.addInstancedModel(iblOpaqueInstance, sphere, cubeMeshIndices, roughDielectric, roughDielectricSphere);
 
 
-	engine.addInstancedModel(iblOpaqueInstance, floor, { 0 }, mirror, floorInstances);
+	engine.addInstancedModel(iblOpaqueInstance, floor, { 0 }, grass, floorInstances);
 
 	std::vector<size_t> samuraiMeshIndices;
 	for (size_t i = 0; i < samurai.get()->getMeshesCount(); ++i)
@@ -406,14 +513,17 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	engine.addInstancedModel(iblOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
 
 
-	std::vector<size_t> pointLightMeshIndeices;
+	std::vector<size_t> sphereMeshIndeices;
 	for (size_t i = 0; i < sphere.get()->getMeshesCount(); ++i)
 	{
-		pointLightMeshIndeices.emplace_back(i);
+		sphereMeshIndeices.emplace_back(i);
 	}
 
 	std::vector<engine::DX::TransformSystem::ID> pointLightInstanceIDs =
-		engine.addInstancedModel(sphereOpaqueInstance, sphere, pointLightMeshIndeices, noMaterial, spherePointLightInstances, pointLightEmissions);
+		engine.addInstancedModel(sphereOpaqueInstance, sphere, sphereMeshIndeices, noMaterial, spherePointLightInstances, pointLightEmissions);
+
+	std::vector<engine::DX::TransformSystem::ID> spotLightInstanceIDs =
+		engine.addInstancedModel(sphereOpaqueInstance, sphere, sphereMeshIndeices, noMaterial, sphereSpotLightInstances, spotLightEmissions);
 
 
 	std::vector<size_t> eastTowerMeshIndices;
@@ -433,14 +543,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)
-	{
+	{	
 		knightHorseMeshIndices.emplace_back(i);
 	}
 	engine.addInstancedModel(iblOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3 position{ 0, 2, -2 };
+	const engine::DX::float3 position{ 0, 0, -5 };
 	engine::DX::float3 direction{ 0, 0, 1 };
 	direction.Normalize();
 	const engine::DX::float3 worldUp{ 0, 1, 0 };
@@ -449,7 +559,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	float fov{ 60 };
 	float aspect{ (float)windowWidth / windowHeight };
 	float zNear{ 0.01 };
-	float zFar{ 100 };
+	float zFar{ 30 };
 
 	engine.initCamera(position, direction, worldUp, fov, aspect, zNear, zFar);
 
@@ -460,7 +570,12 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	LightSystem& lightSystem = LightSystem::getInstance();
 
-	//lightSystem.addDirectionalLight({ 1, 1, 1 }, 10, { 0, -0.5, -0.5 }, 1);
+	for (size_t i = 0; i < directionalLights.size(); i++)
+	{
+		lightSystem.addDirectionalLight(directionalLights[i]);
+
+	}
+
 
 	//cameraFlashLight = lightSystem.addFlashLight(
 	//	{ 1,1,1 },
@@ -472,25 +587,18 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//	flashLight
 	//);
 
-	//lightSystem.addSpotLight(
-	//	{ 0, 3, 5 },
-	//	{ 0, -1, 0 },
-	//	{ 0.69,0,0 },
-	//	10,
-	//	DirectX::XMConvertToRadians(30.0f),
-	//	DirectX::XMConvertToRadians(30.0f),
-	//	1,
-	//	pointLightAttenuations[0]
-	//);
+	for (size_t i = 0; i < spotLightInstanceIDs.size(); i++)
+	{
+		spotLights[i].transformID = spotLightInstanceIDs[i];
+		lightSystem.addSpotLight(spotLights[i]);
+	}
+
 
 	for (int i = 0; i < pointLightInstanceIDs.size(); ++i)
 	{
-		lightSystem.addPointLight(
-			pointLightInstanceIDs[i],
-			pointLightColors[i],
-			pointLightIntensities[i],
-			pointLightRadiuses[i],
-			pointLightAttenuations[i]);
+
+		pointLights[i].transformID = pointLightInstanceIDs[i];
+		lightSystem.addPointLight(pointLights[i]);
 
 	};
 
@@ -663,18 +771,18 @@ bool ApplicationDX::ProcessInputs()
 					increasedSpeed = false;
 				}
 				break;
-			}
+				}
 			break;
 		case WM_QUIT:
 			return false;
 			break;
-		}
+			}
 
 
 
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);
-	}
+		}
 
 
 	AddCameraDirection();
@@ -700,7 +808,7 @@ bool ApplicationDX::ProcessInputs()
 	lastMousePos = { xPos, yPos };
 	cameraDirection = engine::DX::float3();
 	return true;
-}
+	}
 
 void ApplicationDX::AddCameraDirection()
 {

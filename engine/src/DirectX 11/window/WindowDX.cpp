@@ -130,7 +130,7 @@ namespace engine::DX
 		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
 		depthStencilTextureDesc.Width = backBufferDesc.Width;
 		depthStencilTextureDesc.Height = backBufferDesc.Height;
-		depthStencilTextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilTextureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
 		depthStencilTextureDesc.Usage = D3D11_USAGE_DEFAULT;
 		depthStencilTextureDesc.MipLevels = 1;
 		depthStencilTextureDesc.ArraySize = 1;
@@ -138,8 +138,9 @@ namespace engine::DX
 		depthStencilTextureDesc.SampleDesc.Quality = 0;
 		depthStencilTextureDesc.CPUAccessFlags = 0;
 		depthStencilTextureDesc.MiscFlags = 0;
+		depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 
-		D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
+		D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
 		depthStencilDesc.DepthEnable = true;
 		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 		depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
@@ -151,8 +152,20 @@ namespace engine::DX
 		depthStencilViewDesc.Texture2D.MipSlice = 0;
 		depthStencilViewDesc.Flags = 0;
 
-		depthStencilBuffer.initDepthStencil(depthStencilTextureDesc, depthStencilDesc, depthStencilViewDesc);
-		depthStencilBuffer.setDepthStencilState();
+		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+		shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+		shaderResourceViewDesc.Texture2D.MipLevels = 1;
+		
+
+
+		engine::DX::Texture2D depthStencilTexture;
+		depthStencilTexture.createTextureFromMemory(0, depthStencilTextureDesc, nullptr, shaderResourceViewDesc);
+
+		depthStencilBuffer.initDepthStencil(depthStencilTexture, depthStencilDesc, depthStencilViewDesc);
+
+		
 		//depthStencilUpdated = true;
 	}
 

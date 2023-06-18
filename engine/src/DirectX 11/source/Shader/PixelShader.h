@@ -8,7 +8,7 @@ namespace engine::DX
 	public:
 		PixelShader(const std::wstring& pathToShader, const std::string& entryPoint = "main", const std::string& shaderVersion = "ps_4_0")
 			: Shader(pathToShader, entryPoint, shaderVersion)
-		{
+		{	
 			compileShader();
 			createShader();
 		}

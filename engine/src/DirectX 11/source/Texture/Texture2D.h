@@ -11,6 +11,22 @@ namespace engine
 		class Texture2D
 		{
 		public:
+
+			Texture2D() {}
+
+			Texture2D(const Texture2D& other)
+			{
+				m_bindSlot = other.m_bindSlot;
+				m_textureDescription = other.m_textureDescription;
+				m_textureSubresourceData = other.m_textureSubresourceData;
+				m_shaderResourceViewDesc = other.m_shaderResourceViewDesc;
+				textureUpdated = other.textureUpdated;
+
+				m_texture = other.m_texture;
+				m_shaderResourceView = other.m_shaderResourceView;
+			}
+
+
 			/// <param name="bindSlot">in which register in shader to bind</param>
 			void createTextureFromMemory(UINT bindSlot, const D3D11_TEXTURE2D_DESC& textureDesc, const void* textureData,
 				const D3D11_SHADER_RESOURCE_VIEW_DESC& shaderResourceViewDesc, UINT memoryPitch = 0, UINT memorySlicePitch = 0)
@@ -21,8 +37,17 @@ namespace engine
 				initTextureSubresourceData(textureData, memoryPitch, memorySlicePitch);
 				if (!textureUpdated)
 				{
-					g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.GetAddressOf());
-					g_device->CreateShaderResourceView(m_texture.Get(), &m_shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
+					HRESULT result;
+					result = g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.GetAddressOf());
+					if (FAILED(result))
+					{
+						PrintError(result, L"Texture2D was not created");
+					}
+					result = g_device->CreateShaderResourceView(m_texture.Get(), &m_shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
+					if (FAILED(result))
+					{
+						PrintError(result, L"Shader Resource View was not created");
+					}
 					textureUpdated = true;
 				}
 			}
@@ -90,6 +115,14 @@ namespace engine
 				g_devcon->PSSetShaderResources(m_bindSlot, 1, m_shaderResourceView.GetAddressOf());
 			}
 
+			void resize(UINT width, UINT height)
+			{
+				m_textureDescription.Width = width;
+				m_textureDescription.Height = height;
+				g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.GetAddressOf());
+			}
+
+
 		private:
 
 			void initShaderResourceView(const D3D11_SHADER_RESOURCE_VIEW_DESC& shaderResourceViewDesc)
@@ -112,6 +145,8 @@ namespace engine
 				textureUpdated = false;
 
 			}
+
+
 
 
 			UINT m_bindSlot{};

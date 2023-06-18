@@ -13,9 +13,11 @@ namespace engine::DX
 {
 
 	const UINT MAX_DIRECTIONAL_LIGHTS = 2;
-	const UINT MAX_POINT_LIGHTS = 10;
-	const UINT MAX_SPOT_LIGHTS = 10;
+	const UINT MAX_POINT_LIGHTS = 4;
+	const UINT MAX_SPOT_LIGHTS = 3;
 	const UINT MAX_FLASH_LIGHTS = 1;
+
+	const UINT SHADOW_MAP_SIZE = 1024;
 
 	class LightSystem {
 	public:
@@ -56,6 +58,7 @@ namespace engine::DX
 			float innerAngle;
 			float outerAngle;
 			float radius;
+			float3 direction;
 			Attenuation attenuation;
 		};
 
@@ -77,70 +80,6 @@ namespace engine::DX
 		using SpotLightID = SolidVector<SpotLight>::ID;
 		using FlashLightID = SolidVector<FlashLight>::ID;
 
-		struct LightConstantBuffer
-		{
-
-			struct DirectionalLight
-			{
-				BaseLight base;
-				float3 direction;
-				float solidAngle;
-			};
-
-
-			struct PointLight
-			{
-				BaseLight base;
-				float3 position;
-				float radius;
-				Attenuation attenuation;
-				float padding1;
-
-			};
-
-
-			struct SpotLight
-			{
-				BaseLight base;
-				float3 position;
-				float innerAngle;
-				float3 direction;
-				float outerAngle;
-				float radius;
-				Attenuation attenuation;
-
-			};
-
-
-			struct FlashLight // currently the same as SpotLight (but may change in the future)
-			{
-				BaseLight base;
-				float3 position;
-				float innerAngle;
-				float3 direction;
-				float outerAngle;
-				float radius;
-				Attenuation attenuation;
-			};
-
-			int g_numDirectionalLights;
-			int g_numPointLights;
-			int g_numSpotLights;
-			int g_numFlashLights;
-			float4 g_cameraPosition;
-
-
-			DirectionalLight g_directionalLights[MAX_DIRECTIONAL_LIGHTS];
-
-			PointLight g_pointLights[MAX_POINT_LIGHTS];
-
-			SpotLight g_spotLights[MAX_SPOT_LIGHTS];
-
-			FlashLight g_flashLights[MAX_FLASH_LIGHTS];
-		};
-
-		
-
 		static LightSystem& getInstance()
 		{
 			static LightSystem instance;
@@ -160,31 +99,74 @@ namespace engine::DX
 			this->camera = &camera;
 		}
 
-	
-		PointLightID addPointLight(
-			TransformSystem::ID transformID,
-			const float3& color,
-			float intensity,
-			float radius,
-			const Attenuation& attenuation);
+		int getCurrentPointLights() const
+		{
+			return pointLights.size();
+		}
 
+		int getCurrentFlashLights() const
+		{
+			return flashLights.size();
+		}
+
+		int getCurrentSpotLights() const
+		{
+			return spotLights.size();
+		}
+
+		int getCurrentDirectionalLights() const
+		{
+			return directionalLights.size();
+		}
+
+		// binding PerView constant buffer for shadow map generation
+		void setPerViewDirectionalLight(int lightIndex);
+
+		// binding PerView constant buffer for shadow map generation
+		void setPerViewSpotLight(int lightIndex);
+
+		// binding PerView constant buffer for shadow map generation
+		void setPerViewFlashLight(int lightIndex);
+
+		// binding PerView constant buffer for shadow map generation
+		void setPerViewPointLight(int lightIndex);
+
+		void bindDirectionalLightShadowMapTextures()
+		{
+			directionalLightShadowMap.bind();
+		}
+
+		void bindSpotLightShadowMapTextures()
+		{
+			spotLightShadowMap.bind();
+		}
+
+		void bindPointLightShadowMapTextures()
+		{
+			pointLightShadowMap.bind();
+		}
+
+		void bindFlashLightShadowMapTextures()
+		{
+			flashLightShadowMap.bind();
+		}
+
+		void bindShadowMapTextures()
+		{
+			bindDirectionalLightShadowMapTextures();
+			bindSpotLightShadowMapTextures();
+			bindFlashLightShadowMapTextures();
+			bindPointLightShadowMapTextures();
+
+		}
+
+
+		PointLightID addPointLight(const PointLight& pointLight);
 
 		/// <param name="solidAngle">in steradians</param>
-		DirectionalLightID addDirectionalLight(const float3& color, float intensity, const float3& direction, float solidAngle);
+		DirectionalLightID addDirectionalLight(const DirectionalLight& directionalLight);
 
-		/// <param name="outerAngle"> pass cosine of degrees in radians (cos(radians(degrees)))</param>
-		/// <param name="textureMask"> pass cosine of degrees in radians (cos(radians(degrees)))</param>
-		SpotLightID addSpotLight(
-			const float3& position,
-			const float3& direction,
-			const float3& color,
-			float intensity,
-			float innerAngle,
-			float outerAngle,
-			float radius,
-			const Attenuation& attenuation);
-
-
+		SpotLightID addSpotLight(const SpotLight& spotLight);
 
 		/// <param name="outerAngle"> pass cosine of degrees in radians (cos(radians(degrees)))</param>
 		/// <param name="textureMask"> pass cosine of degrees in radians (cos(radians(degrees)))</param>
@@ -238,15 +220,119 @@ namespace engine::DX
 			spotLights[id] = newLight;
 		}
 
-		
+
 
 	protected:
+
+		struct PerView2dShadowMap
+		{
+			float4x4 viewMatrix;
+			float4x4 projMatrix;
+		};
+
+		struct PerView3dShadowMap
+		{
+			std::array<float4x4, 6> viewMatrix;
+			float4x4 projMatrix;
+		};
+
+		void bind2DShadowMap(const PerView2dShadowMap& constantBuffer)
+		{
+			perView2dConstantBuffer.updateData({ constantBuffer });
+			perView2dConstantBuffer.setVertexShaderBuffer();
+		}
+
+		ConstantBuffer<PerView2dShadowMap> perView2dConstantBuffer;
+		ConstantBuffer<PerView3dShadowMap> perView3dConstantBuffer;
+
+		struct LightConstantBuffer
+		{
+
+			struct DirectionalLight
+			{
+				BaseLight base;
+				float3 direction;
+				float solidAngle;
+				float4x4 shadowViewMatrix;
+				float4x4 shadowProjMatrix;
+			};
+
+
+			struct PointLight
+			{
+				BaseLight base;
+				float3 position;
+				float radius;
+				Attenuation attenuation;
+				float padding;
+				std::array<float4x4, 6> shadowViewMatrices; // 6 - number of faces of the cube map
+				float4x4 shadowProjMatrix;
+
+			};
+
+
+			struct SpotLight
+			{
+				BaseLight base;
+				float3 position;
+				float innerAngle;
+				float3 direction;
+				float outerAngle;
+				float radius;
+				Attenuation attenuation;
+				float4x4 shadowViewMatrix;
+				float4x4 shadowProjMatrix;
+
+			};
+
+
+			struct FlashLight // currently the same as SpotLight (but may change in the future)
+			{
+				BaseLight base;
+				float3 position;
+				float innerAngle;
+				float3 direction;
+				float outerAngle;
+				float radius;
+				Attenuation attenuation;
+				float4x4 shadowViewMatrix;
+				float4x4 shadowProjMatrix;
+			};
+
+			int g_numDirectionalLights;
+			int g_numPointLights;
+			int g_numSpotLights;
+			int g_numFlashLights;
+			float4 g_cameraPosition;
+
+
+			DirectionalLight g_directionalLights[MAX_DIRECTIONAL_LIGHTS];
+
+			PointLight g_pointLights[MAX_POINT_LIGHTS];
+
+			SpotLight g_spotLights[MAX_SPOT_LIGHTS];
+
+			FlashLight g_flashLights[MAX_FLASH_LIGHTS];
+		};
+
 		LightSystem()
 		{
-			
+
 			m_buffer.setBufferData({ LightConstantBuffer{} });
 			m_buffer.initBuffer(PER_FRAME_GLOBAL, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
 
+			perView2dConstantBuffer.setBufferData({ PerView2dShadowMap{} });
+			perView2dConstantBuffer.initBuffer(PER_VIEW_SHADOW_MAP_2D, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+			perView2dConstantBuffer.createBuffer();
+
+			perView3dConstantBuffer.setBufferData({ PerView3dShadowMap{} });
+			perView3dConstantBuffer.initBuffer(PER_VIEW_SHADOW_MAP_3D, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+			perView3dConstantBuffer.createBuffer();
+
+			initTexture2DShadowMap(MAX_DIRECTIONAL_LIGHTS, DIRECTIONAL_LIGHT_SHADOW_MAPS_SLOT, directionalLightShadowMap, directionalLightViews);
+			initTexture2DShadowMap(MAX_SPOT_LIGHTS, SPOT_LIGHT_SHADOW_MAPS_SLOT, spotLightShadowMap, spotLightViews);
+			initTexture2DShadowMap(MAX_FLASH_LIGHTS, FLASH_LIGHT_SHADOW_MAPS_SLOT, flashLightShadowMap, flashLightViews);
+			initCubeShadowMap(MAX_POINT_LIGHTS, POINT_LIGHT_SHADOW_MAPS_SLOT, pointLightShadowMap, pointLightViews);
 		}
 
 		LightSystem(const LightSystem&) = delete;
@@ -264,18 +350,46 @@ namespace engine::DX
 
 		void updateBuffer();
 
+		void initTexture2DShadowMap(UINT arraySize, UINT bindSlot, Texture2D& shadowMaps, std::vector<ComPtr<ID3D11DepthStencilView>>& depthStencilViews);
+
+		void initCubeShadowMap(UINT arraySize, UINT bindSlot, Texture2D& shadowMaps, std::vector<ComPtr<ID3D11DepthStencilView>>& depthStencilViews);
+
+		void computeLightSpaceFrustumDirectionalLight(const float3& lightDir, float4x4& lightViewMatrix, float4x4& lightProjMatrix);
+
+		// general function for computing the view and perspective matrices for both spot and flash lights
+		void computeBeamLightMatrices(
+			float fov,
+			const float3& lightPos,
+			const float3& lightDir,
+			float nearPlane,
+			float farPlane,
+			float4x4& lightViewMatrix,
+			float4x4& lightProjMatrix);
+
+		void computePointLightMatrices(const float3& lightPos, float nearPlane, float farPlane, std::array<float4x4, 6>& lightViewMatrices, float4x4& lightProjMatrix);
+
+
+
+		Camera* camera{};
+
+		ConstantBuffer<LightConstantBuffer> m_buffer;
+		LightConstantBuffer m_lightConstantBuffer;
+
 		// Store lights in separate containers for each type
 		SolidVector<PointLight> pointLights;
 		SolidVector<DirectionalLight> directionalLights;
 		SolidVector<SpotLight> spotLights;
 		SolidVector<FlashLight> flashLights;
 
-		Camera* camera{};
-
-		ConstantBuffer<LightConstantBuffer> m_buffer;
-		
-
-
+		//store the shadow map of the light
+		Texture2D directionalLightShadowMap;
+		Texture2D spotLightShadowMap;
+		Texture2D pointLightShadowMap;
+		Texture2D flashLightShadowMap;
+		std::vector<ComPtr<ID3D11DepthStencilView>>	directionalLightViews;
+		std::vector<ComPtr<ID3D11DepthStencilView>>	spotLightViews;
+		std::vector<ComPtr<ID3D11DepthStencilView>>	pointLightViews;
+		std::vector<ComPtr<ID3D11DepthStencilView>>	flashLightViews;
 
 	};
 

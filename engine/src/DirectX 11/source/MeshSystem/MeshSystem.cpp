@@ -37,14 +37,16 @@ namespace engine::DX
 				case RenderMode::PBR:
 					SetRenderMode<RenderMode::PBR>(opaqueInstance.get(), &camera);
 					break;
+				case RenderMode::IBL_SHADOW:
+					SetRenderMode<RenderMode::IBL_SHADOW>(opaqueInstance.get(), &camera);
+					break;
 				case RenderMode::IBL:
 					SetRenderMode<RenderMode::IBL>(opaqueInstance.get(), &camera);
 					break;
 				}
 
 				
-				LightSystem::getInstance().setBuffer();
-
+				
 				setPrimitiveTopology(shaderGroup);
 
 
@@ -65,6 +67,59 @@ namespace engine::DX
 		{
 			ImGuiManager::getInstance().RenderSlider("overwrittenRoughnessValue", m_perFrameIBL.overwrittenRoughnessValue, 0.0f, 1.0f);
 		}
+	}
+
+	void MeshSystem::renderDepth2D()
+	{
+		const static std::wstring shadowMapVertexShaderFileName{ L"Shadow/2D/shadow2DVertexShader.hlsl" };
+		const static std::wstring shadowMapPixelShaderFileName{ L"Shadow/2D/shadow2DPixelShader.hlsl" };
+
+		static OpaqueInstances::ShaderGroup shaderGroup
+		{
+			OpaqueInstances::RenderType::SHADOW_GENERATION,
+			{},
+			ShaderManager::getInstance().getVertexShader(shadowMapVertexShaderFileName),
+			{},
+			{},
+			{},
+			ShaderManager::getInstance().getPixelShader(shadowMapPixelShaderFileName),
+		};
+
+		setShaders(shaderGroup);
+		for (const auto& opaqueInstance : opaqueInstances)
+		{
+			SetRenderMode<RenderMode::SHADOW_GENERATION>(opaqueInstance.get());
+			setPrimitiveTopology(shaderGroup);
+			opaqueInstance->render();
+		}
+	}
+
+	void MeshSystem::renderDepthCubemap()
+	{
+		const static std::wstring shadowCubeMapVertexShaderFileName{ L"Shadow/Omnidirectional/shadow3DVertexShader.hlsl" };
+		const static std::wstring shadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DGeometryShader.hlsl" };
+		const static std::wstring shadowCubeMapPixelShaderFileName{ L"Shadow/Omnidirectional/shadow3DPixelShader.hlsl" };
+
+
+		static OpaqueInstances::ShaderGroup shaderGroup
+		{
+			OpaqueInstances::RenderType::SHADOW_GENERATION,
+			{},
+			ShaderManager::getInstance().getVertexShader(shadowCubeMapVertexShaderFileName),
+			{},
+			{},
+			ShaderManager::getInstance().getGeometryShader(shadowCubeMapGeometryShaderFileName),
+			ShaderManager::getInstance().getPixelShader(shadowCubeMapPixelShaderFileName),
+		};
+
+		setShaders(shaderGroup);
+		for (const auto& opaqueInstance : opaqueInstances)
+		{
+			SetRenderMode<RenderMode::SHADOW_GENERATION>(opaqueInstance.get());
+			setPrimitiveTopology(shaderGroup);
+			opaqueInstance->render();
+		}
+
 	}
 
 
@@ -181,6 +236,8 @@ namespace engine::DX
 			return RenderMode::POINT_SPHERE;
 		case OpaqueInstances::RenderType::PBR:
 			return RenderMode::PBR;
+		case OpaqueInstances::RenderType::IBL_SHADOW:
+			return RenderMode::IBL_SHADOW;
 		case OpaqueInstances::RenderType::IBL:
 			return RenderMode::IBL;
 		default:

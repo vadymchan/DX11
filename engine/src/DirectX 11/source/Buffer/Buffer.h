@@ -30,6 +30,7 @@ namespace engine::DX
 
 		void createBuffer()
 		{
+			
 			if (updateBuffer)
 			{
 				HRESULT result = g_device->CreateBuffer(&bufferDescription, &bufferSubresourceData, buffer.ReleaseAndGetAddressOf());

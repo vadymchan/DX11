@@ -41,6 +41,8 @@ namespace engine::DX
 			POINT_SPHERE,
 			PBR,
 			IBL,
+			SHADOW_GENERATION,
+			IBL_SHADOW,
 		};
 
 
