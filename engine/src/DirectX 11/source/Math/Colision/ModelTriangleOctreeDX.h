@@ -4,7 +4,7 @@
 
 namespace engine::DX
 {
-	using Intersection = MeshTriangleOctree::Intersection;
+
 	class ModelTriangleOctree
 	{
 	public:
@@ -47,7 +47,7 @@ namespace engine::DX
 		}
 
 
-		bool intersect(ray r, Intersection& intersection, Instance& instance);
+		bool intersect(ray r, RayIntersection& intersection, TransformSystem::ID& instance);
 
 
 	private:

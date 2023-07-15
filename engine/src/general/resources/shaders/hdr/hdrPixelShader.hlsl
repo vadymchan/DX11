@@ -53,7 +53,7 @@ struct Input
     float2 uv : TEXCOORD;
 };
 
-float3 main(Input input) : SV_TARGET
+float4 main(Input input) : SV_TARGET
 {
     
     float3 hdrColor;
@@ -84,5 +84,5 @@ float3 main(Input input) : SV_TARGET
     float3 finalColor = correctGamma(toneMappedColor, Gamma);
     //finalColor = correctGamma(finalColor, Gamma);
 
-    return finalColor;
+    return float4(finalColor, 1);
 }

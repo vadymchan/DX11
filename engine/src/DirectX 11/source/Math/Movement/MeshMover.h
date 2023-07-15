@@ -1,5 +1,5 @@
 #pragma once
-#include "../../MeshSystem/OpaqueInstances.h"
+#include "../../MeshSystem/Instance/OpaqueInstances.h"
 #include "../../D3D/D3D.h"
 
 namespace engine::DX
@@ -15,7 +15,7 @@ namespace engine::DX
 			return instance;
 		}
 
-		void setInstance(Instance instance)
+		void setMeshInstance(TransformSystem::ID instance)
 		{
 			this->instance = instance;
 		}
@@ -29,19 +29,19 @@ namespace engine::DX
 		void moveMesh(const float3& offset)
 		{
 
-			TransformSystem::getInstance().getTransform(instance.worldMatrixID)._14 += offset.x;
-			TransformSystem::getInstance().getTransform(instance.worldMatrixID)._24 += offset.y;
-			TransformSystem::getInstance().getTransform(instance.worldMatrixID)._34 += offset.z;
+			TransformSystem::getInstance().getTransform(instance)._14 += offset.x;
+			TransformSystem::getInstance().getTransform(instance)._24 += offset.y;
+			TransformSystem::getInstance().getTransform(instance)._34 += offset.z;
 
 			intersectionPoint.x += offset.x;
 			intersectionPoint.y += offset.y;
 			intersectionPoint.z += offset.z;
 
-			MeshSystem::getInstance().updateOpaqueInstanceBuffer(instance);
+			MeshSystem::getInstance().updateInstanceBuffer(instance);
 		}
 
 		
-		Instance getMat()
+		TransformSystem::ID getMat()
 		{
 			return instance;
 		}
@@ -60,7 +60,7 @@ namespace engine::DX
 		{
 		}
 
-		Instance instance;
+		TransformSystem::ID instance;
 		float4 intersectionPoint;
 
 	};

@@ -2,7 +2,8 @@
 
 #include "boxDX.h"
 #include "../../MeshSystem/Mesh.h"
-#include "../../MeshSystem/OpaqueInstances.h"
+#include "../../MeshSystem/Instance/OpaqueInstances.h"
+#include "RayIntersection.h"
 
 #include <memory>
 #include <vector>
@@ -11,23 +12,13 @@
 
 namespace engine::DX
 {
-	using Instance = OpaqueInstances::Instance;
+
 
 	class MeshTriangleOctree
 	{
 	public:
 
-		struct Intersection
-		{
-			float3 point;
-			float3 normal;
-			float3 dir;
-			float t;
-
-			bool isValid() { return std::isfinite(t); }
-
-			void reset() { t = std::numeric_limits<float>::infinity(); }
-		};
+		
 
 		const static float PREFFERED_TRIANGLE_COUNT;
 		const static float MAX_STRETCHING_RATIO;
@@ -37,7 +28,7 @@ namespace engine::DX
 
 		void initialize(Mesh& mesh);
 
-		bool intersect(ray r, Intersection& nearest, Instance& instance) const;
+		bool intersect(ray r, RayIntersection& nearest, TransformSystem::ID& instance) const;
 
 		Mesh* m_mesh = nullptr;
 	protected:
@@ -56,6 +47,6 @@ namespace engine::DX
 		const float3& getPos(const Mesh& mesh, size_t triangleIndex, size_t vertexIndex) const;
 		void initialize(Mesh& mesh, const Box& parentBox, const float3& parentCenter, int octetIndex);
 		bool addTriangle(size_t triangleIndex, const float3& V1, const float3& V2, const float3& V3, const float3& center);
-		bool intersectInternal(const ray& ray, Intersection& nearest) const;
+		bool intersectInternal(const ray& ray, RayIntersection& nearest) const;
 	};
 }

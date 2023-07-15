@@ -10,7 +10,9 @@ namespace engine::DX
 		m_textureFileName = textureFileName;
 
 		//initing skybox shaders
-		std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout{};
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout{
+			{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
 		ShaderManager::getInstance().addVertexShader(VERTEX_SHADER_PATH, inputLayout);
 		ShaderManager::getInstance().addPixelShader(PIXEL_SHADER_PATH);
 
@@ -48,7 +50,7 @@ namespace engine::DX
 				PrintError(result, L"Depth disabled in skybox rendering");
 			}
 		}
-		
+
 		g_devcon->OMSetDepthStencilState(skyboxDepthStencilState.Get(), stencilRef);
 
 		camera.setInvCameraBufferVertexShader();

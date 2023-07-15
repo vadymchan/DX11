@@ -1,3 +1,6 @@
+#ifndef GLOBAL_HLSL
+#define GLOBAL_HLSL
+
 SamplerState g_pointWrap : register(s0);
 SamplerState g_linearWrap : register(s1);
 SamplerState g_anisotropicWrap : register(s2);
@@ -241,3 +244,4 @@ float3 CalculateFlashLightBlinnPhong(float3 normal, float3 position, FlashLight 
 //END: Blinn-Phong light calculation
 //-------------------------------------------------------------------------------------------------------
 
+#endif

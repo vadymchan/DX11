@@ -21,6 +21,7 @@ struct Input
 struct Output
 {
     float4 viewPos : VIEWPOS;
+    float4 worldPos : WORLDPOS;
     float4 screenPos : SV_POSITION;
     float3 normal : NORMAL;
     float3 emission : EMISSION;
@@ -29,9 +30,15 @@ struct Output
 Output main(Input input)
 {
     Output output;
-    output.viewPos = mul(mul(float4(input.position, 1), input.instance), View);
+    output.viewPos = float4(input.position, 1);
+    output.viewPos = mul(output.viewPos, input.instance);
+    output.worldPos = output.viewPos;
+    output.viewPos = mul(output.viewPos, View);
+
+    
     output.screenPos = mul(output.viewPos, Proj);
-    output.normal = mul(mul(float4(input.normal, 0), input.instance), View);
+    output.normal = mul(float4(input.normal, 0), input.instance);
+    //output.normal = mul(mul(float4(input.normal, 0), input.instance), View);
     output.emission = input.emission.xyz;
 
     return output;

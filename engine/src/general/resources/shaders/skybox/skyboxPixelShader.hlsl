@@ -18,17 +18,21 @@ float4 main(Input input) : SV_TARGET
     switch (g_samplerStateIndex)
     {
         case 0:
-            color = SkyboxTexture.Sample(g_pointWrap, input.texcoord);
+            color.rgb = SkyboxTexture.Sample(g_pointWrap, input.texcoord).rgb;
             break;
         case 1:
-            color = SkyboxTexture.Sample(g_linearWrap, input.texcoord);
+            color.rgb = SkyboxTexture.Sample(g_linearWrap, input.texcoord).rgb;
             break;
         case 2:
-            color = SkyboxTexture.Sample(g_anisotropicWrap, input.texcoord);
+            color.rgb = SkyboxTexture.Sample(g_anisotropicWrap, input.texcoord).rgb;
             break;
         default:
-            color = SkyboxTexture.Sample(g_anisotropicWrap, input.texcoord);
+            color.rgb = SkyboxTexture.Sample(g_anisotropicWrap, input.texcoord).rgb;
             break;
     }
+    
+    
+    color.a = 1.0f;
+    
     return color;
 }

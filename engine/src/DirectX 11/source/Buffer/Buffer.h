@@ -20,6 +20,8 @@ namespace engine::DX
 		void setBufferData(const std::vector<T>& bufferData)
 		{
 			this->bufferData = bufferData;
+			bufferDescription.ByteWidth = sizeof(T) * bufferData.size();
+			bufferSubresourceData.pSysMem = bufferData.data();
 			updateBuffer = true;
 		}
 
@@ -90,7 +92,7 @@ namespace engine::DX
 		D3D11_SUBRESOURCE_DATA bufferSubresourceData{};
 		ComPtr<ID3D11Buffer> buffer;
 		bool updateBuffer{ true };
-		std::vector<T> bufferData{{}};
+		std::vector<T> bufferData{};
 
 	};
 

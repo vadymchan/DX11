@@ -31,6 +31,15 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Integration\FibonacciPointDistribution.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\BaseInstances.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\DissolutionInstances.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\OpaqueInstances.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -40,7 +49,7 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Model.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\OpaqueInstances.cpp">
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\ParticleSystem\ParticleSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\PostProcess\HDR\PostProcess.cpp">
@@ -127,6 +136,9 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\general\utils\sort\RadixSort.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Controller\BufferManager.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Math\Colision\RaySphereIntersection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.h">
@@ -186,6 +198,15 @@
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Transform\TransformSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\BaseInstances.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\DissolutionInstances.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\OpaqueInstances.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -195,7 +216,7 @@
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\OpaqueInstances.h">
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\ParticleSystem\ParticleSystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\PostProcess\HDR\PostProcess.h">
@@ -348,9 +369,14 @@
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\console\Console.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\sort\RadixSort.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\DirectX 11\source\Math\Colision\RayIntersection.h" />
+    <ClInclude Include="src\DirectX 11\source\Math\Colision\RaySphereIntersection.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\vadym\source\repos\vchan\engine\CMakeLists.txt" />

@@ -1,5 +1,6 @@
 #pragma once
-#include "OpaqueInstances.h"
+#include "Instance/OpaqueInstances.h"
+#include "Instance/DissolutionInstances.h"
 #include "../Math/Colision/ModelTriangleOctreeDX.h"
 #include "../Controller/ModelManager.h"
 #include "../../../general/utils/timer/FPSTimerRC.h"	 
@@ -11,11 +12,23 @@
 
 namespace engine::DX
 {
-	using Intersection = MeshTriangleOctree::Intersection;
+
 	class MeshSystem
 	{
 	public:
 
+		enum class RenderInstance
+		{
+			OPAQUE_INSTANCE,
+			DISSOLUTION_INSTANCE,
+			COUNT,
+			ALL_INSTANCES
+		};
+
+		using DepthRender = RenderInstance;
+
+		using OpaqueInstancesID = uint32_t;
+		using DissolutionInstancesID = uint32_t;
 		MeshSystem(const MeshSystem&) = delete;
 		MeshSystem& operator=(const MeshSystem&) = delete;
 		static MeshSystem& getInstance()
@@ -24,15 +37,174 @@ namespace engine::DX
 			return instance;
 		}
 
-		void render(Camera& camera);
+		template<RenderInstance Instance> 
+		void render(Camera& camera) {}
 
-		void renderDepth2D();
-		void renderDepthCubemap();
+		template<>
+		void render<RenderInstance::OPAQUE_INSTANCE>(Camera& camera)
+		{
+			renderHelper<OpaqueInstances>(camera, opaqueInstances);
+		}
 
-		bool findIntersection(const ray& r, Instance& instance, Intersection& intersection);
+		template<>
+		void render<RenderInstance::DISSOLUTION_INSTANCE>(Camera& camera)
+		{
+			renderHelper<DissolutionInstances>(camera, dissolutionInstances);
+		}
 
-		/// <param name="instance">instance, which is contained in opaqueInstance</param>
-		void updateOpaqueInstanceBuffer(const Instance instance);
+		template<>
+		void render<RenderInstance::ALL_INSTANCES>(Camera& camera)
+		{
+			renderHelper<OpaqueInstances>(camera, opaqueInstances);
+			renderHelper<DissolutionInstances>(camera, dissolutionInstances);
+		}
+
+		void renderUIPerFrameIBL()
+		{
+			ImGuiManager::getInstance().RenderCheckbox("useIBL", m_perFrameIBL.useIBL);
+			if (m_perFrameIBL.useIBL)
+			{
+				ImGuiManager::getInstance().RenderCheckbox("useDiffuseReflection", m_perFrameIBL.useDiffuseReflection);
+				ImGuiManager::getInstance().RenderCheckbox("useSpecularReflection", m_perFrameIBL.useSpecularReflection);
+			}
+
+			ImGuiManager::getInstance().RenderCheckbox("useRoughnessOverwriting", m_perFrameIBL.useRoughnessOverwriting);
+			if (m_perFrameIBL.useRoughnessOverwriting)
+			{
+				ImGuiManager::getInstance().RenderSlider("overwrittenRoughnessValue", m_perFrameIBL.overwrittenRoughnessValue, 0.0f, 1.0f);
+			}
+		}
+
+
+		template<DepthRender>
+		void renderDepth2D() {}
+
+		template<>
+		void renderDepth2D<DepthRender::OPAQUE_INSTANCE>()
+		{
+			const static std::wstring shadowMapVertexShaderFileName{ L"Shadow/2D/shadow2DVertexShader.hlsl" };
+			const static std::wstring shadowMapPixelShaderFileName{ L"Shadow/2D/shadow2DPixelShader.hlsl" };
+
+			static BaseInstances::ShaderGroup shaderGroup
+			{
+				BaseInstances::RenderType::SHADOW_GENERATION,
+				{},
+				ShaderManager::getInstance().getVertexShader(shadowMapVertexShaderFileName),
+				{},
+				{},
+				{},
+				ShaderManager::getInstance().getPixelShader(shadowMapPixelShaderFileName),
+			};
+
+			setShaders(shaderGroup);
+			SetRenderMode<RenderMode::SHADOW_GENERATION>();
+			setPrimitiveTopology(shaderGroup);
+			for (const auto& opaqueInstance : opaqueInstances)
+			{
+				opaqueInstance->render();
+			}
+
+			
+		}
+
+		template<>
+		void renderDepth2D<DepthRender::DISSOLUTION_INSTANCE>()
+		{
+			const std::wstring shadowMapVertexShaderFileName{ L"Shadow/2D/shadow2DDissolutionVertexShader.hlsl" };
+			const std::wstring shadowMapPixelShaderFileName{ L"Shadow/2D/shadow2DDissolutionPixelShader.hlsl" };
+
+			static BaseInstances::ShaderGroup shaderGroup
+			{
+				BaseInstances::RenderType::SHADOW_GENERATION,
+				{},
+				ShaderManager::getInstance().getVertexShader(shadowMapVertexShaderFileName),
+				{},
+				{},
+				{},
+				ShaderManager::getInstance().getPixelShader(shadowMapPixelShaderFileName),
+			};
+
+			setShaders(shaderGroup);
+			SetRenderMode<RenderMode::SHADOW_GENERATION>();
+			setPrimitiveTopology(shaderGroup);
+
+			for (const auto& dissolutionInstances : dissolutionInstances)
+			{
+				dissolutionInstances->render();
+			}
+		}
+
+
+		template<DepthRender>
+		void renderDepthCubemap() {}
+
+		template<>
+		void renderDepthCubemap<DepthRender::OPAQUE_INSTANCE>()
+		{
+			const static std::wstring shadowCubeMapVertexShaderFileName{ L"Shadow/Omnidirectional/shadow3DVertexShader.hlsl" };
+			const static std::wstring shadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DGeometryShader.hlsl" };
+			const static std::wstring shadowCubeMapPixelShaderFileName{ L"Shadow/Omnidirectional/shadow3DPixelShader.hlsl" };
+
+
+			static BaseInstances::ShaderGroup shaderGroup
+			{
+				BaseInstances::RenderType::SHADOW_GENERATION,
+				{},
+				ShaderManager::getInstance().getVertexShader(shadowCubeMapVertexShaderFileName),
+				{},
+				{},
+				ShaderManager::getInstance().getGeometryShader(shadowCubeMapGeometryShaderFileName),
+				ShaderManager::getInstance().getPixelShader(shadowCubeMapPixelShaderFileName),
+			};
+
+			setShaders(shaderGroup);
+			SetRenderMode<RenderMode::SHADOW_GENERATION>();
+			setPrimitiveTopology(shaderGroup);
+
+			for (const auto& opaqueInstance : opaqueInstances)
+			{
+
+				opaqueInstance->render();
+			}
+
+		}
+
+		template<>
+		void renderDepthCubemap<DepthRender::DISSOLUTION_INSTANCE>()
+		{
+			const static std::wstring shadowCubeMapVertexShaderFileName{ L"Shadow/Omnidirectional/shadow3DDissolutionVertexShader.hlsl" };
+			const static std::wstring shadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DDissolutionGeometryShader.hlsl" };
+			const static std::wstring shadowCubeMapPixelShaderFileName{ L"Shadow/Omnidirectional/shadow3DDissolutionPixelShader.hlsl" };
+
+
+			static BaseInstances::ShaderGroup shaderGroup
+			{
+				BaseInstances::RenderType::SHADOW_GENERATION,
+				{},
+				ShaderManager::getInstance().getVertexShader(shadowCubeMapVertexShaderFileName),
+				{},
+				{},
+				ShaderManager::getInstance().getGeometryShader(shadowCubeMapGeometryShaderFileName),
+				ShaderManager::getInstance().getPixelShader(shadowCubeMapPixelShaderFileName),
+			};
+
+			setShaders(shaderGroup);
+			SetRenderMode<RenderMode::SHADOW_GENERATION>();
+			setPrimitiveTopology(shaderGroup);
+
+			for (const auto& dissolutionInstances : dissolutionInstances)
+			{
+				dissolutionInstances->render();
+			}
+		}
+
+
+		
+
+		bool findIntersection(const ray& r, TransformSystem::ID& instance, RayIntersection& intersection);
+
+		/// <param name="instance">instance, which is contained in instanceGroup</param>
+		void updateInstanceBuffer(const TransformSystem::ID instance);
 
 		//skybox is needed for taking the right environment map
 		void setSkybox(std::shared_ptr<Skybox> skybox)
@@ -51,24 +223,101 @@ namespace engine::DX
 		}
 
 		/// <param name="instances">instance may be change during dragging</param>
-		void addInstances(uint32_t opaqueInstanceID,
+		void addOpaqueInstances(OpaqueInstancesID opaqueInstanceID,
 			const std::shared_ptr<Model>& model,
 			const std::vector<size_t>& meshIndex,
 			const std::shared_ptr<OpaqueInstances::Material>& material,
-			const std::vector<Instance>& transformID);
+			const std::vector<OpaqueInstances::Instance>& transformID);
+
+		/// <param name="instances">instance may be change during dragging</param>
+		void addDissolutionInstances(DissolutionInstancesID opaqueInstanceID,
+			const std::shared_ptr<Model>& model,
+			const std::vector<size_t>& meshIndex,
+			const std::shared_ptr<DissolutionInstances::Material>& material,
+			const std::vector<std::shared_ptr<DissolutionInstances::Instance>>& instances);
+
+		std::shared_ptr<DissolutionInstances::Instance> getDissolutionInstance(DissolutionInstancesID dissolutionInstancesID, const DissolutionInstances::ModelInstanceID& id)
+		{
+			return  dissolutionInstances[dissolutionInstancesID]->getDissolutionInstance(id);
+		}
+
+		void removeDissolutionInstance(DissolutionInstancesID dissolutionInstancesID, const DissolutionInstances::ModelInstanceID& dissolutionModelInstanceID)
+		{
+			dissolutionInstances[dissolutionInstancesID]->removeModelInstance(dissolutionModelInstanceID);
+		}
 
 		/// <summary>
 		/// creates new Opaque Instance
 		/// </summary>
 		/// <param name = "shaderFileNames">0 - vertex, 1 - hull shader, 2 - domain shader, 3 - geometry shader, 4 - pixel shader file names</param>
 		/// <returns>ID to access to created opaque instance</returns>
-		uint32_t createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames);
+		OpaqueInstancesID createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames);
+
+		/// <summary>
+		/// creates new Dissolution Instance
+		/// </summary>
+		/// <param name = "shaderFileNames">0 - vertex, 1 - hull shader, 2 - domain shader, 3 - geometry shader, 4 - pixel shader file names</param>
+		/// <returns>ID to access to created Dissolution instance</returns>
+		DissolutionInstancesID createDissolutionInstance(const std::vector<std::array<std::wstring, (int)DissolutionInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames);
+
+
 
 
 		ConstantBuffer<DirectX::SimpleMath::Vector4> cameraPosition;
 		ConstantBuffer<DirectX::SimpleMath::Vector4> time;
 
 	private:
+
+		template <typename T>
+		void renderHelper(Camera& camera, std::vector<std::shared_ptr<T>> instances)
+		{
+			for (const auto& instance : instances)
+			{
+				//bind shaders (draw several times with different shader)
+				for (auto& shaderGroup : instance->getShaders())
+				{
+					RenderMode renderModeType = getRenderMode(shaderGroup);
+
+					setShaders(shaderGroup);
+
+					switch (renderModeType)
+					{
+					case RenderMode::DEFAULT:
+						SetRenderMode<RenderMode::DEFAULT>(&camera);
+						break;
+					case RenderMode::NORMAL_VISUALISER:
+						if (!m_showNormal)
+							continue;
+						SetRenderMode<RenderMode::NORMAL_VISUALISER>(&camera);
+						break;
+					case RenderMode::HOLOGRAM:
+						SetRenderMode<RenderMode::HOLOGRAM>(&camera);
+						break;
+					case RenderMode::BLINN_PHONG:
+						SetRenderMode<RenderMode::BLINN_PHONG>(&camera);
+						break;
+					case RenderMode::POINT_SPHERE:
+						SetRenderMode<RenderMode::POINT_SPHERE>(&camera);
+						break;
+					case RenderMode::PBR:
+						SetRenderMode<RenderMode::PBR>(&camera);
+						break;
+					case RenderMode::IBL_SHADOW:
+						SetRenderMode<RenderMode::IBL_SHADOW>(&camera);
+						break;
+					case RenderMode::IBL:
+						SetRenderMode<RenderMode::IBL>(&camera);
+						break;
+					}
+
+					setPrimitiveTopology(shaderGroup);
+
+					instance->render();
+				}
+			}
+		}
+
+
 		MeshSystem()
 		{
 			cameraPosition.initBuffer(PER_VIEW_PIXEL_HOLOGRAM_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
@@ -104,12 +353,13 @@ namespace engine::DX
 				{
 					m_perFrameIBL.overwrittenRoughnessValue = value;
 				}
-			});
-
-
-
+				});
 		};
+
+		//std::array<>
+
 		std::vector<std::shared_ptr<OpaqueInstances>> opaqueInstances{};
+		std::vector<std::shared_ptr<DissolutionInstances>> dissolutionInstances{};
 		std::vector<std::shared_ptr<ModelTriangleOctree>> triangleOctrees{};
 		std::weak_ptr<Skybox> currentSkybox; // used to take skybox for taking the right environment map
 
@@ -120,11 +370,13 @@ namespace engine::DX
 		struct ModelIntersection
 		{
 			std::weak_ptr<ModelTriangleOctree> triangleOctree;
-			Instance instance;
-			std::weak_ptr<OpaqueInstances> opaqueInstance; // used to update instance buffer during dragging
+			TransformSystem::ID instance;
+			std::weak_ptr<BaseInstances> instanceGroup; // used to update instance buffer during dragging
 		};
 
 		std::vector<ModelIntersection> modelIntersections{};
+
+#pragma region RenderMode
 
 		enum class RenderMode
 		{
@@ -137,16 +389,18 @@ namespace engine::DX
 			IBL,
 			SHADOW_GENERATION,
 			IBL_SHADOW,
+			DISSOLUTION_SHADOW_GENERATION,
+			IBL_DISSOLUTION
 		};
 
 		template<RenderMode Mode>
-		void SetRenderMode(OpaqueInstances* opaqueInstance = nullptr, Camera* camera = nullptr) {};
+		void SetRenderMode(Camera* camera = nullptr) {};
 
 		template<>
-		void SetRenderMode<RenderMode::HOLOGRAM>(OpaqueInstances* opaqueInstance, Camera* camera)
+		void SetRenderMode<RenderMode::HOLOGRAM>( Camera* camera)
 		{
 
-			time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {general::FPSTimer::getCurrentTick() - general::FPSTimer::initTick, 0, 0, 0}});
+			time.setBufferData(std::vector<DirectX::SimpleMath::Vector4>{ {(general::FPSTimer::getCurrentTick() - general::FPSTimer::initTick) * general::FPSTimer::milliToSec, 0, 0, 0}});
 			time.setBuffer();
 
 			float3 cameraPos = camera->position();
@@ -155,17 +409,26 @@ namespace engine::DX
 			camera->setCameraBufferGeometryShader();
 		}
 
+
 		template<>
-		void SetRenderMode<RenderMode::IBL_SHADOW>(OpaqueInstances* opaqueInstance, Camera* camera)
+		void SetRenderMode<RenderMode::IBL_DISSOLUTION>(Camera* camera)
 		{
-			SetRenderMode<RenderMode::IBL>(opaqueInstance, camera);
+			SetRenderMode<RenderMode::IBL>(camera);
+
+			LightSystem::getInstance().bindShadowMapTextures();
+		}
+
+		template<>
+		void SetRenderMode<RenderMode::IBL_SHADOW>( Camera* camera)
+		{
+			SetRenderMode<RenderMode::IBL>(camera);
 
 			LightSystem::getInstance().bindShadowMapTextures();
 		}
 
 		//set textures to pixel shader (irradiance, prefilteredEnvMap, brdfLUT)
 		template<>
-		void SetRenderMode<RenderMode::IBL>(OpaqueInstances* opaqueInstance, Camera* camera)
+		void SetRenderMode<RenderMode::IBL>( Camera* camera)
 		{
 			std::wstring environmentMap = std::filesystem::path(currentSkybox.lock()->getTexture()).stem().wstring();
 
@@ -219,11 +482,13 @@ namespace engine::DX
 
 		}
 
-		RenderMode getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup);
+		RenderMode getRenderMode(const BaseInstances::ShaderGroup& shaderGroup);
 
-		void setShaders(const OpaqueInstances::ShaderGroup& shaderGroup);
+		void setShaders(const BaseInstances::ShaderGroup& shaderGroup);
 
-		void setPrimitiveTopology(const OpaqueInstances::ShaderGroup& shaderGroup);
+		void setPrimitiveTopology(const BaseInstances::ShaderGroup& shaderGroup);
+
+#pragma endregion
 
 	};
 

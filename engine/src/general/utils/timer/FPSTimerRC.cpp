@@ -1,21 +1,29 @@
 #include "FPSTimerRC.h"
-
+#include <iostream>
 namespace engine::general
 {
+	constexpr float FPSTimer::oneSecInMS = 1000.0f;
+	constexpr float FPSTimer::oneFPS = 1000 / 60;
+	constexpr float FPSTimer::milliToSec = 1e-3;
+	constexpr float FPSTimer::initTick = static_cast<float>(GetTickCount64());
 
-	const double FPSTimer::oneFPS = 1000 / 60;
-	const double FPSTimer::milliToSec = 1e-3;
-	const float FPSTimer::initTick = static_cast<float>(GetTickCount64() / 1000.0);
-
-	double FPSTimer::frameTimeElapsed()
+	float FPSTimer::frameTimeElapsed()
 	{
-		using dmil = std::chrono::duration<double, std::milli>;
-		double deltaTime = std::chrono::duration_cast<dmil>(std::chrono::high_resolution_clock::now() - lastTime).count();
+		using dmil = std::chrono::duration<float, std::milli>;
+		float deltaTime = std::chrono::duration_cast<dmil>(std::chrono::high_resolution_clock::now() - lastTime).count();
+		timeCounter += deltaTime;
 		return deltaTime;
 	}
 
 	void FPSTimer::resetClock()
 	{
+		frameCounter++;
+		if (timeCounter >= oneSecInMS)
+		{
+			std::cout << "FPS: " << frameCounter << std::endl;
+			frameCounter = 0;
+			timeCounter -= oneSecInMS;
+		}
 		lastTime = std::chrono::high_resolution_clock::now();
 	}
 

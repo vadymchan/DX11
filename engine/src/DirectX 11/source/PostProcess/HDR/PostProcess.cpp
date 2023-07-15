@@ -12,7 +12,10 @@ namespace engine::DX
 	{
 		m_constBuffer.initBuffer(POST_PROCESS_CONST_BUFFER_SLOT, D3D11_USAGE_DYNAMIC, D3D10_CPU_ACCESS_WRITE);
 
-		ShaderManager::getInstance().addVertexShader(POST_PROCESS_VERTEX_SHADER_PATH, {});
+		std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayout{
+			{ "DUMMY", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+		ShaderManager::getInstance().addVertexShader(POST_PROCESS_VERTEX_SHADER_PATH, inputLayout);
 		ShaderManager::getInstance().addPixelShader(POST_PROCESS_PIXEL_SHADER_PATH);
 
 		m_constBuffer.setBufferData({ { Gamma, EV100, 0,0 } });

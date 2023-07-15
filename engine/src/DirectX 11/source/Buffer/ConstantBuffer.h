@@ -103,18 +103,28 @@ namespace engine::DX
 
 		void updateData(const std::vector<T>& bufferData)
 		{
-			D3D11_MAPPED_SUBRESOURCE mappedResource;
-			HRESULT result = g_devcon->Map(Buffer<T>::buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-			if (SUCCEEDED(result))
+			if (Buffer<T>::bufferDescription.ByteWidth != sizeof(T) * bufferData.size()) // new elements added
 			{
-				memcpy(mappedResource.pData, bufferData.data(), bufferData.size() * sizeof(T));
-				g_devcon->Unmap(Buffer<T>::buffer.Get(), 0);
+				Buffer<T>::bufferDescription.ByteWidth = sizeof(T) * bufferData.size();
+				Buffer<T>::bufferSubresourceData.pSysMem = bufferData.data();
+				Buffer<T>::createBuffer();
 			}
 			else
 			{
-				PrintError(result, L"constant buffer data was not updated!");
+				D3D11_MAPPED_SUBRESOURCE mappedResource;
+				HRESULT result = g_devcon->Map(Buffer<T>::buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+				if (SUCCEEDED(result))
+				{
+					memcpy(mappedResource.pData, bufferData.data(), bufferData.size() * sizeof(T));
+					g_devcon->Unmap(Buffer<T>::buffer.Get(), 0);
+				}
+				else
+				{
+					PrintError(result, L"constant buffer data was not updated!");
+				}
 			}
 		}
+
 
 	private:
 		UINT registerSlot;

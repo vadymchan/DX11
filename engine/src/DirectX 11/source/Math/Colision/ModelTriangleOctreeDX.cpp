@@ -2,12 +2,12 @@
 
 
 
-bool engine::DX::ModelTriangleOctree::intersect(ray r, Intersection& intersection, Instance& instance)
+bool engine::DX::ModelTriangleOctree::intersect(ray r, RayIntersection& intersection, TransformSystem::ID& instance)
 {
 	ray oldray = r; //for debug 
 	ray modelRay = r;
     //transpose matrix since matrix is stored in column-space (but we need row-major for computation)
-    float4x4 worldMatrix = TransformSystem::getInstance().getTransform(instance.worldMatrixID).Transpose();
+    float4x4 worldMatrix = TransformSystem::getInstance().getTransform(instance).Transpose();
     float4x4 invModelMatrix = worldMatrix.Invert();
 
     modelRay.position = float3::Transform(modelRay.position, invModelMatrix);

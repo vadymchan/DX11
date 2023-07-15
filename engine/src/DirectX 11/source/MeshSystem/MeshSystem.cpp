@@ -4,129 +4,8 @@
 namespace engine::DX
 {
 
-	void MeshSystem::render(Camera& camera)
-	{
-		for (const auto& opaqueInstance : opaqueInstances)
-		{
-			//bind shaders (draw several times with different shader)
-			for (auto& shaderGroup : opaqueInstance->getShaders())
-			{
-				RenderMode renderModeType = getRenderMode(shaderGroup);
-
-				setShaders(shaderGroup);
-
-				switch (renderModeType)
-				{
-				case RenderMode::DEFAULT:
-					SetRenderMode<RenderMode::DEFAULT>(opaqueInstance.get(), &camera);
-					break;
-				case RenderMode::NORMAL_VISUALISER:
-					if (!m_showNormal)
-						continue;
-					SetRenderMode<RenderMode::NORMAL_VISUALISER>(opaqueInstance.get(), &camera);
-					break;
-				case RenderMode::HOLOGRAM:
-					SetRenderMode<RenderMode::HOLOGRAM>(opaqueInstance.get(), &camera);
-					break;
-				case RenderMode::BLINN_PHONG:
-					SetRenderMode<RenderMode::BLINN_PHONG>(opaqueInstance.get(), &camera);
-					break;
-				case RenderMode::POINT_SPHERE:
-					SetRenderMode<RenderMode::POINT_SPHERE>(opaqueInstance.get(), &camera);
-					break;
-				case RenderMode::PBR:
-					SetRenderMode<RenderMode::PBR>(opaqueInstance.get(), &camera);
-					break;
-				case RenderMode::IBL_SHADOW:
-					SetRenderMode<RenderMode::IBL_SHADOW>(opaqueInstance.get(), &camera);
-					break;
-				case RenderMode::IBL:
-					SetRenderMode<RenderMode::IBL>(opaqueInstance.get(), &camera);
-					break;
-				}
-
-				
-				
-				setPrimitiveTopology(shaderGroup);
-
-
-				opaqueInstance->render();
-			}
-		}
-
-		//render UI component
-		ImGuiManager::getInstance().RenderCheckbox("useIBL", m_perFrameIBL.useIBL);
-		if (m_perFrameIBL.useIBL)
-		{
-			ImGuiManager::getInstance().RenderCheckbox("useDiffuseReflection", m_perFrameIBL.useDiffuseReflection);
-			ImGuiManager::getInstance().RenderCheckbox("useSpecularReflection", m_perFrameIBL.useSpecularReflection);
-		}
-		
-		ImGuiManager::getInstance().RenderCheckbox("useRoughnessOverwriting", m_perFrameIBL.useRoughnessOverwriting);
-		if (m_perFrameIBL.useRoughnessOverwriting)
-		{
-			ImGuiManager::getInstance().RenderSlider("overwrittenRoughnessValue", m_perFrameIBL.overwrittenRoughnessValue, 0.0f, 1.0f);
-		}
-	}
-
-	void MeshSystem::renderDepth2D()
-	{
-		const static std::wstring shadowMapVertexShaderFileName{ L"Shadow/2D/shadow2DVertexShader.hlsl" };
-		const static std::wstring shadowMapPixelShaderFileName{ L"Shadow/2D/shadow2DPixelShader.hlsl" };
-
-		static OpaqueInstances::ShaderGroup shaderGroup
-		{
-			OpaqueInstances::RenderType::SHADOW_GENERATION,
-			{},
-			ShaderManager::getInstance().getVertexShader(shadowMapVertexShaderFileName),
-			{},
-			{},
-			{},
-			ShaderManager::getInstance().getPixelShader(shadowMapPixelShaderFileName),
-		};
-
-		setShaders(shaderGroup);
-		for (const auto& opaqueInstance : opaqueInstances)
-		{
-			SetRenderMode<RenderMode::SHADOW_GENERATION>(opaqueInstance.get());
-			setPrimitiveTopology(shaderGroup);
-			opaqueInstance->render();
-		}
-	}
-
-	void MeshSystem::renderDepthCubemap()
-	{
-		const static std::wstring shadowCubeMapVertexShaderFileName{ L"Shadow/Omnidirectional/shadow3DVertexShader.hlsl" };
-		const static std::wstring shadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DGeometryShader.hlsl" };
-		const static std::wstring shadowCubeMapPixelShaderFileName{ L"Shadow/Omnidirectional/shadow3DPixelShader.hlsl" };
-
-
-		static OpaqueInstances::ShaderGroup shaderGroup
-		{
-			OpaqueInstances::RenderType::SHADOW_GENERATION,
-			{},
-			ShaderManager::getInstance().getVertexShader(shadowCubeMapVertexShaderFileName),
-			{},
-			{},
-			ShaderManager::getInstance().getGeometryShader(shadowCubeMapGeometryShaderFileName),
-			ShaderManager::getInstance().getPixelShader(shadowCubeMapPixelShaderFileName),
-		};
-
-		setShaders(shaderGroup);
-		for (const auto& opaqueInstance : opaqueInstances)
-		{
-			SetRenderMode<RenderMode::SHADOW_GENERATION>(opaqueInstance.get());
-			setPrimitiveTopology(shaderGroup);
-			opaqueInstance->render();
-		}
-
-	}
-
-
-
-
-	/// <param name="instance">instance, which is contained in opaqueInstance</param>
-	bool MeshSystem::findIntersection(const ray& r, Instance& instance, Intersection& intersection)
+	/// <param name="instance">instance, which is contained in instanceGroup</param>
+	bool MeshSystem::findIntersection(const ray& r, TransformSystem::ID& instance, RayIntersection& intersection)
 	{
 		bool returnResult{};
 
@@ -144,34 +23,34 @@ namespace engine::DX
 	}
 
 	/// <param name="instances">instance may be change during dragging</param>
-	void MeshSystem::updateOpaqueInstanceBuffer(const Instance instance)
+	void MeshSystem::updateInstanceBuffer(const TransformSystem::ID instance)
 	{
 		for (auto& modelIntersection : modelIntersections)
 		{
-			if (modelIntersection.instance.worldMatrixID == instance.worldMatrixID)
+			if (modelIntersection.instance == instance)
 			{
-				modelIntersection.opaqueInstance.lock()->needToUpdateInstanceBuffer();
+				modelIntersection.instanceGroup.lock()->needToUpdateInstanceBuffer();
 			}
 		}
 	}
 
-	void MeshSystem::addInstances(uint32_t opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<Instance>& transformID)
+	void MeshSystem::addOpaqueInstances(OpaqueInstancesID opaqueInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<OpaqueInstances::Instance>& transformID)
 	{
 		bool debugCubeModel{};
 
-		std::vector<Instance> instances{};
+		std::vector<OpaqueInstances::Instance> instances{};
 		instances.resize(transformID.size());
 		for (size_t i = 0; i < transformID.size(); i++)
 		{
-			instances[i] = Instance{ transformID[i] };
+			instances[i] = OpaqueInstances::Instance{ transformID[i] };
 		}
 
-		for (size_t meshIndex = 0; meshIndex < meshIndices.size(); ++meshIndex)
+		for (size_t i = 0; i < meshIndices.size(); ++i)
 		{
 
-			opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices[meshIndex], material, instances);
+			opaqueInstances.at(opaqueInstanceID)->addInstances(model, meshIndices[i], material, instances);
 
-			if (model->getMesh(meshIndex).GetName() == ModelManager::debugCubeTag)
+			if (model->getMesh(i).GetName() == ModelManager::debugCubeTag)
 			{
 				debugCubeModel = true;
 			}
@@ -188,7 +67,7 @@ namespace engine::DX
 					if (triangleOctrees[triangleOctreeIndex]->alreadyInited(model, meshIndices)) // already created
 					{
 						modelIntersections.emplace_back(
-							ModelIntersection{ triangleOctrees[triangleOctreeIndex], instanceID, opaqueInstances[opaqueInstanceID] });
+							ModelIntersection{ triangleOctrees[triangleOctreeIndex], instanceID.worldMatrixID, opaqueInstances[opaqueInstanceID] });
 						break;
 					}
 				}
@@ -197,7 +76,51 @@ namespace engine::DX
 				{
 					triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, meshIndices));
 					modelIntersections.emplace_back(
-						ModelIntersection{ triangleOctrees[triangleOctrees.size() - 1], instanceID, opaqueInstances[opaqueInstanceID] });
+						ModelIntersection{ triangleOctrees[triangleOctrees.size() - 1], instanceID.worldMatrixID, opaqueInstances[opaqueInstanceID] });
+				}
+			}
+		}
+
+
+	}
+
+
+	void MeshSystem::addDissolutionInstances(DissolutionInstancesID dissolutionInstanceID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<DissolutionInstances::Material>& material, const std::vector<std::shared_ptr<DissolutionInstances::Instance>>& instances)
+	{
+		bool debugCubeModel{};
+
+		for (size_t i = 0; i < meshIndices.size(); ++i)
+		{
+
+			dissolutionInstances.at(dissolutionInstanceID)->addInstances(model, meshIndices[i], material, instances);
+
+			if (model->getMesh(i).GetName() == ModelManager::debugCubeTag)
+			{
+				debugCubeModel = true;
+			}
+
+		}
+
+		for (auto& instanceID : instances)
+		{
+			if (!debugCubeModel)
+			{
+				int triangleOctreeIndex = 0;
+				for (; triangleOctreeIndex < triangleOctrees.size(); ++triangleOctreeIndex)
+				{
+					if (triangleOctrees[triangleOctreeIndex]->alreadyInited(model, meshIndices)) // already created
+					{
+						modelIntersections.emplace_back(
+							ModelIntersection{ triangleOctrees[triangleOctreeIndex], instanceID->worldMatrixID, dissolutionInstances[dissolutionInstanceID] });
+						break;
+					}
+				}
+
+				if (triangleOctreeIndex == triangleOctrees.size())
+				{
+					triangleOctrees.emplace_back(std::make_shared<ModelTriangleOctree>(model, meshIndices));
+					modelIntersections.emplace_back(
+						ModelIntersection{ triangleOctrees[triangleOctrees.size() - 1], instanceID->worldMatrixID, dissolutionInstances[dissolutionInstanceID] });
 				}
 			}
 		}
@@ -209,7 +132,7 @@ namespace engine::DX
 	/// creates new Opaque Instance
 	/// </summary>
 	/// <returns>ID to access to created opaque instance</returns>
-	uint32_t MeshSystem::createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames)
+	MeshSystem::OpaqueInstancesID MeshSystem::createOpaqueInstance(const std::vector<std::array<std::wstring, (int)OpaqueInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames)
 	{
 		std::shared_ptr<OpaqueInstances> opaqueInstance = std::make_shared<OpaqueInstances>();
 		opaqueInstance->setShaders(shaderFileNames);
@@ -217,28 +140,38 @@ namespace engine::DX
 		return (opaqueInstances.size() - 1);
 	}
 
+	/// <summary>
+	/// creates new Dissolution Instance
+	/// </summary>
+	/// <returns>ID to access to created opaque instance</returns>
+	MeshSystem::DissolutionInstancesID MeshSystem::createDissolutionInstance(const std::vector<std::array<std::wstring, (int)DissolutionInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames)
+	{
+		std::shared_ptr<DissolutionInstances> dissolutionInstance = std::make_shared<DissolutionInstances>();
+		dissolutionInstance->setShaders(shaderFileNames);
+		dissolutionInstances.emplace_back(dissolutionInstance);
+		return (dissolutionInstances.size() - 1);
+	}
 
-
-	MeshSystem::RenderMode MeshSystem::getRenderMode(const OpaqueInstances::ShaderGroup& shaderGroup)
+	MeshSystem::RenderMode MeshSystem::getRenderMode(const BaseInstances::ShaderGroup& shaderGroup)
 	{
 
 		switch (shaderGroup.type)
 		{
-		case OpaqueInstances::RenderType::NORMAL_VISUALIZER:
+		case BaseInstances::RenderType::NORMAL_VISUALIZER:
 			return RenderMode::NORMAL_VISUALISER;
-		case OpaqueInstances::RenderType::HOLOGRAM:
+		case BaseInstances::RenderType::HOLOGRAM:
 			return RenderMode::HOLOGRAM;
-		case OpaqueInstances::RenderType::DEFAULT:
+		case BaseInstances::RenderType::DEFAULT:
 			return RenderMode::DEFAULT;
-		case OpaqueInstances::RenderType::BLINN_PHONG:
+		case BaseInstances::RenderType::BLINN_PHONG:
 			return RenderMode::BLINN_PHONG;
-		case OpaqueInstances::RenderType::POINT_SPHERE:
+		case BaseInstances::RenderType::POINT_SPHERE:
 			return RenderMode::POINT_SPHERE;
-		case OpaqueInstances::RenderType::PBR:
+		case BaseInstances::RenderType::PBR:
 			return RenderMode::PBR;
-		case OpaqueInstances::RenderType::IBL_SHADOW:
+		case BaseInstances::RenderType::IBL_SHADOW:
 			return RenderMode::IBL_SHADOW;
-		case OpaqueInstances::RenderType::IBL:
+		case BaseInstances::RenderType::IBL:
 			return RenderMode::IBL;
 		default:
 			return RenderMode::DEFAULT;
@@ -247,7 +180,7 @@ namespace engine::DX
 
 	}
 
-	void MeshSystem::setShaders(const OpaqueInstances::ShaderGroup& shaderGroup)
+	void MeshSystem::setShaders(const BaseInstances::ShaderGroup& shaderGroup)
 	{
 		//vertex shader
 		shaderGroup.vertexShader.lock()->bind();
@@ -297,7 +230,7 @@ namespace engine::DX
 
 	}
 
-	void MeshSystem::setPrimitiveTopology(const OpaqueInstances::ShaderGroup& shaderGroup)
+	void MeshSystem::setPrimitiveTopology(const BaseInstances::ShaderGroup& shaderGroup)
 	{
 		//topology
 		if (!shaderGroup.hullShader.expired() && !shaderGroup.domainShader.expired())

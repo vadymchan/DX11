@@ -114,14 +114,16 @@ namespace engine::DX
 		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		HRESULT hr = g_device->CreateBlendState(&blendDesc, blendState.ReleaseAndGetAddressOf());
+		HRESULT hr = g_device->CreateBlendState(&blendDesc, blendStates[(int)BlendState::ENABLED].ReleaseAndGetAddressOf());
 		
-		float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		UINT sampleMask = 0xFFFFFFFF;
-		g_devcon->OMSetBlendState(blendState.Get(), blendFactor, sampleMask);
+		blendDesc.RenderTarget[0].BlendEnable = FALSE;
+		hr = g_device->CreateBlendState(&blendDesc, blendStates[(int)BlendState::DISABLED].ReleaseAndGetAddressOf());
+
+
+		setBlendState(BlendState::DISABLED);
 	}
 
 	void Window::initDepthStencil()
@@ -161,7 +163,8 @@ namespace engine::DX
 
 
 		engine::DX::Texture2D depthStencilTexture;
-		depthStencilTexture.createTextureFromMemory(0, depthStencilTextureDesc, nullptr, shaderResourceViewDesc);
+		constexpr UINT BIND_SLOT = 0;
+		depthStencilTexture.createTextureFromMemory(depthStencilTextureDesc, nullptr, shaderResourceViewDesc, BIND_SLOT);
 
 		depthStencilBuffer.initDepthStencil(depthStencilTexture, depthStencilDesc, depthStencilViewDesc);
 

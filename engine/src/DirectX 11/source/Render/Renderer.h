@@ -5,6 +5,7 @@
 #include "../Texture/Skybox.h"
 #include "../Texture/SampleState.h"
 #include "../PostProcess/HDR/PostProcess.h"
+#include "../ParticleSystem/ParticleSystem.h"
 
 namespace engine::DX
 {
@@ -22,6 +23,8 @@ namespace engine::DX
 
 		void setSkybox(const std::shared_ptr<Skybox>& skybox);
 
+		void setParticleSystem(ParticleSystem* particleSystem);
+
 		void updateRasterizer();
 
 		void setVisualizeNormal(bool value);
@@ -30,7 +33,10 @@ namespace engine::DX
 
 		PostProcess& getPostProcess();
 
+
 	private:
+
+
 
 		void updateOffScreenRenderer(Window& window);
 
@@ -61,6 +67,7 @@ namespace engine::DX
 
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
+		ComPtr<ID3D11RasterizerState> transparentRasterizerState; // for transparent objects
 
 		Texture2D m_HDRtexture;
 		ComPtr<ID3D11RenderTargetView> m_offscreenRTV;
@@ -71,6 +78,8 @@ namespace engine::DX
 		std::shared_ptr<Skybox> m_skybox;
 
 		std::shared_ptr<ConstantBuffer<PerFrameIBL>> m_perFrameIBLbuffer;
+
+		ParticleSystem* particleSystem;
 
 		bool visualizeNormal{};
 		bool needToUpdateRasterizer{};

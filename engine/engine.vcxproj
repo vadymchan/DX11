@@ -106,7 +106,8 @@
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -151,7 +152,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -196,7 +198,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -240,7 +243,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <ProxyFileName>%(Filename)_p.c</ProxyFileName>
     </Midl>
     <PostBuildEvent>
-      <Message></Message>
+      <Message>
+      </Message>
       <Command>setlocal
 "C:\Program Files\CMake\bin\cmake.exe" -E copy C:/Users/vadym/source/repos/vchan/engine/src/general/dependencies/assimp/assimp-out/bin/assimp-vc143-mtd.dll C:/Users/vadym/source/repos/vchan
 if %errorlevel% neq 0 goto :cmEnd
@@ -327,10 +331,13 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Integration\FibonacciPointDistribution.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\BaseInstances.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\DissolutionInstances.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\OpaqueInstances.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\MeshSystem.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Model.cpp" />
-    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\OpaqueInstances.cpp" />
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\ParticleSystem\ParticleSystem.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\PostProcess\HDR\PostProcess.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Render\Renderer.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Texture\DDSTextureLoader11.cpp" />
@@ -351,6 +358,9 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\Ray Casting\window\WindowRC.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\console\Console.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Controller\BufferManager.cpp" />
+    <ClCompile Include="src\DirectX 11\source\Math\Colision\RaySphereIntersection.cpp" />
+    <ClCompile Include="src\general\utils\sort\RadixSort.cpp" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\Buffer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Buffer\ConstantBuffer.h" />
@@ -370,10 +380,13 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Integration\FibonacciPointDistribution.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Movement\MeshMover.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Transform\TransformSystem.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\BaseInstances.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\DissolutionInstances.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Instance\OpaqueInstances.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Mesh.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\MeshSystem.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\Model.h" />
-    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\MeshSystem\OpaqueInstances.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\ParticleSystem\ParticleSystem.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\PostProcess\HDR\PostProcess.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Render\Renderer.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Shader\DomainShader.h" />
@@ -424,6 +437,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\include\win_def.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\include\win_undef.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\console\Console.h" />
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\sort\RadixSort.h" />
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.h" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\imgui.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\imgui_draw.cpp" />
@@ -433,6 +447,8 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx9.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx10.cpp" />
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx11.cpp" />
+    <ClInclude Include="src\DirectX 11\source\Math\Colision\RayIntersection.h" />
+    <ClInclude Include="src\DirectX 11\source\Math\Colision\RaySphereIntersection.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:\Users\vadym\source\repos\vchan\ZERO_CHECK.vcxproj">

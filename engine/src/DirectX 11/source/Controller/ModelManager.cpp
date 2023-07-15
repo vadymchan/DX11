@@ -64,6 +64,8 @@ namespace engine::DX
 								textureBindSlot = ROUGHNESS_TEXTURE_BIND_SLOT;
 							else if (fileName.find("normal") != std::string::npos)
 								textureBindSlot = NORMAL_TEXTURE_BIND_SLOT;
+							else if (fileName.find("Noise") != std::string::npos)
+								textureBindSlot = NOISE_TEXTURE_BIND_SLOT;
 							else
 								textureBindSlot = COLOR_TEXTURE_BIND_SLOT;
 
@@ -271,91 +273,6 @@ namespace engine::DX
 		models[modelFileName] = std::make_shared<Model>(std::move(model));
 	}
 
-	//void engine::DX::ModelManager::createModelAssimp(const std::string& modelFileName)
-	//{
-	//	D3D11_TEXTURE2D_DESC textureDesc{};
-	//	textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	//	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	//	textureDesc.CPUAccessFlags = 0;
-	//	textureDesc.MiscFlags = 0;
-
-	//	uint32_t flags = uint32_t(aiProcess_Triangulate | aiProcess_GenBoundingBoxes | aiProcess_ConvertToLeftHanded | aiProcess_CalcTangentSpace);
-
-	//	Assimp::Importer importer;
-	//	const aiScene* assimpScene = importer.ReadFile(modelDirectory.string() + modelFileName, flags);
-
-	//	assert(assimpScene != nullptr && ("model: " + modelFileName + " was not loaded").c_str());
-
-	//	uint32_t numMeshes = assimpScene->mNumMeshes;
-
-	//	Model model;
-
-	//	model.meshes.resize(assimpScene->mNumMeshes);
-	//	model.meshRanges.resize(assimpScene->mNumMeshes);
-
-	//	static_assert(sizeof(float3) == sizeof(aiVector3D));
-
-	//	for (uint32_t i = 0; i < numMeshes; ++i)
-	//	{
-	//		auto& srcMesh = assimpScene->mMeshes[i];
-	//		auto& dstMesh = model.meshes.at(i);
-
-	//		dstMesh.name = srcMesh->mName.C_Str();
-	//		dstMesh.box.min = reinterpret_cast<float3&>(srcMesh->mAABB.mMin);
-	//		dstMesh.box.max = reinterpret_cast<float3&>(srcMesh->mAABB.mMax);
-
-	//		dstMesh.vertices.resize(srcMesh->mNumVertices);
-	//		dstMesh.indices.resize(srcMesh->mNumFaces * 3);
-
-	//		model.meshRanges.at(i).vertexNum = srcMesh->mNumVertices;
-	//		model.meshRanges.at(i).indexNum = srcMesh->mNumFaces * 3;
-
-	//		for (uint32_t v = 0; v < srcMesh->mNumVertices; ++v)
-	//		{
-	//			dstMesh.vertices.at(v).position = reinterpret_cast<float3&>(srcMesh->mVertices[v]);
-	//			dstMesh.vertices.at(v).normal = reinterpret_cast<float3&>(srcMesh->mNormals[v]);
-	//			dstMesh.vertices.at(v).texCoord = reinterpret_cast<float2&>(srcMesh->mTextureCoords[0][v]);
-	//			dstMesh.vertices.at(v).tangent = reinterpret_cast<float3&>(srcMesh->mTangents[v]);
-	//			dstMesh.vertices.at(v).bitangent = reinterpret_cast<float3&>(srcMesh->mBitangents[v]);
-	//		}
-
-	//		addTextureFiles(dstMesh, textureDesc, std::filesystem::path(modelFileName).parent_path() / "skins");
-
-	//		for (uint32_t f = 0, index = 0; f < srcMesh->mNumFaces; ++f)
-	//		{
-	//			const auto& face = srcMesh->mFaces[f];
-	//			assert(face.mNumIndices == 3);
-
-	//			dstMesh.indices.at(index++) = face.mIndices[0];
-	//			dstMesh.indices.at(index++) = face.mIndices[1];
-	//			dstMesh.indices.at(index++) = face.mIndices[2];
-	//		}
-	//	}
-
-	//	std::function<void(aiNode*)> loadInstances;
-	//	loadInstances = [&loadInstances, &model](aiNode* node)
-	//	{
-	//		const float4x4 nodeToParent = reinterpret_cast<const float4x4&>(node->mTransformation);
-	//		const float4x4 parentToNode = nodeToParent.Invert();
-	//		// The same node may contain multiple meshes in its space, referring to them by indices
-	//		for (uint32_t i = 0; i < node->mNumMeshes; ++i)
-	//		{
-	//			uint32_t meshIndex = node->mMeshes[i];
-	//			model.meshes[meshIndex].meshToModelMat.push_back(nodeToParent);
-	//			model.meshes[meshIndex].invMeshToModelMat.push_back(parentToNode);
-	//		}
-
-	//		for (uint32_t i = 0; i < node->mNumChildren; ++i)
-	//			loadInstances(node->mChildren[i]);
-	//	};
-
-	//	loadInstances(assimpScene->mRootNode);
-
-	//	model.initVertexBuffer(MODEL_DATA_INPUT_SLOT_0, std::vector<UINT>{sizeof(Mesh::Vertex)}, std::vector<UINT>{0}, D3D11_USAGE_IMMUTABLE);
-	//	model.initIndexBuffer(D3D11_USAGE_DEFAULT);
-
-	//	models[modelFileName] = std::make_shared<Model>(std::move(model));
-	//}
 
 
 	void engine::DX::ModelManager::createCube(const std::string& modelFileName)

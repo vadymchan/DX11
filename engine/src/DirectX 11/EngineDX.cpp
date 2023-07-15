@@ -25,8 +25,8 @@ namespace engine::DX
 			camera.initBuffer(PER_VIEW_SHADER, INV_PER_VIEW_SHADER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE); // may be moved in application
 		}
 
-		std::vector<TransformSystem::ID> Engine::addInstancedModel(
-			uint32_t opaqueInstanceID, 
+		std::vector<TransformSystem::ID> Engine::addOpaqueInstances(
+			MeshSystem::OpaqueInstancesID opaqueInstancesID,
 			const std::shared_ptr<Model>& model,
 			const std::vector<size_t>& meshIndices,
 			const std::shared_ptr<OpaqueInstances::Material>& material,
@@ -37,25 +37,82 @@ namespace engine::DX
 
 			std::vector<TransformSystem::ID> instanceMatrixIDs;
 			instanceMatrixIDs.reserve(instanceMatrices.size());
-			std::vector<Instance> instances;
+			std::vector<OpaqueInstances::Instance> instances;
 			instances.resize(instanceMatrices.size());
 			for (size_t i = 0; i < instanceMatrices.size(); i++)
 			{
-				Instance instance;
+				OpaqueInstances::Instance instance;
 				instance.color = color.empty() ? float4{ -1,-1,-1,-1 } : color[i];
 				instance.worldMatrixID = instanceMatrixIDs.emplace_back(
 					TransformSystem::getInstance().addTransform(instanceMatrices[i]));
 				instances[i] = instance;
 			}
 
-			MeshSystem::getInstance().addInstances(opaqueInstanceID, model, meshIndices, material, instances);
+			MeshSystem::getInstance().addOpaqueInstances(opaqueInstancesID, model, meshIndices, material, instances);
 			return instanceMatrixIDs;
+		}
+
+		void Engine::addOpaqueInstances(MeshSystem::OpaqueInstancesID opaqueInstancesID, const std::shared_ptr<Model>& model, const std::vector<size_t>& meshIndices, const std::shared_ptr<OpaqueInstances::Material>& material, const std::vector<TransformSystem::ID>& transformInstanceIDs)
+		{
+			
+			std::vector<OpaqueInstances::Instance> instances;
+			instances.resize(transformInstanceIDs.size());
+			for (size_t i = 0; i < transformInstanceIDs.size(); i++)
+			{
+				OpaqueInstances::Instance instance;
+				instance.color =float4{ -1,-1,-1,-1 } ;
+				instance.worldMatrixID = transformInstanceIDs[i];
+				instances[i] = instance;
+			}
+
+			MeshSystem::getInstance().addOpaqueInstances(opaqueInstancesID, model, meshIndices, material, instances);
+		}
+
+		std::vector<DissolutionInstances::ModelInstanceID> Engine::addDissolutionInstances(
+			MeshSystem::DissolutionInstancesID opaqueInstanceID,
+			const std::shared_ptr<Model>& model,
+			const std::vector<size_t>& meshIndices,
+			const std::shared_ptr<DissolutionInstances::Material>& material,
+			const std::vector<float4x4>& instanceMatrices,
+			const std::vector<float>& time)
+		{
+			assert((time.empty() || instanceMatrices.size() == time.size()) && "Size of instances and time should be the same");
+
+			std::vector<DissolutionInstances::ModelInstanceID> modelInstanceIDs;
+			modelInstanceIDs.reserve(instanceMatrices.size());
+			std::vector<std::shared_ptr<DissolutionInstances::Instance>> instances;
+			instances.resize(instanceMatrices.size());
+			for (size_t i = 0; i < instanceMatrices.size(); i++)
+			{
+				auto instance = std::make_shared<DissolutionInstances::Instance>(DissolutionInstances::Instance{ TransformSystem::getInstance().addTransform(instanceMatrices[i]), time.empty() ? 0.0f : time[i] });
+				modelInstanceIDs.emplace_back(DissolutionInstances::ModelInstanceID{ model, meshIndices, material, instance->worldMatrixID });
+				instances[i] = instance;
+			}
+
+			MeshSystem::getInstance().addDissolutionInstances(opaqueInstanceID, model, meshIndices, material, instances);
+			return modelInstanceIDs;
+		}
+
+		std::shared_ptr<DissolutionInstances::Instance> Engine::getDissolutionInstance(MeshSystem::DissolutionInstancesID dissolutionInstancesID, const DissolutionInstances::ModelInstanceID& dissolutionModelInstanceID)
+		{
+			return MeshSystem::getInstance().getDissolutionInstance(dissolutionInstancesID, dissolutionModelInstanceID);
+		}
+
+		void Engine::removeDissolutionInstance(MeshSystem::DissolutionInstancesID dissolutionInstancesID, const DissolutionInstances::ModelInstanceID& dissolutionModelInstanceID)
+		{
+			MeshSystem::getInstance().removeDissolutionInstance(dissolutionInstancesID, dissolutionModelInstanceID);
+			//TransformSystem::getInstance().removeTransform(dissolutionModelInstanceID.transformID); - we should also remove the transform matrices but for optimization (removing from dissolution transform and then add opaue transform instances) we don't do th
 		}
 
 
 		uint32_t Engine::createOpaqueInstance(const std::vector<std::array<std::wstring, 5>>& shaderFileNames)
 		{
 			return MeshSystem::getInstance().createOpaqueInstance(shaderFileNames);
+		}
+
+		uint32_t Engine::createDissolutionInstance(const std::vector<std::array<std::wstring, (int)DissolutionInstances::ShaderType::SHADER_TYPE_NUM>>& shaderFileNames)
+		{
+			return MeshSystem::getInstance().createDissolutionInstance(shaderFileNames);
 		}
 
 		void Engine::castRay()
@@ -73,18 +130,22 @@ namespace engine::DX
 		bool Engine::castRay(float xPos, float yPos)
 		{
 #ifdef INTERSECTION_TEST
-			std::shared_ptr<OpaqueInstances::Material> diamond = std::make_shared<OpaqueInstances::Material>(OpaqueInstances::Material{L"diamond"});
+			std::shared_ptr<OpaqueInstances::Material> diamond = std::make_shared<OpaqueInstances::Material>(OpaqueInstances::Material{ L"diamond" });
 #endif // color of intersection point
 
 			ray ray = rayToWorld(xPos, yPos);
-			Instance instance{UINT32_MAX};
-			Intersection intersection;
+			TransformSystem::ID instance{ UINT32_MAX };
+			RayIntersection intersection;
 			intersection.reset();
-			if (MeshSystem::getInstance().findIntersection(ray, instance, intersection))
-			{
 
+			bool modelIntersection{ MeshSystem::getInstance().findIntersection(ray, instance, intersection) };
+			bool particlesIntersection {particleSystem.findIntersection(ray, instance, intersection)};
+
+			bool returnResult{modelIntersection || particlesIntersection};
+			if (returnResult)
+			{
 				MeshMover::getInstance().setIntersectionPoint(float4(intersection.point.x, intersection.point.y, intersection.point.z, 1));
-				std::cout << intersection.point.x << " " << intersection.point.y << " " << intersection.point.z << std::endl;
+				MeshMover::getInstance().setMeshInstance(instance);
 
 #ifdef INTERSECTION_TEST
 				addInstancedModel(0, ModelManager::getInstance().getModel(ModelManager::debugCubeTag), { 0 }, diamond,
@@ -94,18 +155,9 @@ namespace engine::DX
 					{ 0,0,0.01,intersection.point.z},
 					{ 0,0,0,1 }, } } });
 #endif // add intersection point
-
-
-
-			}
-			bool returnResult{};
-
-			if (instance.worldMatrixID != UINT32_MAX)
-			{
-				MeshMover::getInstance().setInstance(instance);
-				returnResult = true;
 			}
 
+			
 			return returnResult;
 		}
 
@@ -125,7 +177,7 @@ namespace engine::DX
 			float worldOffsetY = nearPlaneOffsetY * intersectionVec.z / camera.getZNear();
 			float3 moveOffset = worldOffsetX * camera.right() + worldOffsetY * camera.up();
 
-			DirectX::SimpleMath::Matrix worldMatrix = TransformSystem::getInstance().getTransform(MeshMover::getInstance().getMat().worldMatrixID);
+			DirectX::SimpleMath::Matrix worldMatrix = TransformSystem::getInstance().getTransform(MeshMover::getInstance().getMat());
 			DirectX::SimpleMath::Vector3 worldSpaceScale;
 
 			MeshMover::getInstance().moveMesh(moveOffset);
