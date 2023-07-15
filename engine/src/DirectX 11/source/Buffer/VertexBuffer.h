@@ -32,8 +32,6 @@ namespace engine::DX
 			g_devcon->IASetVertexBuffers(startSlot, 1, Buffer<T>::buffer.GetAddressOf(), strides.data(), offsets.data());
 		}
 
-
-
 		/// <param name="inputSlot">slot in which buffer binds in Input Assembler</param>
 		void setBuffer(UINT inputSlot)
 		{
@@ -43,6 +41,32 @@ namespace engine::DX
 			}
 			g_devcon->IASetVertexBuffers(inputSlot, 1, Buffer<T>::buffer.GetAddressOf(), strides.data(), offsets.data());
 		}
+
+		void updateBuffer(const std::vector<T>& newBufferData)
+		{
+
+			if (newBufferData.empty())
+			{
+				return;
+			}
+
+			const UINT oldBufferSize = Buffer<T>::bufferData.size();
+			if (oldBufferSize != newBufferData.size()) // new elements added
+			{
+				Buffer<T>::setBufferData(newBufferData);
+				Buffer<T>::createBuffer();
+			}
+			else
+			{
+				D3D11_MAPPED_SUBRESOURCE mappedResource;
+				ZeroMemory(&mappedResource, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+				g_devcon->Map(Buffer<T>::buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+				memcpy(mappedResource.pData, newBufferData.data(), sizeof(T) * newBufferData.size());
+				g_devcon->Unmap(Buffer<T>::buffer.Get(), 0);
+			}
+		}
+
 
 		static void setBuffers(UINT startSlot, UINT bufferNum, ID3D11Buffer* const* vertexBuffers, const UINT* strides, const UINT* offsets)
 		{

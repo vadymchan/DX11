@@ -1,5 +1,7 @@
 #pragma once
 
+#include <array>
+
 #include "../../general/include/win.h"
 #include "../source/D3D/D3D.h"
 #include "../source/Buffer/DepthStencilBuffer.h"
@@ -14,10 +16,29 @@ namespace engine::DX
 	class Window
 	{
 	public:
+
+		enum class BlendState
+		{
+			ENABLED,
+			DISABLED,
+			CUSTOM,
+			COUNT
+		};
+
 		void initWindow(const LPCSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams);
 		void clearWindow();
 		void clearDepthStencil() { g_devcon->ClearDepthStencilView(depthStencilBuffer.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0.0f); }
-		void clearBlend() { float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f }; g_devcon->OMSetBlendState(nullptr, blendFactor, 0xFFFFFFFF); }
+	
+		void Window::setBlendState(BlendState state, const std::array<float, 4>& blendFactor = { 0.0f, 0.0f, 0.0f, 0.0f }, UINT sampleMask = 0xFFFFFFFF)
+		{
+			g_devcon->OMSetBlendState(blendStates[(int)state].Get(), blendFactor.data(), sampleMask);
+		}
+
+		void setBlendState(ComPtr<ID3D11BlendState> blendState)
+		{
+			blendStates[(int)BlendState::CUSTOM] = blendState;
+		}
+
 		void windowResize(float width, float height);
 		void setBackgroundColor(float r, float g, float b, float a);
 		void setVSync(bool value) { vsync = value; }
@@ -42,6 +63,8 @@ namespace engine::DX
 		bool isDepthtStencilUpdated() const { return depthStencilUpdated; }
 		void flush();
 	private:
+		
+
 		void initSwapchain();
 		void initBackbuffer();
 		void initRenderTargetView();
@@ -53,7 +76,7 @@ namespace engine::DX
 		ComPtr<IDXGISwapChain1> swapchain;
 		ComPtr<ID3D11Texture2D> backBuffer;
 		ComPtr<ID3D11RenderTargetView> renderTargetView;
-		ComPtr<ID3D11BlendState> blendState;
+		std::array<ComPtr<ID3D11BlendState>, (int)BlendState::COUNT> blendStates;
 		DepthStencilBuffer depthStencilBuffer;
 		D3D11_VIEWPORT viewport;
 		D3D11_TEXTURE2D_DESC backBufferDesc;

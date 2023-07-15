@@ -2,7 +2,8 @@
 #include <random>
 
 using Instance = engine::DX::OpaqueInstances::Instance;
-using Material = engine::DX::OpaqueInstances::Material;
+using OpaqueMaterial = engine::DX::OpaqueInstances::Material;
+using DissolutionMaterial = engine::DX::DissolutionInstances::Material;
 using Attenuation = engine::DX::LightSystem::Attenuation;
 using PointLight = engine::DX::LightSystem::PointLight;
 using BaseLight = engine::DX::LightSystem::BaseLight;
@@ -15,6 +16,9 @@ using engine::DX::ModelManager;
 using engine::DX::ShaderManager;
 using engine::DX::TextureManager;
 using engine::DX::LightSystem;
+using engine::DX::ParticleSystem;
+using engine::DX::Emitter;
+using engine::DX::Texture2D;
 
 void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 {
@@ -58,10 +62,23 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	const std::wstring shadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DGeometryShader.hlsl" };
 	const std::wstring shadowCubeMapPixelShaderFileName{ L"Shadow/Omnidirectional/shadow3DPixelShader.hlsl" };
 
+	const std::wstring dissolutionShadowMapVertexShaderFileName{ L"Shadow/2D/shadow2DDissolutionVertexShader.hlsl" };
+	const std::wstring dissolutionShadowMapPixelShaderFileName{ L"Shadow/2D/shadow2DDissolutionPixelShader.hlsl" };
+
+	const std::wstring dissolutionShadowCubeMapVertexShaderFileName{ L"Shadow/Omnidirectional/shadow3DDissolutionVertexShader.hlsl" };
+	const std::wstring dissolutionShadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DDissolutionGeometryShader.hlsl" };
+	const std::wstring dissolutionShadowCubeMapPixelShaderFileName{ L"Shadow/Omnidirectional/shadow3DDissolutionPixelShader.hlsl" };
+
 	const std::wstring skyboxNightStreet{ engine::DX::textureDirectory / L"skybox/hdr" / "night_street.dds" };
 	const std::wstring skyboxGrassField{ engine::DX::textureDirectory / L"skybox/hdr" / "grass_field.dds" };
 
 	const std::wstring flashLight{ engine::DX::textureDirectory / L"flashLight/dragonslake.dds" };
+
+	const std::wstring iblDissolutionVertexShaderFileName{ L"IBL/IBL_Dissolution_VertexShader.hlsl" };
+	const std::wstring iblDissolutionPixelShaderFileName{ L"IBL/IBL_Dissolution_PixelShader.hlsl" };
+
+	const std::wstring smokeParticleVertexShaderFileName{ L"Particles/Particles_VertexShader.hlsl" };
+	const std::wstring smokeParticlePixelShaderFileName{ L"Particles/Particles_PixelShader.hlsl" };
 
 	cameraSpeed = 2.f;
 	cameraRotationSpeed = 0.005f;
@@ -70,6 +87,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	wireframeMode = false;
 	deltaExposure = 1.f;
 	flashLightAttached = true;
+	dissolutionEffectDuration = 5000;
 
 
 	// compute integral of cosine over the hemisphere using Fibonacci hemisphere point distribution
@@ -79,39 +97,17 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 
 
-	D3D11_TEXTURE2D_DESC textureDesc1{};
-	textureDesc1.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc1.Usage = D3D11_USAGE_DEFAULT;
-	textureDesc1.CPUAccessFlags = 0;
-	textureDesc1.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-	//engine::DX::TextureManager::getInstance().addTexture2D(skyboxGrassField, 0, textureDesc1);
-	//auto texture = engine::DX::TextureManager::getInstance().getTexture2D(skyboxGrassField);
-
-	//engine::DX::ReflectionCapture reflectionCapture;
-
-	D3D11_TEXTURE2D_DESC textureDesc2{};
-	textureDesc2.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc2.Usage = D3D11_USAGE_IMMUTABLE;
-	textureDesc2.CPUAccessFlags = 0;
-
-
-	D3D11_TEXTURE2D_DESC textureDesc3{};
-	textureDesc3.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	textureDesc3.Usage = D3D11_USAGE_IMMUTABLE;
-	textureDesc3.CPUAccessFlags = 0;
-	textureDesc3.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
-
-
 
 	engine.initWindow("DirectX 11 Model", windowStartX, windowStartY, windowWidth, windowHeight, appHandle, windowShowParams);
 
 	D3D11_RASTERIZER_DESC rasterizerDesc{};
 	rasterizerDesc.FillMode = wireframeMode ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
 	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	//rasterizerDesc.CullMode = D3D11_CULL_NONE;
 	rasterizerDesc.DepthClipEnable = true;
 	rasterizerDesc.DepthBias = -1; // adjust as needed (for depth bias)
 	rasterizerDesc.SlopeScaledDepthBias = -1; // adjust as needed (for depth bias)
-	rasterizerDesc.DepthBiasClamp = 0.0f; 
+	rasterizerDesc.DepthBiasClamp = 0.0f;
 
 	engine::DX::Skybox skybox;
 	skybox.initSkybox(skyboxGrassField);
@@ -206,36 +202,92 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 	};
 
+	std::vector<D3D11_INPUT_ELEMENT_DESC> dissolutionInputElementDesc
+	{
+		//model vertex buffer
+		{"POSITION",  0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(1), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(2), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(3), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BITANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(4), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//instance vertex buffer
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,  D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 80, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 96, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INVINSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 112, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"TIME",     0, DXGI_FORMAT_R32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 128,  D3D11_INPUT_PER_INSTANCE_DATA, 1},
+
+
+	};
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> dissolutionShadowInputElementDesc
+	{
+		//model vertex buffer
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(0), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",  0, DXGI_FORMAT_R32G32_FLOAT,    engine::DX::MODEL_DATA_INPUT_SLOT_0, Mesh::Vertex::alignedByteOffsets.at(2), D3D11_INPUT_PER_VERTEX_DATA, 0},
+		//instance vertex buffer
+		{"INSTANCE", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 0,  D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"INSTANCE", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+		{"TIME",     0, DXGI_FORMAT_R32_FLOAT, engine::DX::INSTANCE_INPUT_SLOT_1, 128,  D3D11_INPUT_PER_INSTANCE_DATA, 1},
+	};
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> particleInputElementDesc
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, engine::DX::PARTICLE_DATA_INPUT_SLOT_2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, engine::DX::PARTICLE_DATA_INPUT_SLOT_2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,    engine::DX::PARTICLE_DATA_INPUT_SLOT_2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"LIFETIME", 0, DXGI_FORMAT_R32_FLOAT,		 engine::DX::PARTICLE_DATA_INPUT_SLOT_2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"ROTATION", 0, DXGI_FORMAT_R32_FLOAT,       engine::DX::PARTICLE_DATA_INPUT_SLOT_2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"SIZE",     0, DXGI_FORMAT_R32G32_FLOAT,    engine::DX::PARTICLE_DATA_INPUT_SLOT_2, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	auto& shaderManager = ShaderManager::getInstance();
+
 	//vertex shader
-	ShaderManager::getInstance().addVertexShader(normalVertexShaderFileName, inputElementDescNormal);
-	ShaderManager::getInstance().addVertexShader(colorVertexShaderFileName, inputElementDesc);
-	ShaderManager::getInstance().addVertexShader(blinnPhongVertexShaderFileName, inputElementDescNormal);
-	ShaderManager::getInstance().addVertexShader(pbrVertexShaderFileName, pbrInputElementDesc);
-	ShaderManager::getInstance().addVertexShader(iblVertexShaderFileName, pbrInputElementDesc);
-	ShaderManager::getInstance().addVertexShader(hologramVertexShaderFileName, hologramInputElementDesc);
-	ShaderManager::getInstance().addVertexShader(pointLightVertexShaderFileName, pointLightInputElementDesc);
-	ShaderManager::getInstance().addVertexShader(shadowMapVertexShaderFileName, shadowInputElementDesc);
-	ShaderManager::getInstance().addVertexShader(shadowCubeMapVertexShaderFileName, shadowInputElementDesc);
-	ShaderManager::getInstance().addVertexShader(iblShadowVertexShaderFileName, pbrInputElementDesc);
+	shaderManager.addVertexShader(normalVertexShaderFileName, inputElementDescNormal);
+	shaderManager.addVertexShader(colorVertexShaderFileName, inputElementDesc);
+	shaderManager.addVertexShader(blinnPhongVertexShaderFileName, inputElementDescNormal);
+	shaderManager.addVertexShader(pbrVertexShaderFileName, pbrInputElementDesc);
+	shaderManager.addVertexShader(iblVertexShaderFileName, pbrInputElementDesc);
+	shaderManager.addVertexShader(hologramVertexShaderFileName, hologramInputElementDesc);
+	shaderManager.addVertexShader(pointLightVertexShaderFileName, pointLightInputElementDesc);
+	shaderManager.addVertexShader(shadowMapVertexShaderFileName, shadowInputElementDesc);
+	shaderManager.addVertexShader(shadowCubeMapVertexShaderFileName, shadowInputElementDesc);
+	shaderManager.addVertexShader(iblShadowVertexShaderFileName, pbrInputElementDesc);
+	shaderManager.addVertexShader(iblDissolutionVertexShaderFileName, dissolutionInputElementDesc);
+	shaderManager.addVertexShader(dissolutionShadowMapVertexShaderFileName, dissolutionShadowInputElementDesc);
+	shaderManager.addVertexShader(dissolutionShadowCubeMapVertexShaderFileName, dissolutionShadowInputElementDesc);
+	shaderManager.addVertexShader(smokeParticleVertexShaderFileName, particleInputElementDesc);
 	//hull shader
-	ShaderManager::getInstance().addHullShader(hologramHullShaderFileName);
+	shaderManager.addHullShader(hologramHullShaderFileName);
 	//domain shader
-	ShaderManager::getInstance().addDomainShader(hologramDomainShaderFileName);
+	shaderManager.addDomainShader(hologramDomainShaderFileName);
 	//geometry shader
-	ShaderManager::getInstance().addGeometryShader(normalGeometryShaderFileName);
-	ShaderManager::getInstance().addGeometryShader(hologramGeometryShaderFileName);
-	ShaderManager::getInstance().addGeometryShader(shadowCubeMapGeometryShaderFileName);
+	shaderManager.addGeometryShader(normalGeometryShaderFileName);
+	shaderManager.addGeometryShader(hologramGeometryShaderFileName);
+	shaderManager.addGeometryShader(shadowCubeMapGeometryShaderFileName);
+	shaderManager.addGeometryShader(dissolutionShadowCubeMapGeometryShaderFileName);
 	//pixel shader
-	ShaderManager::getInstance().addPixelShader(normalPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(colorPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(hologramPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(blinnPhongPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(pointLightPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(pbrPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(iblPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(shadowMapPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(shadowCubeMapPixelShaderFileName);
-	ShaderManager::getInstance().addPixelShader(iblShadowPixelShaderFileName);
+	shaderManager.addPixelShader(normalPixelShaderFileName);
+	shaderManager.addPixelShader(colorPixelShaderFileName);
+	shaderManager.addPixelShader(hologramPixelShaderFileName);
+	shaderManager.addPixelShader(blinnPhongPixelShaderFileName);
+	shaderManager.addPixelShader(pointLightPixelShaderFileName);
+	shaderManager.addPixelShader(pbrPixelShaderFileName);
+	shaderManager.addPixelShader(iblPixelShaderFileName);
+	shaderManager.addPixelShader(shadowMapPixelShaderFileName);
+	shaderManager.addPixelShader(shadowCubeMapPixelShaderFileName);
+	shaderManager.addPixelShader(dissolutionShadowMapPixelShaderFileName);
+	shaderManager.addPixelShader(dissolutionShadowCubeMapPixelShaderFileName);
+	shaderManager.addPixelShader(iblShadowPixelShaderFileName);
+	shaderManager.addPixelShader(iblDissolutionPixelShaderFileName);
+	shaderManager.addPixelShader(smokeParticlePixelShaderFileName);
 
 	//textures & sampler 
 	//---------------------------------------------------------------------------------------------------
@@ -249,13 +301,14 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	// opaque instance
 	//---------------------------------------------------------------------------------------------------
 
-	uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {blinnPhongVertexShaderFileName, L"", L"", L"",blinnPhongPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t pbrOpaqueInstance = engine.createOpaqueInstance({ {pbrVertexShaderFileName, L"", L"", L"",pbrPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t iblOpaqueInstance = engine.createOpaqueInstance({ {iblShadowVertexShaderFileName, L"", L"", L"",iblShadowPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t sphereOpaqueInstance = engine.createOpaqueInstance({ {pointLightVertexShaderFileName, L"", L"", L"",pointLightPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
-	uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", /*hologramHullShaderFileName, hologramDomainShaderFileName,*/ hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/ });
+	//uint32_t normalOpaqueInstance = engine.createOpaqueInstance({ {blinnPhongVertexShaderFileName, L"", L"", L"",blinnPhongPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	//uint32_t pbrOpaqueInstance = engine.createOpaqueInstance({ {pbrVertexShaderFileName, L"", L"", L"",pbrPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	iblOpaqueInstance = engine.createOpaqueInstance({ {iblShadowVertexShaderFileName, L"", L"", L"",iblShadowPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	sphereOpaqueInstance = engine.createOpaqueInstance({ {pointLightVertexShaderFileName, L"", L"", L"",pointLightPixelShaderFileName}, {normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName,normalPixelShaderFileName} });
+	//uint32_t hologramOpaqueInstance = engine.createOpaqueInstance({ {hologramVertexShaderFileName, L"", L"", /*hologramHullShaderFileName, hologramDomainShaderFileName,*/ hologramGeometryShaderFileName, hologramPixelShaderFileName}, /*{normalVertexShaderFileName, L"", L"", normalGeometryShaderFileName, normalPixelShaderFileName},*/ });
 
-
+	// dissolution instance
+	dissolutionInstancesID = engine.createDissolutionInstance({ { iblDissolutionVertexShaderFileName, L"", L"", L"",iblDissolutionPixelShaderFileName } });
 
 	//light
 	//---------------------------------------------------------------------------------------------------
@@ -269,8 +322,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	};
 
 	std::vector<engine::DX::float3> pointLightPositions = {
-		{-5, 5, -4},
 		{5, 5, -2},
+		{-5, 5, -4},
 
 	};
 
@@ -278,18 +331,18 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	std::vector<PointLight> pointLights
 	{
-		
+
 		PointLight
 		{
 			{ {1, 1, 1}, 1000 },
-			{}, // will be updated after the insertion to the opaqueInstance 
+			{}, // will be updated after the insertion to the instanceGroup 
 			0.5,
 			{ 1.0, 0.045, 0.0075 }
 		},
 		PointLight
 		{
 			{ {1, 1, 1}, 1000 },
-			{}, // will be updated after the insertion to the opaqueInstance 
+			{}, // will be updated after the insertion to the instanceGroup 
 			0.5,
 			{ 1.0, 0.045, 0.0075 }
 		},
@@ -309,7 +362,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		SpotLight
 		{
 			{ {1, 0, 0}, 1000 },
-			{}, // will be updated after the insertion to the opaqueInstance 
+			{}, // will be updated after the insertion to the instanceGroup 
 			DirectX::XMConvertToRadians(30.0f),
 			DirectX::XMConvertToRadians(30.0f),
 			0.5,
@@ -319,7 +372,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		SpotLight
 		{
 			{ {1, 0, 0}, 1000 },
-			{}, // will be updated after the insertion to the opaqueInstance 
+			{}, // will be updated after the insertion to the instanceGroup 
 			DirectX::XMConvertToRadians(30.0f),
 			DirectX::XMConvertToRadians(30.0f),
 			0.5,
@@ -353,6 +406,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::shared_ptr<Model> knight = ModelManager::getInstance().getModel("Knight/Knight.fbx");
 	std::shared_ptr<Model> knightHorse = ModelManager::getInstance().getModel("KnightHorse/KnightHorse.fbx");
 
+	spawnModel = knight;
 
 
 
@@ -452,10 +506,6 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		cubeMeshIndices.emplace_back(i);
 	}
 
-
-
-
-
 	std::vector<engine::DX::float4x4> mirrorSphere
 	{
 		engine::DX::float4x4
@@ -483,26 +533,38 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		  {0,0,0, 1},}},
 	};
 
+	opaqueMaterials[DIAMOND] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"diamond" });
+	opaqueMaterials[OBSIDIAN] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"obsidian" });
+	opaqueMaterials[GRASS] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"Grass" });
+	opaqueMaterials[PEACOCK] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"Peacock" });
+	opaqueMaterials[VINES] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"Vines" });
+	opaqueMaterials[NORMAL_DEBUG] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"normalDebug" });
+	opaqueMaterials[MIRROR] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"Mirror" });
+	opaqueMaterials[SHINY_CONDUCTOR] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"Shiny Conductor" });
+	opaqueMaterials[ROUGH_DIELECTRIC] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"Rough Dielectric" });
+	opaqueMaterials[NO_MATERIAL] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"" });
+	opaqueMaterials[DEFAULT_SKIN] = std::make_shared<OpaqueMaterial>(OpaqueMaterial{ L"default" });
 
 
-	std::shared_ptr<Material> diamond = std::make_shared<Material>(Material{ L"diamond" });
-	std::shared_ptr<Material> obsidian = std::make_shared<Material>(Material{ L"obsidian" });
-	std::shared_ptr<Material> grass = std::make_shared<Material>(Material{ L"Grass" });
-	std::shared_ptr<Material> peacock = std::make_shared<Material>(Material{ L"Peacock" });
-	std::shared_ptr<Material> vines = std::make_shared<Material>(Material{ L"Vines" });
-	std::shared_ptr<Material> normalDebug = std::make_shared<Material>(Material{ L"normalDebug" });
-	std::shared_ptr<Material> mirror = std::make_shared<Material>(Material{ L"Mirror" });
-	std::shared_ptr<Material> shinyConductor = std::make_shared<Material>(Material{ L"Shiny Conductor" });
-	std::shared_ptr<Material> roughDielectric = std::make_shared<Material>(Material{ L"Rough Dielectric" });
-	std::shared_ptr<Material> noMaterial = std::make_shared<Material>(Material{ L"" });
-	std::shared_ptr<Material> defaultSkin = std::make_shared<Material>(Material{ L"default" });
+	dissolutionMaterials[DIAMOND] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"diamond" });
+	dissolutionMaterials[OBSIDIAN] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"obsidian" });
+	dissolutionMaterials[GRASS] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"Grass" });
+	dissolutionMaterials[PEACOCK] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"Peacock" });
+	dissolutionMaterials[VINES] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"Vines" });
+	dissolutionMaterials[NORMAL_DEBUG] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"normalDebug" });
+	dissolutionMaterials[MIRROR] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"Mirror" });
+	dissolutionMaterials[SHINY_CONDUCTOR] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"Shiny Conductor" });
+	dissolutionMaterials[ROUGH_DIELECTRIC] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"Rough Dielectric" });
+	dissolutionMaterials[NO_MATERIAL] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"" });
+	dissolutionMaterials[DEFAULT_SKIN] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"default" });
+	dissolutionMaterials[DISSOLUTION_SKIN] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"dissolution" });
 
-	engine.addInstancedModel(iblOpaqueInstance, sphere, cubeMeshIndices, mirror, mirrorSphere);
-	engine.addInstancedModel(iblOpaqueInstance, sphere, cubeMeshIndices, shinyConductor, shinyConductorSphere);
-	engine.addInstancedModel(iblOpaqueInstance, sphere, cubeMeshIndices, roughDielectric, roughDielectricSphere);
+	engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[MIRROR], mirrorSphere);
+	engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[SHINY_CONDUCTOR], shinyConductorSphere);
+	engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[ROUGH_DIELECTRIC], roughDielectricSphere);
 
 
-	engine.addInstancedModel(iblOpaqueInstance, floor, { 0 }, grass, floorInstances);
+	engine.addOpaqueInstances(iblOpaqueInstance, floor, { 0 }, opaqueMaterials[GRASS], floorInstances);
 
 	std::vector<size_t> samuraiMeshIndices;
 	for (size_t i = 0; i < samurai.get()->getMeshesCount(); ++i)
@@ -510,7 +572,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		samuraiMeshIndices.emplace_back(i);
 	}
 
-	engine.addInstancedModel(iblOpaqueInstance, samurai, samuraiMeshIndices, defaultSkin, samuraiInstance);
+	//engine.addOpaqueInstances(iblOpaqueInstance, samurai, samuraiMeshIndices, opaqueMaterials[DEFAULT_SKIN], samuraiInstance);
 
 
 	std::vector<size_t> sphereMeshIndeices;
@@ -520,10 +582,10 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	}
 
 	std::vector<engine::DX::TransformSystem::ID> pointLightInstanceIDs =
-		engine.addInstancedModel(sphereOpaqueInstance, sphere, sphereMeshIndeices, noMaterial, spherePointLightInstances, pointLightEmissions);
-
+		engine.addOpaqueInstances(sphereOpaqueInstance, sphere, sphereMeshIndeices, opaqueMaterials[NO_MATERIAL], spherePointLightInstances, pointLightEmissions);
+	
 	std::vector<engine::DX::TransformSystem::ID> spotLightInstanceIDs =
-		engine.addInstancedModel(sphereOpaqueInstance, sphere, sphereMeshIndeices, noMaterial, sphereSpotLightInstances, spotLightEmissions);
+		engine.addOpaqueInstances(sphereOpaqueInstance, sphere, sphereMeshIndeices, opaqueMaterials[NO_MATERIAL], sphereSpotLightInstances, spotLightEmissions);
 
 
 	std::vector<size_t> eastTowerMeshIndices;
@@ -531,7 +593,7 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		eastTowerMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(iblOpaqueInstance, eastTower, eastTowerMeshIndices, defaultSkin, eastTowerInstances);
+	//engine.addOpaqueInstances(iblOpaqueInstance, eastTower, eastTowerMeshIndices, opaqueMaterials[DEFAULT_SKIN], eastTowerInstances);
 
 
 	std::vector<size_t> knightMeshIndices;
@@ -539,18 +601,18 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		knightMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(iblOpaqueInstance, knight, knightMeshIndices, defaultSkin, knightInstances);
+	//engine.addOpaqueInstances(iblOpaqueInstance, knight, knightMeshIndices, opaqueMaterials[DEFAULT_SKIN], knightInstances);
 
 	std::vector<size_t> knightHorseMeshIndices;
 	for (size_t i = 0; i < knightHorse.get()->getMeshesCount(); ++i)
-	{	
+	{
 		knightHorseMeshIndices.emplace_back(i);
 	}
-	engine.addInstancedModel(iblOpaqueInstance, knightHorse, knightHorseMeshIndices, defaultSkin, knightHorseInstances);
+	//engine.addOpaqueInstances(iblOpaqueInstance, knightHorse, knightHorseMeshIndices, opaqueMaterials[DEFAULT_SKIN], knightHorseInstances);
 
 	//camera
 	//-----------------------------------------------------------------------------------------------------------------
-	const engine::DX::float3 position{ 0, 0, -5 };
+	const engine::DX::float3 position{ 0, 0, 0 };
 	engine::DX::float3 direction{ 0, 0, 1 };
 	direction.Normalize();
 	const engine::DX::float3 worldUp{ 0, 1, 0 };
@@ -592,18 +654,97 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		spotLights[i].transformID = spotLightInstanceIDs[i];
 		lightSystem.addSpotLight(spotLights[i]);
 	}
-
-
+	
+	
 	for (int i = 0; i < pointLightInstanceIDs.size(); ++i)
 	{
-
+	
 		pointLights[i].transformID = pointLightInstanceIDs[i];
 		lightSystem.addPointLight(pointLights[i]);
-
+	
 	};
 
 
-	return;
+	// particles
+	//---------------------------------------------------------------------------------------------------
+
+	ParticleSystem& particleSystem = engine.getParticleSystem();
+
+	particleSystem.setShaders(
+		shaderManager.getVertexShader(smokeParticleVertexShaderFileName),
+		shaderManager.getPixelShader(smokeParticlePixelShaderFileName));
+
+	auto& textureManager = TextureManager::getInstance();
+
+	const auto smokeTextureDirectory = engine::DX::textureDirectory / L"smoke";
+	const std::wstring smokeRLUfile = smokeTextureDirectory / L"smoke_RLU.dds";
+	const std::wstring smokeDBFfile = smokeTextureDirectory / L"smoke_DBF.dds";
+	const std::wstring smokeMVEAfile = smokeTextureDirectory / L"smoke_MVEA.dds";
+
+	textureManager.addTexture2D(smokeRLUfile, engine::DX::SMOKE_RLU_TEXTURE_BIND_SLOT, textureDesc);
+	textureManager.addTexture2D(smokeDBFfile, engine::DX::SMOKE_DBF_TEXTURE_BIND_SLOT, textureDesc);
+	textureManager.addTexture2D(smokeMVEAfile, engine::DX::SMOKE_MVEA_TEXTURE_BIND_SLOT, textureDesc);
+
+	std::array<std::weak_ptr<Texture2D>, (size_t)ParticleSystem::TextureType::Count> particleTextures;
+	particleTextures[(int)ParticleSystem::TextureType::RLU] = textureManager.getTexture2D(smokeRLUfile);
+	particleTextures[(int)ParticleSystem::TextureType::DBF] = textureManager.getTexture2D(smokeDBFfile);
+	particleTextures[(int)ParticleSystem::TextureType::MVEA] = textureManager.getTexture2D(smokeMVEAfile);
+
+	particleSystem.setParticleTextures(particleTextures);
+
+	std::vector<Emitter> smokeEmitters = {
+	{
+		{0.0f, 0.0f, 5.0f}, // position
+		100, // spawn rate
+		0, // spawn radius
+		{0,1,1, 1.0}, // particle color
+		1.0f, // bounding sphere radius
+		1.0f, // initial particle size
+		0.0f, // initial rotation angle
+		5.0f, // vertical speed
+		5, // random speed range
+		0.4f, // random speed scale
+		100, // rotation speed range
+		0.002f // rotation speed scale
+	},
+	{
+		{4.0f, 0.0f, 5.0f}, // position
+		200, // spawn rate
+		0, // spawn radius
+		{1,1,0, 1.0}, // particle color
+		1.0f, // bounding sphere radius
+		0.1f, // initial particle size
+		0.0f, // initial rotation angle
+		2.0f, // vertical speed
+		5, // random speed range
+		0.4f, // random speed scale
+		100, // rotation speed range
+		0.2f // rotation speed scale
+	},
+	{
+		{-4.0f, 0.0f, 5.0f}, // position
+		200, // spawn rate
+		0, // spawn radius
+		{1,1,1, 1.0}, // particle color
+		1.0f, // bounding sphere radius
+		0.1f, // initial particle size
+		0.0f, // initial rotation angle
+		2.0f, // vertical speed
+		5, // random speed range
+		0.4f, // random speed scale
+		100, // rotation speed range
+		0.2f // rotation speed scale
+	}
+	};
+
+	std::for_each(smokeEmitters.begin(), smokeEmitters.end(), [&particleSystem](const Emitter& smokeEmitter) {
+		particleSystem.addSmokeEmitter(smokeEmitter);
+	});
+
+
+	//
+
+	//---------------------------------------------------------------------------------------------------
 }
 
 void ApplicationDX::Run()
@@ -614,8 +755,11 @@ void ApplicationDX::Run()
 		fpsTimer.resetClock();
 		if (!ProcessInputs())
 		{
+
 			return;
 		}
+		const float currentTime = fpsTimer.getCurrentTick();
+		Update(deltaTime, currentTime);
 		engine.render();
 	}
 }
@@ -625,9 +769,6 @@ bool ApplicationDX::ProcessInputs()
 {
 	float xPos{ lastMousePos.x };
 	float yPos{ lastMousePos.y };
-
-
-
 
 	while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 	{
@@ -722,6 +863,58 @@ bool ApplicationDX::ProcessInputs()
 					std::cerr << "Flashlight is not attached!\n";
 				}
 				break;
+			case 0x4D: // M
+			{
+
+				std::vector<size_t> meshIndices(spawnModel.get()->getMeshesCount());
+				for (size_t i = 0; i < meshIndices.size(); i++)
+				{
+					meshIndices[i] = i;
+				}
+
+				const engine::DX::float3 cameraPos = engine.getCamera().position();
+				const engine::DX::float3 objPos = cameraPos + engine.getCamera().forward() * engine::DX::DissolutionInstances::SPAWN_DISTANCE;
+
+				constexpr engine::DX::float3 up = { 0, 1, 0 };
+				engine::DX::float3 direction = objPos - cameraPos;
+				direction.Normalize();
+				engine::DX::float3 right = up.Cross(direction);
+				right.Normalize();
+				const engine::DX::float3 newUp = direction.Cross(right);
+
+				engine::DX::float4x4 instance = engine::DX::float4x4{
+					{right.x, newUp.x, direction.x, objPos.x},
+					{right.y, newUp.y, direction.y, objPos.y},
+					{right.z, newUp.z, direction.z, objPos.z},
+					{0,       0,       0,          1}
+				};
+
+
+				//rotation and scale matrices for more flexible model creation
+				//constexpr float theta = DirectX::XMConvertToRadians(90.0f); // -90 degrees converted to radians for clockwise rotation
+				//auto rotationMatrix = DirectX::SimpleMath::Matrix::CreateRotationX(theta);
+				//engine::DX::float4x4 scale = engine::DX::float4x4{
+				//	{10, 0, 0, 0},
+				//	{0, 10, 0, 0},
+				//	{0, 0, 10, 0},
+				//	{0,       0,       0,          1}
+				//};
+				//instance = instance * scale * rotationMatrix;
+
+				auto modelInstanceIDs = engine.addDissolutionInstances(dissolutionInstancesID, spawnModel, meshIndices, dissolutionMaterials[DISSOLUTION_SKIN], { instance });
+
+				const float currentTime = fpsTimer.getCurrentTick();
+				for (size_t i = 0; i < modelInstanceIDs.size(); i++)
+				{
+					DissolutionAnimation animation;
+					animation.initTime = currentTime;
+					animation.maxTime = dissolutionEffectDuration;
+					animation.modelInstanceID = modelInstanceIDs[i];
+
+					dissolutionAnimations.push_back(animation);
+				}
+			}
+			break;
 			case VK_SPACE:
 				cameraMovingDirections[MoveDirection::UP] = true;
 				break;
@@ -771,18 +964,18 @@ bool ApplicationDX::ProcessInputs()
 					increasedSpeed = false;
 				}
 				break;
-				}
+			}
 			break;
 		case WM_QUIT:
 			return false;
 			break;
-			}
+		}
 
 
 
 		TranslateMessage(&msg);
 		DispatchMessageW(&msg);
-		}
+	}
 
 
 	AddCameraDirection();
@@ -794,7 +987,7 @@ bool ApplicationDX::ProcessInputs()
 		//cast the grid of rays
 		engine.castRay();
 #endif // INTERSECTION_TEST
-	}
+}
 	if (objectCaptured)
 	{
 		MoveObject(xPos, yPos);
@@ -808,7 +1001,75 @@ bool ApplicationDX::ProcessInputs()
 	lastMousePos = { xPos, yPos };
 	cameraDirection = engine::DX::float3();
 	return true;
+}
+
+void ApplicationDX::Update(float deltaTime, float currentTime)
+{
+	UpdateParticleAnimation(deltaTime);
+	UpdateDissolutionAnimation(currentTime);
+}
+
+void ApplicationDX::UpdateParticleAnimation(float deltaTime)
+{
+	auto& particleSystem = engine.getParticleSystem();
+	particleSystem.update(deltaTime);
+}
+
+void ApplicationDX::UpdateDissolutionAnimation(float currentTime)
+{
+	std::vector<engine::DX::TransformSystem::ID> newOpaqueTransformIDs;
+	removeFinishedDissolutionAnimations(currentTime, newOpaqueTransformIDs);
+
+	std::vector<size_t> meshIndices(spawnModel.get()->getMeshesCount());
+	for (size_t i = 0; i < meshIndices.size(); i++)
+	{
+		meshIndices[i] = i;
 	}
+	if (!newOpaqueTransformIDs.empty())
+	{
+		engine.addOpaqueInstances(iblOpaqueInstance, spawnModel, meshIndices, opaqueMaterials[DEFAULT_SKIN], newOpaqueTransformIDs);
+		std::cout << "added opaques\n";
+	}
+
+}
+
+void ApplicationDX::removeFinishedDissolutionAnimations(const float currentTime, std::vector<engine::DX::TransformSystem::ID>& newOpaqueTransformIDs)
+{
+	dissolutionAnimations.erase(std::remove_if(dissolutionAnimations.begin(), dissolutionAnimations.end(),
+		[&](const auto& dissolutionAnimation) {
+			if (isAnimationFinished(currentTime, dissolutionAnimation)) {
+				handleFinishedAnimation(dissolutionAnimation, newOpaqueTransformIDs);
+				return true;
+			}
+			else {
+				updateAnimationTime(currentTime, dissolutionAnimation);
+				return false;
+			}
+		}),
+		dissolutionAnimations.end());
+}
+
+bool ApplicationDX::isAnimationFinished(const float currentTime, const DissolutionAnimation& dissolutionAnimation)
+{
+	return dissolutionAnimation.maxTime - (currentTime - dissolutionAnimation.initTime) <= 0;
+}
+
+void ApplicationDX::handleFinishedAnimation(const DissolutionAnimation& dissolutionAnimation, std::vector<engine::DX::TransformSystem::ID>& newOpaqueTransformIDs)
+{
+	engine.removeDissolutionInstance(dissolutionInstancesID, dissolutionAnimation.modelInstanceID);
+	std::cout << "deleted dissolution\n";
+	newOpaqueTransformIDs.push_back(dissolutionAnimation.modelInstanceID.transformID);
+}
+
+void ApplicationDX::updateAnimationTime(const float currentTime, const DissolutionAnimation& dissolutionAnimation)
+{
+	float normalizedTime = (currentTime - dissolutionAnimation.initTime) / dissolutionAnimation.maxTime;
+	//std::cout << normalizedTime << std::endl;
+
+	auto instance = engine.getDissolutionInstance(dissolutionInstancesID, dissolutionAnimation.modelInstanceID);
+	instance->time = normalizedTime;
+}
+
 
 void ApplicationDX::AddCameraDirection()
 {

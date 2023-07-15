@@ -15,7 +15,7 @@ namespace engine::DX
 		};
 
 		g_devcon->OMSetRenderTargets(0, nullptr, directionalLightViews[lightIndex].Get());
-		g_devcon->ClearDepthStencilView(directionalLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+		//g_devcon->ClearDepthStencilView(directionalLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 
 
 		bind2DShadowMap(constantBuffer);
@@ -31,7 +31,7 @@ namespace engine::DX
 		};
 
 		g_devcon->OMSetRenderTargets(0, nullptr, spotLightViews[lightIndex].Get());
-		g_devcon->ClearDepthStencilView(spotLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+		//g_devcon->ClearDepthStencilView(spotLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 
 
 		bind2DShadowMap(constantBuffer);
@@ -47,7 +47,7 @@ namespace engine::DX
 		};
 
 		g_devcon->OMSetRenderTargets(0, nullptr, flashLightViews[lightIndex].Get());
-		g_devcon->ClearDepthStencilView(flashLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+		//g_devcon->ClearDepthStencilView(flashLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 
 
 		bind2DShadowMap(constantBuffer);
@@ -62,7 +62,7 @@ namespace engine::DX
 		};
 
 		g_devcon->OMSetRenderTargets(0, nullptr, pointLightViews[lightIndex].Get());
-		g_devcon->ClearDepthStencilView(pointLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+		//g_devcon->ClearDepthStencilView(pointLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 
 
 		perView3dConstantBuffer.updateData({ constantBuffer });
@@ -293,7 +293,7 @@ namespace engine::DX
 		srvDesc.Texture2DArray.ArraySize = descDepth.ArraySize;
 
 
-		shadowMaps.createTextureFromMemory(bindSlot, descDepth, nullptr, srvDesc);
+		shadowMaps.createTextureFromMemory(descDepth, nullptr, srvDesc, bindSlot);
 
 		// Create a depth stencil view for each texture in the array
 		for (UINT i = 0; i < arraySize; ++i)
@@ -350,7 +350,7 @@ namespace engine::DX
 		srvDesc.TextureCubeArray.NumCubes = arraySize;
 
 
-		shadowMaps.createTextureFromMemory(bindSlot, descDepth, nullptr, srvDesc);
+		shadowMaps.createTextureFromMemory(descDepth, nullptr, srvDesc, bindSlot);
 
 		// Create a depth stencil view for each cube map
 		for (UINT i = 0; i < arraySize; ++i)

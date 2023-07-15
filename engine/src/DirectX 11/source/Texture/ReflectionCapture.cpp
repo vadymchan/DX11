@@ -149,7 +149,8 @@ namespace engine::DX
 		auto texDesc = CreateTextureDesc(32, 32, 1, NUM_CUBE_FACES, DXGI_FORMAT_R16G16B16A16_FLOAT, D3D11_RESOURCE_MISC_TEXTURECUBE);
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CreateShaderResourceViewDesc(texDesc.Format, D3D11_SRV_DIMENSION_TEXTURECUBE, texDesc.MipLevels, 0);
 		Texture2D irradianceTexture;
-		irradianceTexture.createTextureFromMemory(0, texDesc, nullptr, srvDesc);
+		constexpr UINT BIND_SLOT = 0;
+		irradianceTexture.createTextureFromMemory( texDesc, nullptr, srvDesc, BIND_SLOT);
 
 		auto captureViews = GenerateCaptureViews();
 		auto captureProjection = GenerateCaptureProjection();
@@ -241,7 +242,8 @@ namespace engine::DX
 		auto texDesc = CreateTextureDesc(128, 128, NUM_MIP_MAPS, NUM_CUBE_FACES, DXGI_FORMAT_R16G16B16A16_FLOAT, D3D11_RESOURCE_MISC_TEXTURECUBE);
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CreateShaderResourceViewDesc(texDesc.Format, D3D11_SRV_DIMENSION_TEXTURECUBE, texDesc.MipLevels, 0);
 		Texture2D prefilteredTexture;
-		prefilteredTexture.createTextureFromMemory(0, texDesc, nullptr, srvDesc);
+		constexpr UINT BIND_SLOT = 0;
+		prefilteredTexture.createTextureFromMemory(texDesc, nullptr, srvDesc, BIND_SLOT);
 
 		auto captureViews = GenerateCaptureViews();
 		auto captureProjection = GenerateCaptureProjection();
@@ -338,7 +340,7 @@ namespace engine::DX
 		auto texDesc = CreateTextureDesc(512, 512, 1, 1, DXGI_FORMAT_R16G16_FLOAT);
 		auto srvDesc = CreateShaderResourceViewDesc(texDesc.Format, D3D11_SRV_DIMENSION_TEXTURE2D, 1, 0);
 		Texture2D BRDFLookupTexture;
-		BRDFLookupTexture.createTextureFromMemory(BRDFTextureBindSlot, texDesc, nullptr, srvDesc);
+		BRDFLookupTexture.createTextureFromMemory(texDesc, nullptr, srvDesc, BRDFTextureBindSlot);
 
 		auto rtvDesc = CreateRenderTargetViewDesc(texDesc.Format, D3D11_RTV_DIMENSION_TEXTURE2D, 0, 0, 0);
 		ComPtr<ID3D11RenderTargetView> BRDFLookupTextureRTV;

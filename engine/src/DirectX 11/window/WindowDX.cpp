@@ -13,16 +13,17 @@ namespace engine::DX
 	{
 		static Window* window;
 		static DirectX::XMFLOAT2 windowSize;
+		static bool wasMaximized = false;
 
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 			return true;
-		
+
 		switch (message)
 		{
 		case WM_CREATE:
 			CREATESTRUCT* windowCreate;
 			windowCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-			window = reinterpret_cast<Window*>(windowCreate->lpCreateParams);
+			window = static_cast<Window*>(windowCreate->lpCreateParams);
 			break;
 		case WM_CHAR:
 			switch (wParam)
@@ -42,10 +43,13 @@ namespace engine::DX
 			break;
 		case WM_SIZE:
 			windowSize = { (float)GET_X_LPARAM(lParam), (float)GET_Y_LPARAM(lParam) };
-			if (wParam == SIZE_MAXIMIZED || wParam == SIZE_RESTORED)
+
+			if ((wParam == SIZE_MAXIMIZED || (wParam == SIZE_RESTORED && wasMaximized)))
 			{
-				PostMessage(hWnd, WM_EXITSIZEMOVE, wParam, lParam);
+				window->windowResize(windowSize.x, windowSize.y);
+				wasMaximized = (wParam == SIZE_MAXIMIZED);
 			}
+
 			break;
 		case WM_EXITSIZEMOVE:
 			if (windowSize.x <= 1 || windowSize.y <= 1)
@@ -114,14 +118,16 @@ namespace engine::DX
 		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
 		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
 		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		HRESULT hr = g_device->CreateBlendState(&blendDesc, blendState.ReleaseAndGetAddressOf());
+		HRESULT hr = g_device->CreateBlendState(&blendDesc, blendStates[(int)BlendState::ENABLED].ReleaseAndGetAddressOf());
 		
-		float blendFactor[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		UINT sampleMask = 0xFFFFFFFF;
-		g_devcon->OMSetBlendState(blendState.Get(), blendFactor, sampleMask);
+		blendDesc.RenderTarget[0].BlendEnable = FALSE;
+		hr = g_device->CreateBlendState(&blendDesc, blendStates[(int)BlendState::DISABLED].ReleaseAndGetAddressOf());
+
+
+		setBlendState(BlendState::DISABLED);
 	}
 
 	void Window::initDepthStencil()
@@ -161,12 +167,11 @@ namespace engine::DX
 
 
 		engine::DX::Texture2D depthStencilTexture;
-		depthStencilTexture.createTextureFromMemory(0, depthStencilTextureDesc, nullptr, shaderResourceViewDesc);
+		constexpr UINT BIND_SLOT = 0;
+		depthStencilTexture.createTextureFromMemory(depthStencilTextureDesc, nullptr, shaderResourceViewDesc, BIND_SLOT);
 
 		depthStencilBuffer.initDepthStencil(depthStencilTexture, depthStencilDesc, depthStencilViewDesc);
 
-		
-		//depthStencilUpdated = true;
 	}
 
 	void Window::initSwapchain()
@@ -204,7 +209,7 @@ namespace engine::DX
 
 		}
 
-		HRESULT result = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.GetAddressOf());
+		HRESULT result = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.ReleaseAndGetAddressOf());
 		if (FAILED(result))
 		{
 			std::cerr << "Failed to initialize back buffer\n";
@@ -231,8 +236,6 @@ namespace engine::DX
 		viewport.Height = height;
 		viewport.MinDepth = 0.0;
 		viewport.MaxDepth = 1.0;
-
-		g_devcon->RSSetViewports(1, &viewport);
 	}
 
 	void Window::clearWindow()

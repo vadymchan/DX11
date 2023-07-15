@@ -334,12 +334,12 @@ namespace engine::DX
 
 	}
 
-	bool MeshTriangleOctree::intersect(ray r, Intersection& nearest, Instance& instance) const
+	bool MeshTriangleOctree::intersect(ray r, RayIntersection& nearest, TransformSystem::ID& instance) const
 	{
 
 		oldray = r;
 
-		float4x4 meshToWorld{ (TransformSystem::getInstance().getTransform(instance.worldMatrixID) * m_mesh->getMeshToModelMat(0)).Transpose() };
+		float4x4 meshToWorld{ (TransformSystem::getInstance().getTransform(instance) * m_mesh->getMeshToModelMat(0)).Transpose() };
 		auto rayToMesh{ meshToWorld.Invert() };
 
 		r.position = float3::Transform(r.position, rayToMesh);
@@ -354,7 +354,7 @@ namespace engine::DX
 		return intersectInternal(r, nearest);
 	}
 
-	bool MeshTriangleOctree::intersectInternal(const ray& ray, Intersection& nearest) const
+	bool MeshTriangleOctree::intersectInternal(const ray& ray, RayIntersection& nearest) const
 	{
 		{
 			float boxt = nearest.t;

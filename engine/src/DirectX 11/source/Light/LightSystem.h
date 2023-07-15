@@ -160,6 +160,26 @@ namespace engine::DX
 
 		}
 
+		void clearShadwoMaps()
+		{
+			for (size_t i = 0; i < directionalLights.size(); ++i)
+			{
+				g_devcon->ClearDepthStencilView(directionalLightViews[i].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+			}
+			for (size_t i = 0; i < spotLightViews.size(); ++i)
+			{
+				g_devcon->ClearDepthStencilView(spotLightViews[i].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+			}
+			for (size_t i = 0; i < flashLightViews.size(); ++i)
+			{
+				g_devcon->ClearDepthStencilView(flashLightViews[i].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+			}
+			for (size_t i = 0; i < pointLightViews.size(); ++i)
+			{
+				g_devcon->ClearDepthStencilView(pointLightViews[i].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
+			}
+		}
+
 
 		PointLightID addPointLight(const PointLight& pointLight);
 

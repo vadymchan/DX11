@@ -11,18 +11,20 @@ namespace engine::DX
 
 		updateOffScreenRenderer(window);
 
+
 		updateRasterizer();
-		g_devcon->RSSetState(rasterizerState.Get());
+		
 
 		window.SetDepthStencilState();
 
 		//clearing renderTargetView
-		static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		constexpr float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		window.clearWindow();
-		g_devcon->ClearRenderTargetView(m_offscreenRTV.Get(), offScreenBgColor);
 		//window.setViews();
+		g_devcon->ClearRenderTargetView(m_offscreenRTV.Get(), offScreenBgColor);
+		
 
-		window.clearBlend();
+		window.setBlendState(Window::BlendState::ENABLED);
 
 		//set global constant buffers
 		LightSystem& lightSystem = LightSystem::getInstance();
@@ -44,41 +46,78 @@ namespace engine::DX
 
 		g_devcon->RSSetViewports(1, &viewport);
 
+		g_devcon->RSSetState(transparentRasterizerState.Get());
+
 		//directional light
 		const int directionalLights = lightSystem.getCurrentDirectionalLights();
 		for (size_t i = 0; i < directionalLights; ++i)
 		{
 
 			lightSystem.setPerViewDirectionalLight(i);
-			meshSystem.renderDepth2D();
+			meshSystem.renderDepth2D<MeshSystem::DepthRender::DISSOLUTION_INSTANCE>();
 		}
-		//
-		////spot light
+		
+		//spot light
 		const int spotLights = lightSystem.getCurrentSpotLights();
 		for (size_t i = 0; i < spotLights; ++i)
 		{
 			lightSystem.setPerViewSpotLight(i);
-			meshSystem.renderDepth2D();
+			meshSystem.renderDepth2D<MeshSystem::DepthRender::DISSOLUTION_INSTANCE>();
 		}
-		//
-		////flash light
-		//const int flashLights = lightSystem.getCurrentFlashLights();
-		//for (size_t i = 0; i < flashLights; ++i)
-		//{
-		//	lightSystem.setPerViewFlashLight(i);
-		//	meshSystem.renderDepth2D();
-		//}
+
+		//flash light
+		const int flashLights = lightSystem.getCurrentFlashLights();
+		for (size_t i = 0; i < flashLights; ++i)
+		{
+			lightSystem.setPerViewFlashLight(i);
+			meshSystem.renderDepth2D<MeshSystem::DepthRender::DISSOLUTION_INSTANCE>();
+		}
 
 		//point light
 		const int pointLights = lightSystem.getCurrentPointLights();
 		for (size_t i = 0; i < pointLights; ++i)
 		{
 			lightSystem.setPerViewPointLight(i);
-			meshSystem.renderDepthCubemap();
+			meshSystem.renderDepthCubemap<MeshSystem::DepthRender::DISSOLUTION_INSTANCE>();
 		}
 
-		window.SetViewport();
 		
+		g_devcon->RSSetState(rasterizerState.Get());
+		
+
+		//directional light
+		for (size_t i = 0; i < directionalLights; ++i)
+		{
+
+			lightSystem.setPerViewDirectionalLight(i);
+			meshSystem.renderDepth2D<MeshSystem::DepthRender::OPAQUE_INSTANCE>();
+		}
+		
+		//spot light
+		for (size_t i = 0; i < spotLights; ++i)
+		{
+			lightSystem.setPerViewSpotLight(i);
+			meshSystem.renderDepth2D<MeshSystem::DepthRender::OPAQUE_INSTANCE>();
+		}
+
+		//flash light
+		for (size_t i = 0; i < flashLights; ++i)
+		{
+			lightSystem.setPerViewFlashLight(i);
+			meshSystem.renderDepth2D<MeshSystem::DepthRender::OPAQUE_INSTANCE>();
+		}
+
+		//point light
+		for (size_t i = 0; i < pointLights; ++i)
+		{
+			lightSystem.setPerViewPointLight(i);
+			meshSystem.renderDepthCubemap<MeshSystem::DepthRender::OPAQUE_INSTANCE>();
+		}
+
+
+		window.SetViewport();
+		//window.setViews();
+
 		setOffScreenRenderer();
 
 
@@ -87,24 +126,38 @@ namespace engine::DX
 		meshSystem.setShowNormal(visualizeNormal);
 		meshSystem.setPerFrameIBLbuffer(m_perFrameIBLbuffer);
 		
-		meshSystem.render(camera);
 
+		meshSystem.render<MeshSystem::RenderInstance::OPAQUE_INSTANCE>(camera);
+
+		g_devcon->RSSetState(transparentRasterizerState.Get());
+
+		meshSystem.render<MeshSystem::RenderInstance::DISSOLUTION_INSTANCE>(camera);
+		
+
+		meshSystem.renderUIPerFrameIBL();
 		if (m_skybox.get() != nullptr)
 		{
 			m_skybox.get()->render(camera);
 		}
 
+		particleSystem->render(camera);
+
+
 		window.setViews();
 		m_HDRtexture.bind();
 		m_postProcess.resolve(m_HDRtexture.getShaderResourceView(), window.GetRenderTargetView());
 
+
+		
 		ImGuiManager::getInstance().Render();
+
 
 		window.flush();
 
 		//clear depth
 		g_devcon->ClearDepthStencilView(m_offscreenDSB.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 		window.clearDepthStencil();
+		lightSystem.clearShadwoMaps();
 
 	}
 
@@ -150,6 +203,12 @@ namespace engine::DX
 	{
 		m_skybox = skybox;
 		MeshSystem::getInstance().setSkybox(skybox);
+	}
+
+	void Renderer::setParticleSystem(ParticleSystem* particleSystem)
+	{
+		this->particleSystem = particleSystem;
+
 	}
 
 	void Renderer::updateRasterizer()
@@ -214,7 +273,7 @@ namespace engine::DX
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
 
-		m_HDRtexture.createTextureFromMemory(PostProcess::POST_PROCESS_SAMPLE_STATE_SLOT, backBufferTex, nullptr, srvDesc);
+		m_HDRtexture.createTextureFromMemory(backBufferTex, nullptr, srvDesc, PostProcess::POST_PROCESS_SAMPLE_STATE_SLOT);
 	}
 
 	void Renderer::setSampleState()
@@ -271,6 +330,12 @@ namespace engine::DX
 	void Renderer::createRasterizerState()
 	{
 		HRESULT result = g_device->CreateRasterizerState(&rasterizationDesc, rasterizerState.ReleaseAndGetAddressOf());
+
+		D3D11_RASTERIZER_DESC transparentRasterizerDesc = rasterizationDesc;
+		transparentRasterizerDesc.CullMode = D3D11_CULL_NONE;
+
+		g_device->CreateRasterizerState(&transparentRasterizerDesc, transparentRasterizerState.ReleaseAndGetAddressOf());
+
 		if (FAILED(result))
 		{
 			PrintError(result, L"Raserizer creation failed: ");

@@ -2,12 +2,12 @@
 #include "../D3D/D3D.h"
 #include "DDSTextureLoader11.h"
 
+#include <thread>
+
 namespace engine
 {
 	namespace DX
 	{
-
-
 		class Texture2D
 		{
 		public:
@@ -20,45 +20,62 @@ namespace engine
 				m_textureDescription = other.m_textureDescription;
 				m_textureSubresourceData = other.m_textureSubresourceData;
 				m_shaderResourceViewDesc = other.m_shaderResourceViewDesc;
-				textureUpdated = other.textureUpdated;
+				textureUpdated = false;
 
-				m_texture = other.m_texture;
-				m_shaderResourceView = other.m_shaderResourceView;
+				createTextureAndShaderResourceView();
+			}
+
+			Texture2D& operator=(const Texture2D& other)
+			{
+				if (this != &other)
+				{
+					m_bindSlot = other.m_bindSlot;
+					m_textureDescription = other.m_textureDescription;
+					m_textureSubresourceData = other.m_textureSubresourceData;
+					m_shaderResourceViewDesc = other.m_shaderResourceViewDesc;
+					textureUpdated = false;
+
+
+					// Release the old resources before assigning new ones
+					m_texture.Reset();
+					m_shaderResourceView.Reset();
+
+					createTextureAndShaderResourceView();
+				}
+
+				return *this;
 			}
 
 
-			/// <param name="bindSlot">in which register in shader to bind</param>
-			void createTextureFromMemory(UINT bindSlot, const D3D11_TEXTURE2D_DESC& textureDesc, const void* textureData,
-				const D3D11_SHADER_RESOURCE_VIEW_DESC& shaderResourceViewDesc, UINT memoryPitch = 0, UINT memorySlicePitch = 0)
+			void setBindSlot(UINT bindSlot)
+			{
+				m_bindSlot = bindSlot;
+			}
+
+			UINT getBindSlot() const
+			{
+				return m_bindSlot;
+			}
+
+			/// <param name="bindSlot">in case of using default initialisation value, don't forget to set bindSlot later</param
+			void createTextureFromMemory(const D3D11_TEXTURE2D_DESC& textureDesc, const void* textureData,
+				const D3D11_SHADER_RESOURCE_VIEW_DESC& shaderResourceViewDesc, UINT bindSlot = 0, UINT memoryPitch = 0, UINT memorySlicePitch = 0)
 			{
 				m_bindSlot = bindSlot;
 				initTextureDescription(textureDesc);
 				initShaderResourceView(shaderResourceViewDesc);
 				initTextureSubresourceData(textureData, memoryPitch, memorySlicePitch);
-				if (!textureUpdated)
-				{
-					HRESULT result;
-					result = g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.GetAddressOf());
-					if (FAILED(result))
-					{
-						PrintError(result, L"Texture2D was not created");
-					}
-					result = g_device->CreateShaderResourceView(m_texture.Get(), &m_shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
-					if (FAILED(result))
-					{
-						PrintError(result, L"Shader Resource View was not created");
-					}
-					textureUpdated = true;
-				}
+				textureUpdated = false;
+				createTextureAndShaderResourceView();
 			}
 
 
-			/// <param name="bindSlot">in which register in shader to bind</param>
+			/// <param name="bindSlot">in case of using default initialisation value, don't forget to set bindSlot later</param>
 			/// <param name="textureDesc">only need to set Usage, BindFlags, CPUAccessFlags and MiscFlags </param>
 			void createTextureFromFile(
-				UINT bindSlot,
 				const std::wstring& fileName,
 				const D3D11_TEXTURE2D_DESC& textureDesc,
+				UINT bindSlot = 0,
 				size_t maxSize = 0,
 				DirectX::DDS_LOADER_FLAGS loadFlags = DirectX::DDS_LOADER_DEFAULT,
 				DirectX::DDS_ALPHA_MODE* alphaMode = nullptr)
@@ -88,6 +105,38 @@ namespace engine
 				m_texture->GetDesc(&m_textureDescription);
 			}
 
+			/// <param name="bindSlot">in case of using default initialisation value, don't forget to set bindSlot later</param>
+			void copyTextureFromSource(ID3D11Texture2D* sourceTexture, UINT bindSlot = 0)
+			{
+				assert(sourceTexture != nullptr && "sourceTexture cannot be null");
+
+				D3D11_TEXTURE2D_DESC sourceTextureDesc;
+
+				sourceTexture->GetDesc(&sourceTextureDesc);
+
+				if (!m_texture || memcmp(&sourceTextureDesc, &m_textureDescription, sizeof(D3D11_TEXTURE2D_DESC)) != 0) {
+
+					m_shaderResourceViewDesc = {};
+					m_shaderResourceViewDesc.Format = sourceTextureDesc.Format == DXGI_FORMAT_R24G8_TYPELESS
+						? DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+						: sourceTextureDesc.Format;
+					m_shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+					m_shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+					m_shaderResourceViewDesc.Texture2D.MipLevels = -1;
+
+					m_textureDescription = sourceTextureDesc;
+					textureUpdated = false;
+
+					m_texture.Reset();
+					m_shaderResourceView.Reset();
+
+					createTextureAndShaderResourceView();
+				}
+
+				g_devcon->CopyResource(m_texture.Get(), sourceTexture);
+			}
+
+
 			const D3D11_TEXTURE2D_DESC& getTextureDesc() const
 			{
 				return m_textureDescription;
@@ -108,18 +157,48 @@ namespace engine
 				return m_texture.Get();
 			}
 
+			ID3D11Texture2D** getTexture2DViewPtr()
+			{
+				return m_texture.GetAddressOf();
+			}
+
+			ID3D11Texture2D* const* getTexture2DViewPtr() const
+			{
+				return m_texture.GetAddressOf();
+			}
+
+			void Reset()
+			{
+				m_texture.Reset();
+				m_shaderResourceView.Reset();
+			}
+
+			// bind to slot that is currently set
 			void bind()
 			{
 				// may be add VSSetShaderResources if needed in future
-
 				g_devcon->PSSetShaderResources(m_bindSlot, 1, m_shaderResourceView.GetAddressOf());
+			}
+
+			// bind to specific slot
+			void bind(UINT bindSlot)
+			{
+				// may be add VSSetShaderResources if needed in future
+				g_devcon->PSSetShaderResources(bindSlot, 1, m_shaderResourceView.GetAddressOf());
 			}
 
 			void resize(UINT width, UINT height)
 			{
+				m_texture.Reset();
+				m_shaderResourceView.Reset();
+
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+
+
 				m_textureDescription.Width = width;
 				m_textureDescription.Height = height;
-				g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.GetAddressOf());
+				textureUpdated = false;
+				createTextureAndShaderResourceView();
 			}
 
 
@@ -146,7 +225,27 @@ namespace engine
 
 			}
 
-
+			void createTextureAndShaderResourceView()
+			{
+				if (!textureUpdated)
+				{
+					HRESULT result;
+					result = g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.GetAddressOf());
+					if (FAILED(result))
+					{
+						PrintError(result, L"Texture2D was not created");
+					}
+					if (m_textureDescription.BindFlags & D3D11_BIND_SHADER_RESOURCE)
+					{
+						result = g_device->CreateShaderResourceView(m_texture.Get(), &m_shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
+						if (FAILED(result))
+						{
+							PrintError(result, L"Shader Resource View was not created");
+						}
+					}
+					textureUpdated = true;
+				}
+			}
 
 
 			UINT m_bindSlot{};
