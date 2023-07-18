@@ -449,6 +449,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx11.cpp" />
     <ClInclude Include="src\DirectX 11\source\Math\Colision\RayIntersection.h" />
     <ClInclude Include="src\DirectX 11\source\Math\Colision\RaySphereIntersection.h" />
+    <ClInclude Include="src\DirectX 11\source\Render\DeferredShading.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="C:\Users\vadym\source\repos\vchan\ZERO_CHECK.vcxproj">

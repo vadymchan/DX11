@@ -377,6 +377,7 @@
     </ClInclude>
     <ClInclude Include="src\DirectX 11\source\Math\Colision\RayIntersection.h" />
     <ClInclude Include="src\DirectX 11\source\Math\Colision\RaySphereIntersection.h" />
+    <ClInclude Include="src\DirectX 11\source\Render\DeferredShading.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\vadym\source\repos\vchan\engine\CMakeLists.txt" />

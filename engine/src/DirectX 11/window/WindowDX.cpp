@@ -128,7 +128,7 @@ namespace engine::DX
 
 	void Window::initDepthStencil()
 	{
-		backBuffer.Get()->GetDesc(&backBufferDesc);
+		auto backBufferDesc = backBuffer.getTextureDesc();
 		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
 		depthStencilTextureDesc.Width = backBufferDesc.Width;
 		depthStencilTextureDesc.Height = backBufferDesc.Height;
@@ -168,8 +168,6 @@ namespace engine::DX
 
 		depthStencilBuffer.initDepthStencil(depthStencilTexture, depthStencilDesc, depthStencilViewDesc);
 
-		
-		//depthStencilUpdated = true;
 	}
 
 	void Window::initSwapchain()
@@ -198,23 +196,27 @@ namespace engine::DX
 
 	void Window::initBackbuffer()
 	{
-		if (backBuffer.Get() != nullptr)
+		if (backBuffer.getTexture2DView() != nullptr)
 		{
-			g_devcon->OMSetRenderTargets(0, 0, 0);
+			ID3D11RenderTargetView* nullViews[] = { nullptr };
+			g_devcon->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
 			renderTargetView.Reset();
 			backBuffer.Reset();
 			swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-
 		}
 
-		HRESULT result = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)backBuffer.GetAddressOf());
-		if (FAILED(result))
+		ComPtr<ID3D11Texture2D> retrieveBackBuffer;
+		HRESULT result = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(retrieveBackBuffer.GetAddressOf()));
+		if (SUCCEEDED(result))
+		{
+			backBuffer.copyTextureFromSource(retrieveBackBuffer.Get());
+		}
+		else
 		{
 			std::cerr << "Failed to initialize back buffer\n";
 		}
-
-
 	}
+
 
 	void Window::initRenderTargetView()
 	{
@@ -223,7 +225,7 @@ namespace engine::DX
 		bgColorRGBA[2] = 0.4f;
 		bgColorRGBA[3] = 1.0f;
 
-		g_device->CreateRenderTargetView(backBuffer.Get(), nullptr, renderTargetView.ReleaseAndGetAddressOf());
+		g_device->CreateRenderTargetView(backBuffer.getTexture2DView(), nullptr, renderTargetView.ReleaseAndGetAddressOf());
 	}
 
 	void Window::initViewport()
@@ -251,15 +253,36 @@ namespace engine::DX
 		bgColorRGBA[3] = a;
 	}
 
+
 	void Window::windowResize(float width, float height)
 	{
 		this->width = width;
 		this->height = height;
 
+
+		if (backBuffer.getTexture2DView() != nullptr)
+		{
+			g_devcon->OMSetRenderTargets(0, 0, 0);
+			renderTargetView.Reset();
+			backBuffer.Reset();
+			swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+		}
+
+		ComPtr<ID3D11Texture2D> retrieveBackBuffer;
+		HRESULT result = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(retrieveBackBuffer.GetAddressOf()));
+		if (SUCCEEDED(result))
+		{
+			backBuffer.copyTextureFromSource(retrieveBackBuffer.Get());
+		}
+		else
+		{
+			std::cerr << "Failed to initialize back buffer\n";
+		}
+
 		initBackbuffer();
 		initRenderTargetView();
 		initViewport();
-		backBuffer.Get()->GetDesc(&backBufferDesc);
+		auto backBufferDesc = backBuffer.getTextureDesc();
 		depthStencilBuffer.resizeDepthStencilTexture(backBufferDesc.Width, backBufferDesc.Height);
 
 	}

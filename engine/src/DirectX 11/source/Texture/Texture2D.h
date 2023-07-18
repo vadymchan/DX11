@@ -18,11 +18,32 @@ namespace engine
 				m_textureDescription = other.m_textureDescription;
 				m_textureSubresourceData = other.m_textureSubresourceData;
 				m_shaderResourceViewDesc = other.m_shaderResourceViewDesc;
-				textureUpdated = other.textureUpdated;
+				textureUpdated = false;
 
-				m_texture = other.m_texture;
-				m_shaderResourceView = other.m_shaderResourceView;
+				createTextureAndShaderResourceView();
 			}
+
+			Texture2D& operator=(const Texture2D& other)
+			{
+				if (this != &other)
+				{
+					m_bindSlot = other.m_bindSlot;
+					m_textureDescription = other.m_textureDescription;
+					m_textureSubresourceData = other.m_textureSubresourceData;
+					m_shaderResourceViewDesc = other.m_shaderResourceViewDesc;
+					textureUpdated = false;
+
+
+					// Release the old resources before assigning new ones
+					m_texture.Reset();
+					m_shaderResourceView.Reset();
+
+					createTextureAndShaderResourceView();
+				}
+
+				return *this;
+			}
+
 
 			void setBindSlot(UINT bindSlot)
 			{
@@ -42,6 +63,7 @@ namespace engine
 				initTextureDescription(textureDesc);
 				initShaderResourceView(shaderResourceViewDesc);
 				initTextureSubresourceData(textureData, memoryPitch, memorySlicePitch);
+				textureUpdated = false;
 				createTextureAndShaderResourceView();
 			}
 
@@ -93,26 +115,25 @@ namespace engine
 				if (!m_texture || memcmp(&sourceTextureDesc, &m_textureDescription, sizeof(D3D11_TEXTURE2D_DESC)) != 0) {
 
 					m_shaderResourceViewDesc = {};
-					m_shaderResourceViewDesc.Format = sourceTextureDesc.Format == DXGI_FORMAT_R24G8_TYPELESS 
-						? DXGI_FORMAT_R24_UNORM_X8_TYPELESS 
+					m_shaderResourceViewDesc.Format = sourceTextureDesc.Format == DXGI_FORMAT_R24G8_TYPELESS
+						? DXGI_FORMAT_R24_UNORM_X8_TYPELESS
 						: sourceTextureDesc.Format;
 					m_shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 					m_shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 					m_shaderResourceViewDesc.Texture2D.MipLevels = -1;
 
 					m_textureDescription = sourceTextureDesc;
+					textureUpdated = false;
+
+					m_texture.Reset();
+					m_shaderResourceView.Reset();
+
 					createTextureAndShaderResourceView();
 				}
-				
-				
+
 				g_devcon->CopyResource(m_texture.Get(), sourceTexture);
-				
-				/*HRESULT result = g_device->CreateShaderResourceView(m_texture.Get(), &srvDesc, &m_shaderResourceView);
-				if (FAILED(result))
-				{
-					PrintError(result, L"Failed to create shader resource view for copied texture");
-				}*/
 			}
+
 
 			const D3D11_TEXTURE2D_DESC& getTextureDesc() const
 			{
@@ -134,6 +155,22 @@ namespace engine
 				return m_texture.Get();
 			}
 
+			ID3D11Texture2D** getTexture2DViewPtr()
+			{
+				return m_texture.GetAddressOf();
+			}
+
+			ID3D11Texture2D* const* getTexture2DViewPtr() const
+			{
+				return m_texture.GetAddressOf();
+			}
+
+			void Reset()
+			{
+				m_texture.Reset();
+				m_shaderResourceView.Reset();
+			}
+
 			// bind to slot that is currently set
 			void bind()
 			{
@@ -152,6 +189,7 @@ namespace engine
 			{
 				m_textureDescription.Width = width;
 				m_textureDescription.Height = height;
+				textureUpdated = false;
 				createTextureAndShaderResourceView();
 			}
 
@@ -184,15 +222,18 @@ namespace engine
 				if (!textureUpdated)
 				{
 					HRESULT result;
-					result = g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.GetAddressOf());
+					result = g_device->CreateTexture2D(&m_textureDescription, m_textureSubresourceData.pSysMem ? &m_textureSubresourceData : nullptr, m_texture.ReleaseAndGetAddressOf());
 					if (FAILED(result))
 					{
 						PrintError(result, L"Texture2D was not created");
 					}
-					result = g_device->CreateShaderResourceView(m_texture.Get(), &m_shaderResourceViewDesc, m_shaderResourceView.GetAddressOf());
-					if (FAILED(result))
+					if (m_textureDescription.BindFlags & D3D11_BIND_SHADER_RESOURCE)
 					{
-						PrintError(result, L"Shader Resource View was not created");
+						result = g_device->CreateShaderResourceView(m_texture.Get(), &m_shaderResourceViewDesc, m_shaderResourceView.ReleaseAndGetAddressOf());
+						if (FAILED(result))
+						{
+							PrintError(result, L"Shader Resource View was not created");
+						}
 					}
 					textureUpdated = true;
 				}

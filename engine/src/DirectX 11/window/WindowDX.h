@@ -51,14 +51,14 @@ namespace engine::DX
 		void SetDepthStencilState() { depthStencilBuffer.setDepthStencilState(); }
 		float GetAspectRatio()
 		{
-			backBuffer.Get()->GetDesc(&backBufferDesc);
+			auto backBufferDesc = backBuffer.getTextureDesc();
 			return float(backBufferDesc.Width) / backBufferDesc.Height;
 		}
-		const D3D11_TEXTURE2D_DESC& GetBackBufferDesc() { backBuffer.Get()->GetDesc(&backBufferDesc);  return backBufferDesc; }
+		const D3D11_TEXTURE2D_DESC& GetBackBufferDesc() {  return backBuffer.getTextureDesc(); }
 		const HWND& GetHWND() const { return hwnd; }
 		const DepthStencilBuffer& GetDepthStencilBuffer() const { return depthStencilBuffer; }
-		UINT GetWidth() const { return backBufferDesc.Width; }
-		UINT GetHeight() const { return backBufferDesc.Height; }
+		UINT GetWidth() const { return backBuffer.getTextureDesc().Width;}
+		UINT GetHeight() const { return backBuffer.getTextureDesc().Height; }
 		ID3D11RenderTargetView* const GetRenderTargetView() const { return renderTargetView.Get(); }
 		bool isDepthtStencilUpdated() const { return depthStencilUpdated; }
 		void flush();
@@ -74,13 +74,13 @@ namespace engine::DX
 		HWND hwnd;
 		WNDCLASSEX wc;
 		ComPtr<IDXGISwapChain1> swapchain;
-		ComPtr<ID3D11Texture2D> backBuffer;
+		//ComPtr<ID3D11Texture2D> backBuffer;
+		//D3D11_TEXTURE2D_DESC backBufferDesc;
+		Texture2D backBuffer;
 		ComPtr<ID3D11RenderTargetView> renderTargetView;
 		std::array<ComPtr<ID3D11BlendState>, (int)BlendState::COUNT> blendStates;
-		//ComPtr<ID3D11BlendState> blendState;
 		DepthStencilBuffer depthStencilBuffer;
 		D3D11_VIEWPORT viewport;
-		D3D11_TEXTURE2D_DESC backBufferDesc;
 		FLOAT bgColorRGBA[4];
 		float width{};
 		float height{};
