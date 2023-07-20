@@ -8,7 +8,6 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 namespace engine::DX
 {
 
-
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		static Window* window;
@@ -16,7 +15,7 @@ namespace engine::DX
 
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 			return true;
-		
+
 		switch (message)
 		{
 		case WM_CREATE:
@@ -42,10 +41,6 @@ namespace engine::DX
 			break;
 		case WM_SIZE:
 			windowSize = { (float)GET_X_LPARAM(lParam), (float)GET_Y_LPARAM(lParam) };
-			if (wParam == SIZE_MAXIMIZED || wParam == SIZE_RESTORED)
-			{
-				PostMessage(hWnd, WM_EXITSIZEMOVE, wParam, lParam);
-			}
 			break;
 		case WM_EXITSIZEMOVE:
 			if (windowSize.x <= 1 || windowSize.y <= 1)
@@ -58,6 +53,7 @@ namespace engine::DX
 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
+
 
 	void Window::initWindow(const LPCSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
 	{
@@ -198,18 +194,17 @@ namespace engine::DX
 	{
 		if (backBuffer.getTexture2DView() != nullptr)
 		{
-			ID3D11RenderTargetView* nullViews[] = { nullptr };
-			g_devcon->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
+			g_devcon->OMSetRenderTargets(0, 0, 0);
 			renderTargetView.Reset();
 			backBuffer.Reset();
 			swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 		}
 
-		ComPtr<ID3D11Texture2D> retrieveBackBuffer;
-		HRESULT result = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(retrieveBackBuffer.GetAddressOf()));
+		ID3D11Texture2D* retrieveBackBuffer;
+		HRESULT result = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&retrieveBackBuffer));
 		if (SUCCEEDED(result))
 		{
-			backBuffer.copyTextureFromSource(retrieveBackBuffer.Get());
+			backBuffer.assignFromResource(retrieveBackBuffer);
 		}
 		else
 		{
@@ -258,26 +253,6 @@ namespace engine::DX
 	{
 		this->width = width;
 		this->height = height;
-
-
-		if (backBuffer.getTexture2DView() != nullptr)
-		{
-			g_devcon->OMSetRenderTargets(0, 0, 0);
-			renderTargetView.Reset();
-			backBuffer.Reset();
-			swapchain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
-		}
-
-		ComPtr<ID3D11Texture2D> retrieveBackBuffer;
-		HRESULT result = swapchain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(retrieveBackBuffer.GetAddressOf()));
-		if (SUCCEEDED(result))
-		{
-			backBuffer.copyTextureFromSource(retrieveBackBuffer.Get());
-		}
-		else
-		{
-			std::cerr << "Failed to initialize back buffer\n";
-		}
 
 		initBackbuffer();
 		initRenderTargetView();

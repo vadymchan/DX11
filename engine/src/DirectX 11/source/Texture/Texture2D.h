@@ -33,11 +33,6 @@ namespace engine
 					m_shaderResourceViewDesc = other.m_shaderResourceViewDesc;
 					textureUpdated = false;
 
-
-					// Release the old resources before assigning new ones
-					m_texture.Reset();
-					m_shaderResourceView.Reset();
-
 					createTextureAndShaderResourceView();
 				}
 
@@ -104,7 +99,7 @@ namespace engine
 			}
 
 			/// <param name="bindSlot">in case of using default initialisation value, don't forget to set bindSlot later</param>
-			void copyTextureFromSource(ID3D11Texture2D* sourceTexture, UINT bindSlot = 0)
+			void copyFromSource(ID3D11Texture2D* sourceTexture, UINT bindSlot = 0)
 			{
 				assert(sourceTexture != nullptr && "sourceTexture cannot be null");
 
@@ -132,6 +127,26 @@ namespace engine
 				}
 
 				g_devcon->CopyResource(m_texture.Get(), sourceTexture);
+			}
+
+			void assignFromResource(ID3D11Texture2D* sourceTexture, ID3D11ShaderResourceView* sourceSRV = nullptr)
+			{
+				assert(sourceTexture != nullptr && "sourceTexture cannot be null");
+
+				m_texture.Reset();
+				m_texture.Attach(sourceTexture);
+				m_texture->GetDesc(&m_textureDescription);
+
+				if (sourceSRV)
+				{
+					m_shaderResourceView.Reset();
+					m_shaderResourceView.Attach(sourceSRV);
+					m_shaderResourceView->GetDesc(&m_shaderResourceViewDesc);
+				}
+				else
+				{
+					m_shaderResourceView.Reset();
+				}
 			}
 
 

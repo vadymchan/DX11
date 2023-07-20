@@ -74,8 +74,6 @@ namespace engine::DX
 		HWND hwnd;
 		WNDCLASSEX wc;
 		ComPtr<IDXGISwapChain1> swapchain;
-		//ComPtr<ID3D11Texture2D> backBuffer;
-		//D3D11_TEXTURE2D_DESC backBufferDesc;
 		Texture2D backBuffer;
 		ComPtr<ID3D11RenderTargetView> renderTargetView;
 		std::array<ComPtr<ID3D11BlendState>, (int)BlendState::COUNT> blendStates;
@@ -90,3 +88,4 @@ namespace engine::DX
 
 
 }
+

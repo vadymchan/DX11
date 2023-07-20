@@ -252,7 +252,7 @@ namespace engine::DX
 			depthTexture->GetDesc(&sourceDesc);
 
 			// The descriptions don't match, perform the copy
-			depthCopyTexture.copyTextureFromSource(depthTexture.Get());
+			depthCopyTexture.copyFromSource(depthTexture.Get());
 
 		}
 
