@@ -559,9 +559,9 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	dissolutionMaterials[DEFAULT_SKIN] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"default" });
 	dissolutionMaterials[DISSOLUTION_SKIN] = std::make_shared<DissolutionMaterial>(DissolutionMaterial{ L"dissolution" });
 
-	engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[MIRROR], mirrorSphere);
-	engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[SHINY_CONDUCTOR], shinyConductorSphere);
-	engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[ROUGH_DIELECTRIC], roughDielectricSphere);
+	//engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[MIRROR], mirrorSphere);
+	//engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[SHINY_CONDUCTOR], shinyConductorSphere);
+	//engine.addOpaqueInstances(iblOpaqueInstance, sphere, cubeMeshIndices, opaqueMaterials[ROUGH_DIELECTRIC], roughDielectricSphere);
 
 
 	engine.addOpaqueInstances(iblOpaqueInstance, floor, { 0 }, opaqueMaterials[GRASS], floorInstances);
@@ -699,7 +699,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		0, // spawn radius
 		{0,1,1, 1.0}, // particle color
 		1.0f, // bounding sphere radius
-		1.0f, // initial particle size
+		//10.f, // initial particle size
+		0.1f, // initial particle size
 		0.0f, // initial rotation angle
 		5.0f, // vertical speed
 		5, // random speed range

@@ -13,6 +13,12 @@ namespace engine::DX
 	{
 	public:
 
+		enum class RasterizerStateType
+		{
+			SOLID,
+			WIREFRAME
+		};
+
 		void render(Window& window, Camera& camera);
 
 		void initRasterizator(const D3D11_RASTERIZER_DESC& rasterizerDesc, const std::shared_ptr<Skybox>& skybox = std::shared_ptr<Skybox>());
@@ -62,12 +68,13 @@ namespace engine::DX
 			float padding2;
 			float padding3;
 		};
-		ConstantBuffer<constantBufferSamplerState> samplerStateIndexBuffer; // float3 for adding paddings
+		ConstantBuffer<constantBufferSamplerState> samplerStateIndexBuffer; 
 		SamplerState::BindSlot currentSampleState{ SamplerState::BindSlot::ANISOTROPIC_WRAP };
 
 		D3D11_RASTERIZER_DESC rasterizationDesc;
 		ComPtr<ID3D11RasterizerState> rasterizerState;
-		ComPtr<ID3D11RasterizerState> transparentRasterizerState; // for transparent objects
+		ComPtr<ID3D11RasterizerState> transparentRasterizerState; 
+		ComPtr<ID3D11RasterizerState> postProcessRasterizerState;
 
 		Texture2D m_HDRtexture;
 		ComPtr<ID3D11RenderTargetView> m_offscreenRTV;

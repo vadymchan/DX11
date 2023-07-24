@@ -253,6 +253,7 @@ namespace engine::DX
 
 	void Window::windowResize(float width, float height)
 	{
+		std::cout << "before resize\n";
 		this->width = width;
 		this->height = height;
 
@@ -260,6 +261,7 @@ namespace engine::DX
 		initRenderTargetView();
 		initViewport();
 		backBuffer.Get()->GetDesc(&backBufferDesc);
+		std::cout << "after resize\n";
 		depthStencilBuffer.resizeDepthStencilTexture(backBufferDesc.Width, backBufferDesc.Height);
 
 	}

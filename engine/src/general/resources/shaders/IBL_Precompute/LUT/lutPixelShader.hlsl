@@ -108,6 +108,8 @@ float2 IntegrateBRDF(float NdotV, float roughness)
 // ----------------------------------------------------------------------------
 float4 main(Input input) : SV_TARGET
 {
+    return float4(1, 1, 0, 1);
+    
     float2 integratedBRDF = IntegrateBRDF(input.TexCoords.x, input.TexCoords.y);
     return float4(integratedBRDF.x, integratedBRDF.y, 0.0, 0.0);
 }

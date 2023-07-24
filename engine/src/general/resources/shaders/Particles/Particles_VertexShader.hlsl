@@ -82,7 +82,8 @@ PixelInputType main(VertexInputType input)
     rotatedOffset.x = cosTheta * offset.x - sinTheta * offset.y;
     rotatedOffset.y = sinTheta * offset.x + cosTheta * offset.y;
     
-    float3 finalPosition = input.position + right * rotatedOffset.x * input.size.x + up * rotatedOffset.y * input.size.y;
+    //float3 finalPosition = input.position + right * rotatedOffset.x * input.size.x + up * rotatedOffset.y * input.size.y;
+    float3 finalPosition = input.position + right * offset.x * input.size.x + up * offset.y * input.size.y;
     
     output.viewPosition = float4(finalPosition, 1.0);
     output.position = mul(output.viewPosition, Proj); 

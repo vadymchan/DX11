@@ -28,7 +28,7 @@ float4 main(Input input) : SV_TARGET
 
     
     albedo = albedoTexture.Sample(g_anisotropicWrap, input.UV);
-    roughness = roughnessTexture.Sample(g_anisotropicWrap, input.UV).r;
+    roughness = useRoughnessOverwriting ? overwrittenRoughnessValue : roughnessTexture.Sample(g_anisotropicWrap, input.UV).r;
     metalness = metalnessTexture.Sample(g_anisotropicWrap, input.UV).r;
 
     //get normals from the normal map
@@ -82,31 +82,12 @@ float4 main(Input input) : SV_TARGET
     // -----------------------------------------------------------------------------------------------------------------------------------------------------------
     
     
-    //IBL
+        // IBL
     //------------------------------------------------------------------------------------------------------------
-    
     if (useIBL)
     {
-        if (useDiffuseReflection)
-        {
-            float3 iblDiffuse = CalculateIBLDiffuse(worldNormal, albedo.rgb, metalness);
-            finalColor += albedo.rgb * iblDiffuse;
-        }
-
-        if (useRoughnessOverwriting)
-        {
-            roughness = overwrittenRoughnessValue;
-        }
-
-        if (useSpecularReflection)
-        {
-            float F0 = lerp(0.04, albedo, metalness);
-            float3 iblSpecular = CalculateIBLSpecular(worldNormal, normalize(input.WorldPosition.xyz - g_cameraPosition.xyz), roughness, float3(F0, F0, F0));
-            finalColor += iblSpecular;
-        }
+        //finalColor += CalculateIBLContribution(worldNormal, albedo.rgb, roughness, metalness, input.WorldPosition.xyz);
     }
-
-    
     //------------------------------------------------------------------------------------------------------------
     
     

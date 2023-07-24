@@ -4,6 +4,9 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Controller\BufferManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Controller\ImGuiManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -23,6 +26,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\RaySphereIntersection.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.cpp">
@@ -109,6 +115,9 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\console\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\sort\RadixSort.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -136,9 +145,6 @@
     <ClCompile Include="C:\Users\vadym\source\repos\vchan\engine\src\general\dependencies\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\general\utils\sort\RadixSort.cpp" />
-    <ClCompile Include="src\DirectX 11\source\Controller\BufferManager.cpp" />
-    <ClCompile Include="src\DirectX 11\source\Math\Colision\RaySphereIntersection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\EngineDX.h">
@@ -184,6 +190,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\ModelTriangleOctreeDX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\RayIntersection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\RaySphereIntersection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\DirectX 11\source\Math\Colision\boxDX.h">
@@ -375,8 +387,6 @@
     <ClInclude Include="C:\Users\vadym\source\repos\vchan\engine\src\general\utils\timer\FPSTimerRC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\DirectX 11\source\Math\Colision\RayIntersection.h" />
-    <ClInclude Include="src\DirectX 11\source\Math\Colision\RaySphereIntersection.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="C:\Users\vadym\source\repos\vchan\engine\CMakeLists.txt" />

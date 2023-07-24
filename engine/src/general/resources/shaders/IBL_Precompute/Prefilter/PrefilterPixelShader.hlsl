@@ -95,6 +95,9 @@ float3 ImportanceSampleGGX(float2 Xi, float3 N, float roughness)
 
 float4 main(Input input) : SV_TARGET
 {
+    return float4(1, 0, 0, 0);
+    
+    
     float3 N = normalize(input.WorldPos);
     N.z *= -1.0; 
     

@@ -41,7 +41,7 @@ float4 main(Input input) : SV_TARGET
     float metalness;
 
     albedo = albedoTexture.Sample(g_anisotropicWrap, input.UV);
-    roughness = roughnessTexture.Sample(g_anisotropicWrap, input.UV).r;
+    roughness = useRoughnessOverwriting ? overwrittenRoughnessValue : roughnessTexture.Sample(g_anisotropicWrap, input.UV).r;
     metalness = metalnessTexture.Sample(g_anisotropicWrap, input.UV).r;
 
     //get normals from the normal map

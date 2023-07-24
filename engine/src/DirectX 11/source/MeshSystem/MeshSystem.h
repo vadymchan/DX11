@@ -19,10 +19,10 @@ namespace engine::DX
 
 		enum class RenderInstance
 		{
-			OPAQUE_INSTANCE,
-			DISSOLUTION_INSTANCE,
+			Opaque,
+			Dissolution,
 			COUNT,
-			ALL_INSTANCES
+			All,
 		};
 
 		using DepthRender = RenderInstance;
@@ -41,19 +41,19 @@ namespace engine::DX
 		void render(Camera& camera) {}
 
 		template<>
-		void render<RenderInstance::OPAQUE_INSTANCE>(Camera& camera)
+		void render<RenderInstance::Opaque>(Camera& camera)
 		{
 			renderHelper<OpaqueInstances>(camera, opaqueInstances);
 		}
 
 		template<>
-		void render<RenderInstance::DISSOLUTION_INSTANCE>(Camera& camera)
+		void render<RenderInstance::Dissolution>(Camera& camera)
 		{
 			renderHelper<DissolutionInstances>(camera, dissolutionInstances);
 		}
 
 		template<>
-		void render<RenderInstance::ALL_INSTANCES>(Camera& camera)
+		void render<RenderInstance::All>(Camera& camera)
 		{
 			renderHelper<OpaqueInstances>(camera, opaqueInstances);
 			renderHelper<DissolutionInstances>(camera, dissolutionInstances);
@@ -80,7 +80,7 @@ namespace engine::DX
 		void renderDepth2D() {}
 
 		template<>
-		void renderDepth2D<DepthRender::OPAQUE_INSTANCE>()
+		void renderDepth2D<DepthRender::Opaque>()
 		{
 			const static std::wstring shadowMapVertexShaderFileName{ L"Shadow/2D/shadow2DVertexShader.hlsl" };
 			const static std::wstring shadowMapPixelShaderFileName{ L"Shadow/2D/shadow2DPixelShader.hlsl" };
@@ -104,11 +104,11 @@ namespace engine::DX
 				opaqueInstance->render();
 			}
 
-			
+
 		}
 
 		template<>
-		void renderDepth2D<DepthRender::DISSOLUTION_INSTANCE>()
+		void renderDepth2D<DepthRender::Dissolution>()
 		{
 			const std::wstring shadowMapVertexShaderFileName{ L"Shadow/2D/shadow2DDissolutionVertexShader.hlsl" };
 			const std::wstring shadowMapPixelShaderFileName{ L"Shadow/2D/shadow2DDissolutionPixelShader.hlsl" };
@@ -139,7 +139,7 @@ namespace engine::DX
 		void renderDepthCubemap() {}
 
 		template<>
-		void renderDepthCubemap<DepthRender::OPAQUE_INSTANCE>()
+		void renderDepthCubemap<DepthRender::Opaque>()
 		{
 			const static std::wstring shadowCubeMapVertexShaderFileName{ L"Shadow/Omnidirectional/shadow3DVertexShader.hlsl" };
 			const static std::wstring shadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DGeometryShader.hlsl" };
@@ -170,7 +170,7 @@ namespace engine::DX
 		}
 
 		template<>
-		void renderDepthCubemap<DepthRender::DISSOLUTION_INSTANCE>()
+		void renderDepthCubemap<DepthRender::Dissolution>()
 		{
 			const static std::wstring shadowCubeMapVertexShaderFileName{ L"Shadow/Omnidirectional/shadow3DDissolutionVertexShader.hlsl" };
 			const static std::wstring shadowCubeMapGeometryShaderFileName{ L"Shadow/Omnidirectional/shadow3DDissolutionGeometryShader.hlsl" };

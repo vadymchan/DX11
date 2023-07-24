@@ -420,3 +420,32 @@ float3 CalculateFlashLightPBR(float3 normal, float3 macroNormal, float3 worldSpa
 
 //END: PBR light calculation
 //-------------------------------------------------------------------------------------------------------
+
+
+ //BEGIN: IBL
+ //------------------------------------------------------------------------------------------------------------
+    
+
+float3 CalculateIBLContribution(float3 worldNormal, float3 albedo, float roughness, float metalness, float3 worldPos)
+{
+    float3 finalColor = float3(0, 0, 0);
+    
+    if (useDiffuseReflection)
+    {
+        float3 iblDiffuse = CalculateIBLDiffuse(worldNormal, albedo, metalness);
+        finalColor += albedo * iblDiffuse;
+    }
+
+    if (useSpecularReflection)
+    {
+        float F0 = lerp(0.04, albedo, metalness);
+        float3 iblSpecular = CalculateIBLSpecular(worldNormal, normalize(worldPos - g_cameraPosition.xyz), roughness, float3(F0, F0, F0));
+        finalColor += iblSpecular;
+    }
+    
+    return finalColor;
+}
+
+ //END: IBL
+ //------------------------------------------------------------------------------------------------------------
+    

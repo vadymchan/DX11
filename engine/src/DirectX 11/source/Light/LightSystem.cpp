@@ -6,7 +6,7 @@ namespace engine::DX
 
 	void LightSystem::setPerViewDirectionalLight(int lightIndex)
 	{
-
+		directionalLightShadowMap.unbind();
 
 		PerView2dShadowMap constantBuffer
 		{
@@ -15,7 +15,6 @@ namespace engine::DX
 		};
 
 		g_devcon->OMSetRenderTargets(0, nullptr, directionalLightViews[lightIndex].Get());
-		//g_devcon->ClearDepthStencilView(directionalLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 
 
 		bind2DShadowMap(constantBuffer);
@@ -23,6 +22,8 @@ namespace engine::DX
 
 	void LightSystem::setPerViewSpotLight(int lightIndex)
 	{
+		spotLightShadowMap.unbind();
+
 
 		PerView2dShadowMap constantBuffer
 		{
@@ -31,7 +32,6 @@ namespace engine::DX
 		};
 
 		g_devcon->OMSetRenderTargets(0, nullptr, spotLightViews[lightIndex].Get());
-		//g_devcon->ClearDepthStencilView(spotLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 
 
 		bind2DShadowMap(constantBuffer);
@@ -39,6 +39,8 @@ namespace engine::DX
 
 	void LightSystem::setPerViewFlashLight(int lightIndex)
 	{
+		flashLightShadowMap.unbind();
+
 
 		PerView2dShadowMap constantBuffer
 		{
@@ -47,14 +49,15 @@ namespace engine::DX
 		};
 
 		g_devcon->OMSetRenderTargets(0, nullptr, flashLightViews[lightIndex].Get());
-		//g_devcon->ClearDepthStencilView(flashLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
-
 
 		bind2DShadowMap(constantBuffer);
 	}
 
 	void LightSystem::setPerViewPointLight(int lightIndex)
 	{
+		pointLightShadowMap.unbind();
+
+
 		PerView3dShadowMap constantBuffer
 		{
 			m_lightConstantBuffer.g_pointLights[lightIndex].shadowViewMatrices,
@@ -62,7 +65,6 @@ namespace engine::DX
 		};
 
 		g_devcon->OMSetRenderTargets(0, nullptr, pointLightViews[lightIndex].Get());
-		//g_devcon->ClearDepthStencilView(pointLightViews[lightIndex].Get(), D3D11_CLEAR_DEPTH, 0.0f, 0);
 
 
 		perView3dConstantBuffer.updateData({ constantBuffer });
@@ -377,10 +379,9 @@ namespace engine::DX
 	void LightSystem::computeLightSpaceFrustumDirectionalLight(const float3& lightDir, float4x4& lightViewMatrix, float4x4& lightProjMatrix)
 	{
 
-		// Invert the view-projection matrix to get the frustum corners in world space
 		float4x4 invViewProjMatrix = camera->getIPV();
 
-		// Define the frustum corners in homogeneous clip space
+		// frustum corners in homogeneous clip space
 		float4 frustumCorners[8] = {
 			float4(-1.0f, -1.0f, 0.0f, 1.0f), // near bottom left
 			float4(1.0f, -1.0f, 0.0f, 1.0f),  // near bottom right
@@ -398,22 +399,15 @@ namespace engine::DX
 			frustumCorners[i] /= frustumCorners[i].w;
 		}
 
-
-		// Compute the centroid of the frustum corners
-		float3 frustumCenter = float3::Zero;
-		for (int i = 0; i < 8; ++i) {
-			const float3 frustrumCorner = float3(frustumCorners[i].x, frustumCorners[i].y, frustumCorners[i].z);
-			frustumCenter += frustrumCorner / 8.0f;
-		}
-
-		// Create the light view matrix
+		// light view matrix
 		float3 upDir = abs(lightDir.y) < 0.999f ? float3::Up : float3::Forward;
-		lightViewMatrix = DirectX::XMMatrixLookAtLH(frustumCenter, frustumCenter + lightDir, upDir);
+		lightViewMatrix = DirectX::XMMatrixLookAtLH(float3::Zero, lightDir, upDir);
 
 		// Transform the frustum corners to light space
 		for (int i = 0; i < 8; ++i) {
 			frustumCorners[i] = float4::Transform(frustumCorners[i], lightViewMatrix);
 		}
+
 
 
 		// Use the center and diameter to determine the X and Y ranges

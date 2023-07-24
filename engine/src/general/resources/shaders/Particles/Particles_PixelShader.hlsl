@@ -21,51 +21,114 @@ struct Input
     float farPlane : FAR_PLANE; // far plane (smaller value because of reversed depth)
 };
 
+
+float LinearizeDepth(float zPosition, float nearPlane, float farPlane)
+{
+    return nearPlane * farPlane / (farPlane - zPosition * (farPlane - nearPlane));
+}
+
+
+float NormalizeDepth(float linearizedDepth, float nearPlane, float farPlane)
+{
+    return (linearizedDepth - nearPlane) / (farPlane - nearPlane);
+}
+
+
 float4 main(Input input) : SV_TARGET
 {
     // Sample the lightmap textures
     
-    float4 EMVA = smoke_MVEA.Sample(g_linearWrap, input.uv);
-    float2 motionVector = EMVA.gb;
+    
 
-   
+    float4 EMVA0_initial = smoke_MVEA.Sample(g_linearWrap, input.uv);
+    float4 EMVA1_initial = smoke_MVEA.Sample(g_linearWrap, input.uv2);
+    float2 motionVector0 = EMVA0_initial.gb;
+    float2 motionVector1 = EMVA1_initial.gb;
+
+    // [0;1] to [-1;1] range
+    motionVector0 = motionVector0 * 2.0f - 1.0f;
+    motionVector1 = motionVector1 * 2.0f - 1.0f;
+
     //BEGIN: Motion vectors
     static const float MV_SCALE = 0.0015; // adjusted for the smoke textures
     float time = input.frameFraction; // goes from 0.0 to 1.0 between two sequential frames
 
     float2 uv0 = input.uv; // texture sample uv for the current frame
-    uv0 -= motionVector * MV_SCALE * time; // if MV points in some direction, then UV flows in opposite
+    uv0 -= motionVector0 * MV_SCALE * time; // if MV points in some direction, then UV flows in opposite
 
     float2 uv1 = input.uv2; // texture sample uv for the next frame
-    uv1 -= motionVector * MV_SCALE * (time - 1.f); // if MV points in some direction, then UV flows in opposite
+    uv1 -= motionVector1 * MV_SCALE * (time - 1.f); // if MV points in some direction, then UV flows in opposite
 
-    float4 EMVA0 = smoke_MVEA.Sample(g_linearWrap, uv0);
-    float4 EMVA1 = smoke_MVEA.Sample(g_linearWrap, uv1);
+    // Here we use updated motion vectors for sampling
+    float4 EMVA0_final = smoke_MVEA.Sample(g_linearWrap, uv0);
+    float4 EMVA1_final = smoke_MVEA.Sample(g_linearWrap, uv1);
 
-    float2 emissionAlpha = lerp(EMVA0.ra, EMVA1.ra, time);
+    float2 emissionAlpha = lerp(EMVA0_final.ra, EMVA1_final.ra, time);
     float emission = emissionAlpha.x;
     float smokeAlpha = emissionAlpha.y;
     //END: Motion vectors
     
+    //float4 EMVA = smoke_MVEA.Sample(g_linearWrap, input.uv);
+    //float2 motionVector = EMVA.gb;
+    
+    ////BEGIN: Motion vectors
+    //static const float MV_SCALE = 0.0015; // adjusted for the smoke textures
+    //float time = input.frameFraction; // goes from 0.0 to 1.0 between two sequential frames
+
+    //float2 uv0 = input.uv; // texture sample uv for the current frame
+    //uv0 -= motionVector * MV_SCALE * time; // if MV points in some direction, then UV flows in opposite
+
+    //float2 uv1 = input.uv2; // texture sample uv for the next frame
+    //uv1 -= motionVector * MV_SCALE * (time - 1.f); // if MV points in some direction, then UV flows in opposite
+
+    //float4 EMVA0 = smoke_MVEA.Sample(g_linearWrap, uv0);
+    //float4 EMVA1 = smoke_MVEA.Sample(g_linearWrap, uv1);
+
+    //float2 emissionAlpha = lerp(EMVA0.ra, EMVA1.ra, time);
+    //float emission = emissionAlpha.x;
+    //float smokeAlpha = emissionAlpha.y;
+    ////END: Motion vectors
+    
     //BEGIN: Soft particles
 
 
-    float threshold = 0.00001;
-    float sceneZ = depthBufferCopy.Sample(sample, input.uv).r;
-
-    float sceneDepthLinearized = input.nearPlane * input.farPlane / (input.farPlane - sceneZ * (input.farPlane - input.nearPlane));
-    float sceneDepthNormalized = (sceneDepthLinearized - input.nearPlane) / (input.farPlane - input.nearPlane);
-
-    float partZ = input.position.z;
+    float threshold = 0.000001;
     
-    float particleDepthLinearized = input.nearPlane * input.farPlane / (input.farPlane - partZ * (input.farPlane - input.nearPlane));
-    float particleDepthNormalized = (particleDepthLinearized - input.nearPlane) / (input.farPlane - input.nearPlane);
+    
+    float viewportWidth = 982; // Set this to your viewport width
+    float viewportHeight = 953; // Set this to your viewport height
 
+// Convert SV_Position to NDC coordinates
+    float2 ndcCoords;
+    ndcCoords.x = (2.0 * input.position.x - viewportWidth) / viewportWidth;
+    ndcCoords.y = (viewportHeight - 2.0 * input.position.y) / viewportHeight;
+
+// Convert NDC coordinates to texture coordinates
+    float2 texCoords;
+    texCoords.x = (ndcCoords.x + 1.0) / 2.0;
+    texCoords.y = 1.0 - (ndcCoords.y + 1.0) / 2.0;
+
+// Sample the depth using the computed texture coordinates
+    float sceneZ = depthBufferCopy.Sample(g_anisotropicWrap, texCoords).r;
+    
+    //float sceneZ = depthBufferCopy.Sample(g_anisotropicWrap, input.uv).r;
+
+
+    float sceneDepthLinearized = LinearizeDepth(sceneZ, input.nearPlane, input.farPlane);
+    float sceneDepthNormalized = NormalizeDepth(sceneDepthLinearized, input.nearPlane, input.farPlane);
+
+    float particleDepthLinearized = LinearizeDepth(input.position.z, input.nearPlane, input.farPlane);
+    float particleDepthNormalized = NormalizeDepth(particleDepthLinearized, input.nearPlane, input.farPlane);
+
+    
     float deltaDepth = particleDepthNormalized - sceneDepthNormalized;
+    //deltaDepth = input.position.z - sceneZ;
     
     float fade = clamp(deltaDepth / threshold, 0, 1);
 
-    smokeAlpha = saturate(smokeAlpha - fade);
+   // return float4(fade, fade, fade, 1);
+    
+    //smokeAlpha = saturate(smokeAlpha - fade);
     
     
     float4 result = float4(0, 0, 0, 0);

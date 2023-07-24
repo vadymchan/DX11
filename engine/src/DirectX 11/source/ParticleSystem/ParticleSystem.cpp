@@ -6,7 +6,7 @@ namespace engine::DX
 
 	void Emitter::update(float dt)
 	{
-
+		dt /= 20;
 		for (auto& particle : particles)
 		{
 			// update position
@@ -54,6 +54,13 @@ namespace engine::DX
 
 	void Emitter::emit(int numParticles)
 	{
+
+	/*	Particle particle;
+
+		particle.color = particleColor;
+		particle.
+
+		particles.push_back(particle);*/
 
 		const int rangeHalfInt = randomSpeedRange / 2;
 		const float rangeHalfFloat = (float)randomSpeedRange / 2;
@@ -135,6 +142,8 @@ namespace engine::DX
 		bindBuffers();
 
 		bindTextures();
+
+		g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 		g_devcon->DrawIndexed(renderIndices.getBufferData().size(), 0, 0);
 

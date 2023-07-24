@@ -22,6 +22,9 @@ float3 randomHemisphere(out float NdotV, float i, float N)
 
 float4 main(Input input) : SV_TARGET
 {
+    return float4(1, 0, 0, 0);
+    
+    
     float3 N = normalize(input.WorldPos);
 
     float3 irradiance = float3(0.0, 0.0, 0.0);

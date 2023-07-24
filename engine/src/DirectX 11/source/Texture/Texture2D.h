@@ -187,13 +187,22 @@ namespace engine
 				g_devcon->PSSetShaderResources(bindSlot, 1, m_shaderResourceView.GetAddressOf());
 			}
 
+			void unbind()
+			{
+				constexpr ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+				g_devcon->PSSetShaderResources(m_bindSlot, 1, nullSRV);
+			}
+
+			void unbind(UINT bindSlot)
+			{
+				constexpr ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+				g_devcon->PSSetShaderResources(bindSlot, 1, nullSRV);
+			}
+
 			void resize(UINT width, UINT height)
 			{
 				m_texture.Reset();
 				m_shaderResourceView.Reset();
-
-				std::this_thread::sleep_for(std::chrono::seconds(1));
-
 
 				m_textureDescription.Width = width;
 				m_textureDescription.Height = height;
