@@ -12,7 +12,8 @@ namespace engine::DX
 
 		void Engine::initRenderer(const D3D11_RASTERIZER_DESC& rasterizerDesc, const std::shared_ptr<Skybox>& skybox)
 		{
-			renderer.initRasterizator(rasterizerDesc, skybox);
+			//renderer.initRasterizator(rasterizerDesc, skybox);
+			renderer.initRenderer(rasterizerDesc, &window, skybox);
 		}
 
 		/// <param name="fov">in degrees</param>
@@ -191,7 +192,7 @@ namespace engine::DX
 		void Engine::render()
 		{
 			checkAspectRatio();
-			renderer.render(window, camera);
+			renderer.render(camera);
 		}
 
 		void Engine::checkAspectRatio()

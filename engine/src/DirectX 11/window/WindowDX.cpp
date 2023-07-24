@@ -8,10 +8,12 @@ extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg
 namespace engine::DX
 {
 
+
 	LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		static Window* window;
 		static DirectX::XMFLOAT2 windowSize;
+		static bool wasMaximized = false; 
 
 		if (ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam))
 			return true;
@@ -21,7 +23,7 @@ namespace engine::DX
 		case WM_CREATE:
 			CREATESTRUCT* windowCreate;
 			windowCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-			window = reinterpret_cast<Window*>(windowCreate->lpCreateParams);
+			window = static_cast<Window*>(windowCreate->lpCreateParams);
 			break;
 		case WM_CHAR:
 			switch (wParam)
@@ -41,18 +43,26 @@ namespace engine::DX
 			break;
 		case WM_SIZE:
 			windowSize = { (float)GET_X_LPARAM(lParam), (float)GET_Y_LPARAM(lParam) };
+
+			if ((wParam == SIZE_MAXIMIZED || (wParam == SIZE_RESTORED && wasMaximized)))
+			{
+				window->resize(windowSize.x, windowSize.y);
+				wasMaximized = (wParam == SIZE_MAXIMIZED);
+			}
+
 			break;
 		case WM_EXITSIZEMOVE:
 			if (windowSize.x <= 1 || windowSize.y <= 1)
 			{
 				break;
 			}
-			window->windowResize(windowSize.x, windowSize.y);
+			window->resize(windowSize.x, windowSize.y);
 			break;
 		}
 
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
+
 
 
 	void Window::initWindow(const LPCSTR& title, int xStart, int yStart, int width, int height, const HINSTANCE& appHandle, int windowShowParams)
@@ -88,83 +98,88 @@ namespace engine::DX
 			, this
 		);
 
-		ShowWindow(hwnd, windowShowParams);
-
-		ImGuiManager::getInstance().Init(hwnd);
-
 		initSwapchain();
 		initBackbuffer();
 		initRenderTargetView();
 		initViewport();
-		initDepthStencil();
-		initBlendState();
-	}
+		//initDepthStencil();
+		//initBlendState();
 
-	void Window::initBlendState()
-	{
-		D3D11_BLEND_DESC blendDesc;
-		ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+		ImGuiManager::getInstance().Init(hwnd);
 
-		blendDesc.RenderTarget[0].BlendEnable = TRUE;
-		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-		blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
-		blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
-		blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-		blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
-		HRESULT hr = g_device->CreateBlendState(&blendDesc, blendStates[(int)BlendState::ENABLED].ReleaseAndGetAddressOf());
+		ShowWindow(hwnd, windowShowParams);
+
+
 		
-		blendDesc.RenderTarget[0].BlendEnable = FALSE;
-		hr = g_device->CreateBlendState(&blendDesc, blendStates[(int)BlendState::DISABLED].ReleaseAndGetAddressOf());
-
-
-		setBlendState(BlendState::DISABLED);
 	}
 
-	void Window::initDepthStencil()
-	{
-		auto backBufferDesc = backBuffer.getTextureDesc();
-		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
-		depthStencilTextureDesc.Width = backBufferDesc.Width;
-		depthStencilTextureDesc.Height = backBufferDesc.Height;
-		depthStencilTextureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
-		depthStencilTextureDesc.Usage = D3D11_USAGE_DEFAULT;
-		depthStencilTextureDesc.MipLevels = 1;
-		depthStencilTextureDesc.ArraySize = 1;
-		depthStencilTextureDesc.SampleDesc.Count = 1;
-		depthStencilTextureDesc.SampleDesc.Quality = 0;
-		depthStencilTextureDesc.CPUAccessFlags = 0;
-		depthStencilTextureDesc.MiscFlags = 0;
-		depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+	//void Window::initBlendState()
+	//{
+	//	D3D11_BLEND_DESC blendDesc;
+	//	ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
 
-		D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
-		depthStencilDesc.DepthEnable = true;
-		depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-		depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
-		depthStencilDesc.StencilEnable = false;
-
-		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-		depthStencilViewDesc.Texture2D.MipSlice = 0;
-		depthStencilViewDesc.Flags = 0;
-
-		D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
-		shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-		shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-		shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-		shaderResourceViewDesc.Texture2D.MipLevels = 1;
-		
+	//	blendDesc.RenderTarget[0].BlendEnable = TRUE;
+	//	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	//	blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	//	blendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	//	blendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	//	blendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+	//	blendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	//	blendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	//	HRESULT hr = g_device->CreateBlendState(&blendDesc, blendStates[(int)BlendState::ENABLED].ReleaseAndGetAddressOf());
+	//	
+	//	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	//	hr = g_device->CreateBlendState(&blendDesc, blendStates[(int)BlendState::DISABLED].ReleaseAndGetAddressOf());
 
 
-		engine::DX::Texture2D depthStencilTexture;
-		constexpr UINT BIND_SLOT = 0;
-		depthStencilTexture.createTextureFromMemory(depthStencilTextureDesc, nullptr, shaderResourceViewDesc, BIND_SLOT);
+	//	setBlendState(BlendState::DISABLED);
+	//}
 
-		depthStencilBuffer.initDepthStencil(depthStencilTexture, depthStencilDesc, depthStencilViewDesc);
 
-	}
+
+	//void Window::initDepthStencil()
+	//{
+	//	auto backBufferDesc = backBuffer.getTextureDesc();
+	//	D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
+	//	depthStencilTextureDesc.Width = backBufferDesc.Width;
+	//	depthStencilTextureDesc.Height = backBufferDesc.Height;
+	//	depthStencilTextureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+	//	depthStencilTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+	//	depthStencilTextureDesc.MipLevels = 1;
+	//	depthStencilTextureDesc.ArraySize = 1;
+	//	depthStencilTextureDesc.SampleDesc.Count = 1;
+	//	depthStencilTextureDesc.SampleDesc.Quality = 0;
+	//	depthStencilTextureDesc.CPUAccessFlags = 0;
+	//	depthStencilTextureDesc.MiscFlags = 0;
+	//	depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+	//	D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
+	//	depthStencilDesc.DepthEnable = true;
+	//	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	//	depthStencilDesc.DepthFunc = D3D11_COMPARISON_GREATER_EQUAL;
+	//	depthStencilDesc.StencilEnable = false;
+
+	//	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+	//	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	//	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	//	depthStencilViewDesc.Texture2D.MipSlice = 0;
+	//	depthStencilViewDesc.Flags = 0;
+
+	//	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	//	shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	//	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	//	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	//	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+	//	
+
+
+	//	engine::DX::Texture2D depthStencilTexture;
+	//	constexpr UINT BIND_SLOT = 0;
+	//	depthStencilTexture.createTextureFromMemory(depthStencilTextureDesc, nullptr, shaderResourceViewDesc, BIND_SLOT);
+
+	//	depthStencilBuffer.initDepthStencil(depthStencilTexture, depthStencilDesc, depthStencilViewDesc);
+
+	//}
 
 	void Window::initSwapchain()
 	{
@@ -249,7 +264,7 @@ namespace engine::DX
 	}
 
 
-	void Window::windowResize(float width, float height)
+	void Window::resize(float width, float height)
 	{
 		this->width = width;
 		this->height = height;
@@ -257,8 +272,8 @@ namespace engine::DX
 		initBackbuffer();
 		initRenderTargetView();
 		initViewport();
-		auto backBufferDesc = backBuffer.getTextureDesc();
-		depthStencilBuffer.resizeDepthStencilTexture(backBufferDesc.Width, backBufferDesc.Height);
+
+		informResizeHandlers();
 
 	}
 

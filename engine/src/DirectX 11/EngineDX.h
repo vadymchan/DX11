@@ -110,6 +110,7 @@ namespace engine::DX
 
 			LightSystem::getInstance().setCamera(camera);
 
+			window.registerResizeHandler(&renderer);
 			renderer.setParticleSystem(&particleSystem);
 			//particleSystem.setCamera(camera);
 		}

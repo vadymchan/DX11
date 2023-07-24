@@ -4,25 +4,26 @@
 namespace engine::DX
 {
 
-	void Renderer::render(Window& window, Camera& camera)
+	void Renderer::render(Camera& camera)
 	{
 		
 		ImGuiManager::getInstance().NewFrame();
 
-		updateOffScreenRenderer(window);
+		updateOffScreenRenderer(/*window*/);
 
 		updateRasterizer();
-		
 
-		window.SetDepthStencilState();
+		depthStencilBuffer.setDepthStencilState(DepthStencilState::Type::DepthOnStencilOff);
+		//window->SetDepthStencilState();
 
 		//clearing renderTargetView
 		static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-		window.clearWindow();
+		window->clearWindow();
 		g_devcon->ClearRenderTargetView(m_offscreenRTV.Get(), offScreenBgColor);
-		//window.setViews();
+		//window->setViews();
 
-		window.setBlendState(Window::BlendState::ENABLED);
+		//window->setBlendState(Window::BlendState::ENABLED);
+		setBlendState(BlendState::ENABLED);
 
 		//set global constant buffers
 		LightSystem& lightSystem = LightSystem::getInstance();
@@ -113,7 +114,7 @@ namespace engine::DX
 		}
 
 
-		window.SetViewport();
+		window->SetViewport();
 		
 		setOffScreenRenderer();
 
@@ -140,25 +141,28 @@ namespace engine::DX
 		particleSystem->render(camera);
 
 
-		window.setViews();
+		g_devcon->OMSetRenderTargets(1, window->GetRenderTargetViewAddress(), depthStencilBuffer.getPDepthStencilView());
+
 		m_HDRtexture.bind();
-		m_postProcess.resolve(m_HDRtexture.getShaderResourceView(), window.GetRenderTargetView());
+		m_postProcess.resolve(m_HDRtexture.getShaderResourceView(), window->GetRenderTargetViewPointer());
 
 
 		
 		ImGuiManager::getInstance().Render();
 
 
-		window.flush();
+		window->flush();
 
 		//clear depth
 		g_devcon->ClearDepthStencilView(m_offscreenDSB.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0);
-		window.clearDepthStencil();
+		//window->clearDepthStencil();
+		g_devcon->ClearDepthStencilView(depthStencilBuffer.getPDepthStencilView(), D3D11_CLEAR_DEPTH, 0.0f, 0.0f);
+		
 		lightSystem.clearShadwoMaps();
 
 	}
 
-	void Renderer::initRasterizator(const D3D11_RASTERIZER_DESC& rasterizerDesc, const std::shared_ptr<Skybox>& skybox)
+	void Renderer::initRasterizator(const D3D11_RASTERIZER_DESC& rasterizerDesc)
 	{
 		initRasterizerDesc(rasterizerDesc);
 		createRasterizerState();
@@ -166,8 +170,6 @@ namespace engine::DX
 		initSamplers();
 		m_postProcess.init();
 
-		m_skybox = skybox;
-		MeshSystem::getInstance().setSkybox(skybox);
 
 		m_perFrameIBLbuffer = std::make_shared<ConstantBuffer<PerFrameIBL>>();
 		m_perFrameIBLbuffer->initBuffer(PER_FRAME_IBL_BIND_SLOT, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
@@ -232,18 +234,19 @@ namespace engine::DX
 		return m_postProcess;
 	}
 
-	void Renderer::updateOffScreenRenderer(Window& window)
+	void Renderer::updateOffScreenRenderer()
 	{
-		const D3D11_TEXTURE2D_DESC& backBufferDesc = window.GetBackBufferDesc();
+		const D3D11_TEXTURE2D_DESC& backBufferDesc = window->GetBackBufferDesc();
 		const D3D11_TEXTURE2D_DESC& hdrTextureDesc = m_HDRtexture.getTextureDesc();
 		if (backBufferDesc.Width != hdrTextureDesc.Width
 			|| backBufferDesc.Height != hdrTextureDesc.Height)
 		{
 			//texture 2d
-			initHDRTexture(window.GetBackBufferDesc());
+			initHDRTexture(window->GetBackBufferDesc());
 
 			//depth stencil view
-			m_offscreenDSB = window.GetDepthStencilBuffer();
+			//m_offscreenDSB = window->GetDepthStencilBuffer();
+			m_offscreenDSB = depthStencilBuffer;
 
 			//render target view
 			g_device->CreateRenderTargetView(m_HDRtexture.getTexture2DView(), nullptr, m_offscreenRTV.ReleaseAndGetAddressOf());
@@ -253,7 +256,7 @@ namespace engine::DX
 
 	void Renderer::setOffScreenRenderer()
 	{
-		m_offscreenDSB.setDepthStencilState();
+		m_offscreenDSB.setDepthStencilState(DepthStencilState::Type::DepthOnStencilOff);
 		g_devcon->OMSetRenderTargets(1, m_offscreenRTV.GetAddressOf(), m_offscreenDSB.getPDepthStencilView());
 
 	}
