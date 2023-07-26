@@ -6,8 +6,6 @@ namespace engine::DX
 
 	void Renderer::render(Window& window, Camera& camera)
 	{
-
-		
 		ImGuiManager::getInstance().NewFrame();
 		static float offScreenBgColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 

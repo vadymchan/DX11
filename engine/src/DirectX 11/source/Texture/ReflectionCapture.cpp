@@ -81,6 +81,11 @@ namespace engine::DX
 		return rtvDesc;
 	}
 
+	int ReflectionCapture::ComputeMipMapCount(int width, int height)
+	{
+		return 1 + std::floor(std::log2(std::max(width, height)));
+	}
+
 	D3D11_SHADER_RESOURCE_VIEW_DESC ReflectionCapture::CreateShaderResourceViewDesc(
 		DXGI_FORMAT format,
 		D3D11_SRV_DIMENSION viewDimension,
@@ -130,7 +135,7 @@ namespace engine::DX
 	}
 
 
-	Texture2D ReflectionCapture::GenerateIrradianceMap(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& textureFileName, ID3D11ShaderResourceView* environmentCubemap)
+	Texture2D ReflectionCapture::GenerateIrradianceMap(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& textureFileName, std::shared_ptr<Texture2D> environmentCubemap)
 	{
 
 		// Save current viewport
@@ -138,10 +143,8 @@ namespace engine::DX
 		UINT numViewports = 1;
 		g_devcon->RSGetViewports(&numViewports, &originalViewport);
 
-
 		InitializeShaders(vertexShaderFileName, pixelShaderFileName);
 		SamplerState sampleState = InitializeSamplerState();
-
 
 		auto& irradianceMapVertexShader = ShaderManager::getInstance().getVertexShader(vertexShaderFileName);
 		auto& irradianceMapPixelShader = ShaderManager::getInstance().getPixelShader(pixelShaderFileName);
@@ -165,7 +168,24 @@ namespace engine::DX
 		irradianceMapVertexShader->bind();
 		irradianceMapPixelShader->bind();
 		sampleState.bind();
-		g_devcon->PSSetShaderResources(0, 1, &environmentCubemap);
+		environmentCubemap->bind();
+
+
+		struct ConstantBufferData
+		{
+			float samples;
+			float padding1;
+			float padding2;
+			float padding3;
+
+		} constantBufferData;
+
+		ConstantBuffer<ConstantBufferData> constantBuffer;
+		constantBuffer.initBuffer(0, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+		constantBuffer.createBuffer();
+		constantBufferData.samples = 1024;
+		constantBuffer.updateData({ constantBufferData });
+		constantBuffer.setPixelShaderBuffer();
 
 		struct PerView
 		{
@@ -224,7 +244,7 @@ namespace engine::DX
 		const std::wstring& vertexShaderFileName,
 		const std::wstring& pixelShaderFileName,
 		const std::wstring& textureFileName,
-		ID3D11ShaderResourceView* environmentCubemap)
+		std::shared_ptr<Texture2D> environmentCubemap)
 	{
 		// Save current viewport
 		D3D11_VIEWPORT originalViewport;
@@ -238,7 +258,10 @@ namespace engine::DX
 		auto& prefilteredMapPixelShader = ShaderManager::getInstance().getPixelShader(pixelShaderFileName);
 
 		// Texture creation
-		auto texDesc = CreateTextureDesc(128, 128, NUM_MIP_MAPS, NUM_CUBE_FACES, DXGI_FORMAT_R16G16B16A16_FLOAT, D3D11_RESOURCE_MISC_TEXTURECUBE);
+		constexpr int TEXTURE_WIDTH = 128;
+		constexpr int TEXTURE_HEIGHT = 128;
+		int mipCount = ComputeMipMapCount(TEXTURE_WIDTH, TEXTURE_HEIGHT);
+		auto texDesc = CreateTextureDesc(TEXTURE_WIDTH, TEXTURE_HEIGHT, mipCount, NUM_CUBE_FACES, DXGI_FORMAT_R16G16B16A16_FLOAT, D3D11_RESOURCE_MISC_TEXTURECUBE);
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = CreateShaderResourceViewDesc(texDesc.Format, D3D11_SRV_DIMENSION_TEXTURECUBE, texDesc.MipLevels, 0);
 		Texture2D prefilteredTexture;
 		prefilteredTexture.createTextureFromMemory(0, texDesc, nullptr, srvDesc);
@@ -251,17 +274,28 @@ namespace engine::DX
 		prefilteredMapPixelShader->bind();
 
 		// Set the environment cubemap as the input to the pixel shader.
-		g_devcon->PSSetShaderResources(0, 1, &environmentCubemap);
+		environmentCubemap->bind();
 
 		sampleState.bind();
 
-		ConstantBuffer<float4> roughnessBuffer;
-		roughnessBuffer.initBuffer(0, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
-		roughnessBuffer.createBuffer();
+		struct ConstantBufferData
+		{
+			float roughness;
+			float resolution;
+			unsigned int samples;
+			float padding;
+		} constantBufferData;
 
-		std::array<std::array<ComPtr<ID3D11RenderTargetView>, NUM_MIP_MAPS>, NUM_CUBE_FACES> prefilteredRTV{};
+		ConstantBuffer<ConstantBufferData> constantBuffer;
+		constantBuffer.initBuffer(0, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE);
+		constantBuffer.createBuffer();
+
+		std::array<std::vector<ComPtr<ID3D11RenderTargetView>>, NUM_CUBE_FACES> prefilteredRTV{};
+		for (auto& face : prefilteredRTV) {
+			face.resize(mipCount);
+		}
 		HRESULT hr;
-		for (int mip = 0; mip < NUM_MIP_MAPS; mip++)
+		for (int mip = 0; mip < mipCount; mip++)
 		{
 			for (int i = 0; i < NUM_CUBE_FACES; ++i)
 			{
@@ -290,12 +324,20 @@ namespace engine::DX
 		D3D11_VIEWPORT viewport = {};
 		viewport.MinDepth = 0.0f;
 		viewport.MaxDepth = 1.0f;
+
+		const float environmentMapResolution = std::max(environmentCubemap->getTextureDesc().Width, environmentCubemap->getTextureDesc().Height);
+		const unsigned int samples = static_cast<unsigned int>(environmentMapResolution);
+
+		constantBufferData.samples = samples;
+		constantBufferData.resolution = environmentMapResolution;
+
 		for (int mip = 0; mip < texDesc.MipLevels; mip++)
 		{
 			float roughness = (float)mip / (float)(texDesc.MipLevels - 1);
-			roughnessBuffer.updateData({ {roughness, 0, 0, 0} });
+			constantBufferData.roughness = roughness;
+			constantBuffer.updateData({ constantBufferData });
 
-			roughnessBuffer.setPixelShaderBuffer();
+			constantBuffer.setPixelShaderBuffer();
 
 			viewport.Width = texDesc.Width * std::pow(0.5, mip);
 			viewport.Height = texDesc.Height * std::pow(0.5, mip);
@@ -376,9 +418,9 @@ namespace engine::DX
 		return BRDFLookupTexture;
 	}
 
-	
 
-	void ReflectionCapture::SaveTexture(ID3D11Resource* texture, bool generateMips, FileFormat format, const std::wstring& filename) 
+
+	void ReflectionCapture::SaveTexture(ID3D11Resource* texture, bool generateMips, FileFormat format, const std::wstring& filename)
 	{
 		DirectX::ScratchImage scratchImage;
 		DirectX::CaptureTexture(g_device, g_devcon, texture, scratchImage);
@@ -403,7 +445,12 @@ namespace engine::DX
 				result = DirectX::Compress(imagePtr->GetImages(), imagePtr->GetImageCount(), imagePtr->GetMetadata(),
 					(DXGI_FORMAT)format, DirectX::TEX_COMPRESS_PARALLEL, 1.f, compressed);
 
+			if (FAILED(result))
+			{
+				PrintError(result, L"Texture not saved!\n");
+			}
 			assert(result >= 0);
+
 			imagePtr = &compressed;
 		}
 
@@ -443,9 +490,8 @@ namespace engine::DX
 
 			std::wstring environmentMapFileName = baseName + L".dds";
 			auto environmentCubemapTexture = TextureManager::getInstance().getTexture2D(textureDirectory / L"skybox/hdr" / environmentMapFileName);
-			ID3D11ShaderResourceView* environmentCubemapSRV = environmentCubemapTexture->getShaderResourceView();
 
-			Texture2D irradianceTexture = GenerateIrradianceMap(vertexShaderFileName, pixelShaderFileName, textureFileName, environmentCubemapSRV);
+			Texture2D irradianceTexture = GenerateIrradianceMap(vertexShaderFileName, pixelShaderFileName, textureFileName, environmentCubemapTexture);
 
 			SaveTexture(irradianceTexture.getTexture2DView(), false, FileFormat::BC6_UNSIGNED, fullTexturePath);
 
@@ -491,9 +537,9 @@ namespace engine::DX
 
 			std::wstring environmentMapFileName = baseName + L".dds";
 			auto environmentCubemapTexture = TextureManager::getInstance().getTexture2D(textureDirectory / L"skybox/hdr" / environmentMapFileName);
-			ID3D11ShaderResourceView* environmentCubemapSRV = environmentCubemapTexture->getShaderResourceView();
 
-			Texture2D prefilteredTexture = GeneratePrefilteredEnvMap(vertexShaderFileName, pixelShaderFileName, textureFileName, environmentCubemapSRV);
+
+			Texture2D prefilteredTexture = GeneratePrefilteredEnvMap(vertexShaderFileName, pixelShaderFileName, textureFileName, environmentCubemapTexture);
 
 			SaveTexture(prefilteredTexture.getTexture2DView(), false, FileFormat::BC6_UNSIGNED, fullTexturePath);
 		}

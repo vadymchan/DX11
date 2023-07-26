@@ -78,8 +78,8 @@ namespace engine::DX
 			return instance;
 		}
 
-		Texture2D  GenerateIrradianceMap(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& textureFileName, ID3D11ShaderResourceView* environmentCubemap);
-		Texture2D  GeneratePrefilteredEnvMap(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& textureFileName, ID3D11ShaderResourceView* environmentCubemap);
+		Texture2D  GenerateIrradianceMap(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& textureFileName, std::shared_ptr<Texture2D> environmentCubemap);
+		Texture2D  GeneratePrefilteredEnvMap(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& textureFileName, std::shared_ptr<Texture2D> environmentCubemap);
 		Texture2D  GenerateBRDFLookupTexture(const std::wstring& vertexShaderFileName, const std::wstring& pixelShaderFileName, const std::wstring& textureFileName);
 		void SaveTexture(ID3D11Resource* texture, bool generateMips, FileFormat format, const std::wstring& filename);
 
@@ -127,6 +127,7 @@ namespace engine::DX
 		//------------------------
 		D3D11_SHADER_RESOURCE_VIEW_DESC CreateShaderResourceViewDesc(DXGI_FORMAT format, D3D11_SRV_DIMENSION viewDimension, UINT mipLevels, UINT mostDetailedMip);
 		D3D11_RENDER_TARGET_VIEW_DESC CreateRenderTargetViewDesc(DXGI_FORMAT format, D3D11_RTV_DIMENSION viewDimension, UINT mipSlice, UINT firstArraySlice, UINT arraySize);
+		int ComputeMipMapCount(int width, int height);
 
 		float4x4 GenerateCaptureProjection();
 

@@ -4,6 +4,11 @@ SamplerState CubeSampler : register(s0);
 const static float PI = 3.14159265359;
 const static float GOLDEN_RATIO = (1.0 + sqrt(5.0)) / 2.0;
 
+cbuffer ConstantBuffer : register(b0)
+{
+    float samples;
+};
+
 struct Input
 {
     float4 Pos : SV_POSITION;
@@ -31,12 +36,12 @@ float4 main(Input input) : SV_TARGET
     float3 right = normalize(cross(up, N));
     up = normalize(cross(N, right));
 
-    float Nsamples = 1024.0; // Number of samples (e.g. 1024)
+    //float Nsamples = 1024.0;
     float NdotV;
-    for (float i = 0.0; i < Nsamples; i++)
+    for (float i = 0.0; i < samples; i++)
     {
         // Use the Fibonacci sampling
-        float3 tangentSample = randomHemisphere(NdotV, i, Nsamples);
+        float3 tangentSample = randomHemisphere(NdotV, i, samples);
 
         // tangent space to world
         float3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N;
@@ -44,7 +49,7 @@ float4 main(Input input) : SV_TARGET
         float theta = acos(NdotV);
         irradiance += environmentMap.Sample(CubeSampler, sampleVec).rgb * NdotV * sin(theta);
     }
-    irradiance = PI * irradiance * (1.0 / Nsamples);
+    irradiance = PI * irradiance * (1.0 / samples);
     
     return float4(irradiance, 1.0);
 }

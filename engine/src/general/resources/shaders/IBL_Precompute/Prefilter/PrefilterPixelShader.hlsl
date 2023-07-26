@@ -1,6 +1,8 @@
 cbuffer ConstantBuffer : register(b0)
 {
     float roughness;
+    float resolution;
+    uint samples;
 };
 
 TextureCube environmentMap : register(t0);
@@ -95,6 +97,7 @@ float3 ImportanceSampleGGX(float2 Xi, float3 N, float roughness)
 
 float4 main(Input input) : SV_TARGET
 {
+
     float3 N = normalize(input.WorldPos);
     N.z *= -1.0; 
     
@@ -102,14 +105,14 @@ float4 main(Input input) : SV_TARGET
     float3 R = N;
     float3 V = R;
 
-    const uint SAMPLE_COUNT = 1024u;
+    //const uint SAMPLE_COUNT = 1024u;
     float3 prefilteredColor = float3(0.0, 0.0, 0.0);
     float totalWeight = 0.0;
     
-    for (uint i = 0u; i < SAMPLE_COUNT; ++i)
+    for (uint i = 0u; i < samples; ++i)
     {
         // generates a sample vector that's biased towards the preferred alignment direction (importance sampling).
-        float2 Xi = Hammersley(i, SAMPLE_COUNT);
+        float2 Xi = Hammersley(i, samples);
         float3 H = ImportanceSampleGGX(Xi, N, roughness);
         float3 L = normalize(2.0 * dot(V, H) * H - V);
 
@@ -122,9 +125,9 @@ float4 main(Input input) : SV_TARGET
             float HdotV = max(dot(H, V), 0.0);
             float pdf = D * NdotH / (4.0 * HdotV) + 0.0001;
 
-            float resolution = 1024.0; // resolution of source cubemap (per face)
+            //float resolution = 1024.0; // resolution of source cubemap (per face)
             float saTexel = 4.0 * PI / (6.0 * resolution * resolution);
-            float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
+            float saSample = 1.0 / (float(samples) * pdf + 0.0001);
 
             float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel);
             
