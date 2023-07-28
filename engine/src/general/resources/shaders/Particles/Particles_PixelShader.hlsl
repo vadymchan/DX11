@@ -128,7 +128,7 @@ float4 main(Input input) : SV_TARGET
 
    // return float4(fade, fade, fade, 1);
     
-    //smokeAlpha = saturate(smokeAlpha - fade);
+    smokeAlpha = saturate(smokeAlpha - fade);
     
     
     float4 result = float4(0, 0, 0, 0);

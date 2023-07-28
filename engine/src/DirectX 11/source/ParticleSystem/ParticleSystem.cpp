@@ -6,47 +6,47 @@ namespace engine::DX
 
 	void Emitter::update(float dt)
 	{
-		dt /= 20;
+		dt /= 10;
 		for (auto& particle : particles)
 		{
-			// update position
-			particle.position.x += particle.constantSpeed.x * dt;
-			particle.position.y += particle.constantSpeed.y * dt;
-			particle.position.z += particle.constantSpeed.z * dt;
+			//// update position
+			//particle.position.x += particle.constantSpeed.x * dt;
+			//particle.position.y += particle.constantSpeed.y * dt;
+			//particle.position.z += particle.constantSpeed.z * dt;
 
-			// update size
-			particle.size.x += dt; // Increase size over time
-			particle.size.y += dt; // Increase size over time
+			//// update size
+			//particle.size.x += dt; // Increase size over time
+			//particle.size.y += dt; // Increase size over time
 
-			// update rotation
-			particle.rotationAngle += particle.rotationSpeed * dt;
+			//// update rotation
+			//particle.rotationAngle += particle.rotationSpeed * dt;
 
 			// update alpha
-			if (particle.lifetime > 0.5f)
-			{
-				particle.color.w = 1.0f - 2.0f * (particle.lifetime - 0.5f); // Alpha goes from 0 to 1
-			}
-			else
-			{
-				particle.color.w = 2.0f * particle.lifetime; // Alpha goes from 1 to 0
-			}
+			//if (particle.lifetime > 0.5f)
+			//{
+			//	particle.color.w = 1.0f - 2.0f * (particle.lifetime - 0.5f); // Alpha goes from 0 to 1
+			//}
+			//else
+			//{
+			//	particle.color.w = 2.0f * particle.lifetime; // Alpha goes from 1 to 0
+			//}
 
 
-			// Decrease lifetime
-			particle.lifetime -= dt;
+			//// Decrease lifetime
+			//particle.lifetime -= dt;
 
 		}
 
 		// Remove dead particles
-		particles.erase(std::remove_if(particles.begin(), particles.end(),
-			[](const Particle& particle) { return particle.lifetime <= 0.0f; }), particles.end());
+		//particles.erase(std::remove_if(particles.begin(), particles.end(),
+		//	[](const Particle& particle) { return particle.lifetime <= 0.0f; }), particles.end());
 
 		accumulatedTime += dt;
 
 		const int numParticles = static_cast<int>(spawnRate * accumulatedTime);
 		if (numParticles > 0)
 		{
-			emit(numParticles);
+			//emit(numParticles);
 			accumulatedTime -= numParticles / static_cast<float>(spawnRate);
 		}
 

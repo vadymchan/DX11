@@ -58,7 +58,7 @@ namespace engine::DX
 			transformID = TransformSystem::getInstance().addTransform(sphereAroundEmitterMatrix);
 
 
-			//emit(1);
+			emit(1);
 		}
 
 		void update(float dt);
@@ -94,8 +94,8 @@ namespace engine::DX
 
 		TransformSystem::ID transformID;
 
-		const float initialParticleLifetime {1.f};
-		//const float initialParticleLifetime {0.5f};
+		//const float initialParticleLifetime {1.f};
+		const float initialParticleLifetime {0.5f};
 		const float initialParticleSize;
 		const float initialRotationAngle;
 		float verticalSpeed;

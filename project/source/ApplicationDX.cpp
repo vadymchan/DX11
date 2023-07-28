@@ -699,8 +699,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 		0, // spawn radius
 		{0,1,1, 1.0}, // particle color
 		1.0f, // bounding sphere radius
-		//10.f, // initial particle size
-		0.1f, // initial particle size
+		10.f, // initial particle size
+		//0.1f, // initial particle size
 		0.0f, // initial rotation angle
 		5.0f, // vertical speed
 		5, // random speed range
