@@ -6,47 +6,47 @@ namespace engine::DX
 
 	void Emitter::update(float dt)
 	{
-		dt /= 10;
+
 		for (auto& particle : particles)
 		{
-			//// update position
-			//particle.position.x += particle.constantSpeed.x * dt;
-			//particle.position.y += particle.constantSpeed.y * dt;
-			//particle.position.z += particle.constantSpeed.z * dt;
+			// update position
+			particle.position.x += particle.constantSpeed.x * dt;
+			particle.position.y += particle.constantSpeed.y * dt;
+			particle.position.z += particle.constantSpeed.z * dt;
 
-			//// update size
-			//particle.size.x += dt; // Increase size over time
-			//particle.size.y += dt; // Increase size over time
+			// update size
+			particle.size.x += dt; // Increase size over time
+			particle.size.y += dt; // Increase size over time
 
-			//// update rotation
-			//particle.rotationAngle += particle.rotationSpeed * dt;
+			// update rotation
+			particle.rotationAngle += particle.rotationSpeed * dt;
 
 			// update alpha
-			//if (particle.lifetime > 0.5f)
-			//{
-			//	particle.color.w = 1.0f - 2.0f * (particle.lifetime - 0.5f); // Alpha goes from 0 to 1
-			//}
-			//else
-			//{
-			//	particle.color.w = 2.0f * particle.lifetime; // Alpha goes from 1 to 0
-			//}
+			if (particle.lifetime > 0.5f)
+			{
+				particle.color.w = 1.0f - 2.0f * (particle.lifetime - 0.5f); // Alpha goes from 0 to 1
+			}
+			else
+			{
+				particle.color.w = 2.0f * particle.lifetime; // Alpha goes from 1 to 0
+			}
 
 
-			//// Decrease lifetime
-			//particle.lifetime -= dt;
+			// Decrease lifetime
+			particle.lifetime -= dt;
 
 		}
 
 		// Remove dead particles
-		//particles.erase(std::remove_if(particles.begin(), particles.end(),
-		//	[](const Particle& particle) { return particle.lifetime <= 0.0f; }), particles.end());
+		particles.erase(std::remove_if(particles.begin(), particles.end(),
+			[](const Particle& particle) { return particle.lifetime <= 0.0f; }), particles.end());
 
 		accumulatedTime += dt;
 
 		const int numParticles = static_cast<int>(spawnRate * accumulatedTime);
 		if (numParticles > 0)
 		{
-			//emit(numParticles);
+			emit(numParticles);
 			accumulatedTime -= numParticles / static_cast<float>(spawnRate);
 		}
 
@@ -54,13 +54,6 @@ namespace engine::DX
 
 	void Emitter::emit(int numParticles)
 	{
-
-	/*	Particle particle;
-
-		particle.color = particleColor;
-		particle.
-
-		particles.push_back(particle);*/
 
 		const int rangeHalfInt = randomSpeedRange / 2;
 		const float rangeHalfFloat = (float)randomSpeedRange / 2;
@@ -136,12 +129,17 @@ namespace engine::DX
 
 	void ParticleSystem::render(Camera& camera)
 	{
+		updateDepthCopy();
+		updateResolutionConstantBuffer();
+
 		bindShaders();
 
 		updateBuffers(camera);
 		bindBuffers();
 
 		bindTextures();
+
+		g_devcon->OMSetDepthStencilState(depthStencilState.Get(), 1);
 
 		g_devcon->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -227,8 +225,15 @@ namespace engine::DX
 
 	void ParticleSystem::bindBuffers()
 	{
+		//vertex buffer
 		renderData.setBuffer();
+		
+		//index buffer
 		renderIndices.setBuffer();
+
+		//constant buffer
+		resolutionConstantBuffer.setPixelShaderBuffer();
+
 	}
 
 	void ParticleSystem::bindTextures()
@@ -245,27 +250,7 @@ namespace engine::DX
 			}
 		}
 
-
-		// Get the depth stencil view
-		ComPtr<ID3D11DepthStencilView> depthStencilView;
-		g_devcon->OMGetRenderTargets(0, nullptr, &depthStencilView);
-
-		// Get the underlying texture
-		ComPtr<ID3D11Resource> resource;
-		depthStencilView->GetResource(&resource);
-
-		ComPtr<ID3D11Texture2D> depthTexture;
-		if (SUCCEEDED(resource->QueryInterface(IID_PPV_ARGS(&depthTexture))))
-		{
-
-			// The descriptions don't match, perform the copy
-			depthCopyTexture.copyTextureFromSource(depthTexture.Get());
-
-		}
-
 		depthCopyTexture.bind();
-
-
 	}
 
 	void ParticleSystem::bindShaders()

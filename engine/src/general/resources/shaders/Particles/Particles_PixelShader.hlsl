@@ -7,6 +7,12 @@ Texture2D depthBufferCopy : register(t3); // Depth buffer
 
 SamplerState sample;
 
+cbuffer Resolution : register(b0)
+{
+    float viewportWidth;
+    float viewportHeight;
+}
+
 struct Input
 {
     float4 position : SV_POSITION;
@@ -68,52 +74,24 @@ float4 main(Input input) : SV_TARGET
     float smokeAlpha = emissionAlpha.y;
     //END: Motion vectors
     
-    //float4 EMVA = smoke_MVEA.Sample(g_linearWrap, input.uv);
-    //float2 motionVector = EMVA.gb;
-    
-    ////BEGIN: Motion vectors
-    //static const float MV_SCALE = 0.0015; // adjusted for the smoke textures
-    //float time = input.frameFraction; // goes from 0.0 to 1.0 between two sequential frames
-
-    //float2 uv0 = input.uv; // texture sample uv for the current frame
-    //uv0 -= motionVector * MV_SCALE * time; // if MV points in some direction, then UV flows in opposite
-
-    //float2 uv1 = input.uv2; // texture sample uv for the next frame
-    //uv1 -= motionVector * MV_SCALE * (time - 1.f); // if MV points in some direction, then UV flows in opposite
-
-    //float4 EMVA0 = smoke_MVEA.Sample(g_linearWrap, uv0);
-    //float4 EMVA1 = smoke_MVEA.Sample(g_linearWrap, uv1);
-
-    //float2 emissionAlpha = lerp(EMVA0.ra, EMVA1.ra, time);
-    //float emission = emissionAlpha.x;
-    //float smokeAlpha = emissionAlpha.y;
-    ////END: Motion vectors
     
     //BEGIN: Soft particles
 
 
-    float threshold = 0.000001;
-    
-    
-    float viewportWidth = 982; // Set this to your viewport width
-    float viewportHeight = 953; // Set this to your viewport height
 
-// Convert SV_Position to NDC coordinates
+    // Convert SV_Position to NDC coordinates
     float2 ndcCoords;
+
     ndcCoords.x = (2.0 * input.position.x - viewportWidth) / viewportWidth;
     ndcCoords.y = (viewportHeight - 2.0 * input.position.y) / viewportHeight;
-
+    
 // Convert NDC coordinates to texture coordinates
     float2 texCoords;
     texCoords.x = (ndcCoords.x + 1.0) / 2.0;
     texCoords.y = 1.0 - (ndcCoords.y + 1.0) / 2.0;
 
-// Sample the depth using the computed texture coordinates
-    float sceneZ = depthBufferCopy.Sample(g_anisotropicWrap, texCoords).r;
+    float sceneZ = depthBufferCopy.Sample(g_pointWrap, texCoords).r;
     
-    //float sceneZ = depthBufferCopy.Sample(g_anisotropicWrap, input.uv).r;
-
-
     float sceneDepthLinearized = LinearizeDepth(sceneZ, input.nearPlane, input.farPlane);
     float sceneDepthNormalized = NormalizeDepth(sceneDepthLinearized, input.nearPlane, input.farPlane);
 
@@ -122,11 +100,13 @@ float4 main(Input input) : SV_TARGET
 
     
     float deltaDepth = particleDepthNormalized - sceneDepthNormalized;
-    //deltaDepth = input.position.z - sceneZ;
     
-    float fade = clamp(deltaDepth / threshold, 0, 1);
-
-   // return float4(fade, fade, fade, 1);
+    float threshold = 2e-7;
+    
+    float fade = 1.0f - clamp(deltaDepth / threshold, 0, 1);
+    
+    // for debuggin purposes
+    //return float4(fade, fade, fade, 1);
     
     smokeAlpha = saturate(smokeAlpha - fade);
     
@@ -148,6 +128,9 @@ float4 main(Input input) : SV_TARGET
     
     float3 RLU = lerp(RLU0, RLU1, time);
     float3 DBF = lerp(DBF0, DBF1, time);
+    
+    //RLU = RLU0;
+    //DBF = DBF0;
     
     // The basis vectors in view space
     

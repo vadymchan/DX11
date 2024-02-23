@@ -110,8 +110,8 @@ namespace engine::DX
 
 			LightSystem::getInstance().setCamera(camera);
 
+			particleSystem.initParticleSystem();
 			renderer.setParticleSystem(&particleSystem);
-			//particleSystem.setCamera(camera);
 		}
 
 	private:

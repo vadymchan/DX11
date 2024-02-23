@@ -43,7 +43,7 @@ namespace engine::DX
 
 		g_devcon->RSSetViewports(1, &viewport);
 
-		g_devcon->RSSetState(transparentRasterizerState.Get());
+		g_devcon->RSSetState(cullNoneRasterizerState.Get());
 
 		//directional light
 		const int directionalLights = lightSystem.getCurrentDirectionalLights();
@@ -77,7 +77,8 @@ namespace engine::DX
 			meshSystem.renderDepthCubemap<MeshSystem::DepthRender::Dissolution>();
 		}
 
-		g_devcon->RSSetState(rasterizerState.Get());
+		g_devcon->RSSetState(defaultRasterizerState.Get());
+
 
 		//directional light
 		for (size_t i = 0; i < directionalLights; ++i)
@@ -117,9 +118,9 @@ namespace engine::DX
 		meshSystem.setShowNormal(visualizeNormal);
 		meshSystem.setPerFrameIBLbuffer(m_perFrameIBLbuffer);
 
-		meshSystem.render<MeshSystem::RenderInstance::Opaque>(camera);
+		g_devcon->RSSetState(cullNoneRasterizerState.Get());
 
-		g_devcon->RSSetState(transparentRasterizerState.Get());
+		meshSystem.render<MeshSystem::RenderInstance::Opaque>(camera);
 
 		meshSystem.render<MeshSystem::RenderInstance::Dissolution>(camera);
 
@@ -130,6 +131,8 @@ namespace engine::DX
 		}
 
 		particleSystem->render(camera);
+
+		window.SetDepthStencilState();
 
 		window.setViews();
 		m_HDRtexture.bind();
@@ -248,7 +251,6 @@ namespace engine::DX
 	{
 		m_offscreenDSB.setDepthStencilState();
 		g_devcon->OMSetRenderTargets(1, m_offscreenRTV.GetAddressOf(), m_offscreenDSB.getPDepthStencilView());
-
 	}
 
 	void Renderer::initHDRTexture(D3D11_TEXTURE2D_DESC backBufferTex)
@@ -319,11 +321,12 @@ namespace engine::DX
 
 	void Renderer::createRasterizerState()
 	{
-		HRESULT result = g_device->CreateRasterizerState(&rasterizationDesc, rasterizerState.ReleaseAndGetAddressOf());
+
+		HRESULT result = g_device->CreateRasterizerState(&rasterizationDesc, defaultRasterizerState.ReleaseAndGetAddressOf());
 
 		D3D11_RASTERIZER_DESC transparentRasterizerDesc = rasterizationDesc;
 		transparentRasterizerDesc.CullMode = D3D11_CULL_NONE;
-		result = g_device->CreateRasterizerState(&transparentRasterizerDesc, transparentRasterizerState.ReleaseAndGetAddressOf());
+		result = g_device->CreateRasterizerState(&transparentRasterizerDesc, cullNoneRasterizerState.ReleaseAndGetAddressOf());
 
 		D3D11_RASTERIZER_DESC postProcessRasterizerDesc = rasterizationDesc;
 		postProcessRasterizerDesc.FillMode = D3D11_FILL_SOLID;

@@ -45,9 +45,12 @@ float4 main(Input input) : SV_TARGET
     metalness = metalnessTexture.Sample(g_anisotropicWrap, input.UV).r;
 
     //get normals from the normal map
-    float2 normalTextureSample = normalTexture.Sample(g_anisotropicWrap, input.UV).xy;
-    float normalZComponent = sqrt(1 - normalTextureSample.x * normalTextureSample.x - normalTextureSample.y * normalTextureSample.y);
-    float3 normalFromNormalMap = float3(normalTextureSample, normalZComponent);
+   // float2 normalTextureSample = normalTexture.Sample(g_anisotropicWrap, input.UV).xy;
+   // float normalZComponent = sqrt(1 - normalTextureSample.x * normalTextureSample.x - normalTextureSample.y * normalTextureSample.y);
+   // float3 normalFromNormalMap = float3(normalTextureSample, normalZComponent);
+    
+    float3 normalFromNormalMap = normalize(2 * normalTexture.Sample(g_anisotropicWrap, input.UV).xyz - float3(1, 1, 1));
+    
     // TBN matrix in world space
     float3x3 tangentSpaceMatrix = float3x3(input.Tangent, input.Bitangent, input.Normal);
     float3 worldNormal = normalize(mul(normalFromNormalMap, tangentSpaceMatrix));

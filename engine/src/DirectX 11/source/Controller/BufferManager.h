@@ -16,6 +16,7 @@ namespace engine::DX
 	constexpr UINT PER_FRAME_GLOBAL = 4;
 	constexpr UINT PER_FRAME_IBL_BIND_SLOT = 5;
 	constexpr UINT SELECTED_SAMPLER_STATE_3 = 3;
+	constexpr UINT SCREEN_RESOLUTION = 0;
 
 	//vertex buffer
 	constexpr UINT MODEL_DATA_INPUT_SLOT_0 = 0;

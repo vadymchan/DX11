@@ -72,8 +72,8 @@ namespace engine::DX
 		SamplerState::BindSlot currentSampleState{ SamplerState::BindSlot::ANISOTROPIC_WRAP };
 
 		D3D11_RASTERIZER_DESC rasterizationDesc;
-		ComPtr<ID3D11RasterizerState> rasterizerState;
-		ComPtr<ID3D11RasterizerState> transparentRasterizerState; 
+		ComPtr<ID3D11RasterizerState> defaultRasterizerState;
+		ComPtr<ID3D11RasterizerState> cullNoneRasterizerState; 
 		ComPtr<ID3D11RasterizerState> postProcessRasterizerState;
 
 		Texture2D m_HDRtexture;

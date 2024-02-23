@@ -319,12 +319,13 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	{
 		{1, 1, 1, 0},
 		{1, 1, 1, 0},
+		{1, 1, 1, 0},
 	};
 
 	std::vector<engine::DX::float3> pointLightPositions = {
 		{5, 5, -2},
 		{-5, 5, -4},
-
+		{0, 0, 4},
 	};
 
 
@@ -344,6 +345,13 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 			{ {1, 1, 1}, 1000 },
 			{}, // will be updated after the insertion to the instanceGroup 
 			0.5,
+			{ 1.0, 0.045, 0.0075 }
+		},
+		PointLight
+		{
+			{ {1, 1, 1}, 1000 },
+			{}, // will be updated after the insertion to the instanceGroup 
+			0.1,
 			{ 1.0, 0.045, 0.0075 }
 		},
 
@@ -584,8 +592,8 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	std::vector<engine::DX::TransformSystem::ID> pointLightInstanceIDs =
 		engine.addOpaqueInstances(sphereOpaqueInstance, sphere, sphereMeshIndeices, opaqueMaterials[NO_MATERIAL], spherePointLightInstances, pointLightEmissions);
 	
-	std::vector<engine::DX::TransformSystem::ID> spotLightInstanceIDs =
-		engine.addOpaqueInstances(sphereOpaqueInstance, sphere, sphereMeshIndeices, opaqueMaterials[NO_MATERIAL], sphereSpotLightInstances, spotLightEmissions);
+	//std::vector<engine::DX::TransformSystem::ID> spotLightInstanceIDs =
+	//	engine.addOpaqueInstances(sphereOpaqueInstance, sphere, sphereMeshIndeices, opaqueMaterials[NO_MATERIAL], sphereSpotLightInstances, spotLightEmissions);
 
 
 	std::vector<size_t> eastTowerMeshIndices;
@@ -649,11 +657,11 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 	//	flashLight
 	//);
 
-	for (size_t i = 0; i < spotLightInstanceIDs.size(); i++)
-	{
-		spotLights[i].transformID = spotLightInstanceIDs[i];
-		lightSystem.addSpotLight(spotLights[i]);
-	}
+	//for (size_t i = 0; i < spotLightInstanceIDs.size(); i++)
+	//{
+	//	spotLights[i].transformID = spotLightInstanceIDs[i];
+	//	lightSystem.addSpotLight(spotLights[i]);
+	//}
 	
 	
 	for (int i = 0; i < pointLightInstanceIDs.size(); ++i)
@@ -692,51 +700,85 @@ void ApplicationDX::Init(const HINSTANCE& appHandle, int windowShowParams)
 
 	particleSystem.setParticleTextures(particleTextures);
 
+
 	std::vector<Emitter> smokeEmitters = {
+	//{
+	//	pointLightInstanceIDs[0], // position
+	//	100, // spawn rate
+	//	0, // spawn radius
+	//	{0,1,1, 1.0}, // particle color
+	//	0.5f, // initial particle size
+	//	//0.1f, // initial particle size
+	//	0.0f, // initial rotation angle
+	//	5.0f, // vertical speed
+	//	5, // random speed range
+	//	0.4f, // random speed scale
+	//	100, // rotation speed range
+	//	0.002f // rotation speed scale
+	//},
 	{
-		{0.0f, 0.0f, 5.0f}, // position
+		pointLightInstanceIDs[2], // position
 		100, // spawn rate
 		0, // spawn radius
 		{0,1,1, 1.0}, // particle color
-		1.0f, // bounding sphere radius
-		10.f, // initial particle size
-		//0.1f, // initial particle size
-		0.0f, // initial rotation angle
+		0.1f, // initial particle size
+		0.2f, // initial rotation angle
 		5.0f, // vertical speed
 		5, // random speed range
 		0.4f, // random speed scale
 		100, // rotation speed range
-		0.002f // rotation speed scale
-	},
-	{
-		{4.0f, 0.0f, 5.0f}, // position
-		200, // spawn rate
-		0, // spawn radius
-		{1,1,0, 1.0}, // particle color
-		1.0f, // bounding sphere radius
-		0.1f, // initial particle size
-		0.0f, // initial rotation angle
-		2.0f, // vertical speed
-		5, // random speed range
-		0.4f, // random speed scale
-		100, // rotation speed range
 		0.2f // rotation speed scale
 	},
-	{
-		{-4.0f, 0.0f, 5.0f}, // position
-		200, // spawn rate
-		0, // spawn radius
-		{1,1,1, 1.0}, // particle color
-		1.0f, // bounding sphere radius
-		0.1f, // initial particle size
-		0.0f, // initial rotation angle
-		2.0f, // vertical speed
-		5, // random speed range
-		0.4f, // random speed scale
-		100, // rotation speed range
-		0.2f // rotation speed scale
-	}
+	
+
 	};
+
+
+	//std::vector<Emitter> smokeEmitters = {
+	//{
+	//	{0.0f, 0.0f, 5.0f}, // position
+	//	100, // spawn rate
+	//	0, // spawn radius
+	//	{0,1,1, 1.0}, // particle color
+	//	1.0f, // bounding sphere radius
+	//	//10.f, // initial particle size
+	//	0.1f, // initial particle size
+	//	0.2f, // initial rotation angle
+	//	5.0f, // vertical speed
+	//	5, // random speed range
+	//	0.4f, // random speed scale
+	//	100, // rotation speed range
+	//	0.2f // rotation speed scale
+	//},
+	//{
+	//	{4.0f, 0.0f, 5.0f}, // position
+	//	200, // spawn rate
+	//	0, // spawn radius
+	//	{1,1,0, 1.0}, // particle color
+	//	1.0f, // bounding sphere radius
+	//	0.1f, // initial particle size
+	//	0.0f, // initial rotation angle
+	//	2.0f, // vertical speed
+	//	5, // random speed range
+	//	0.4f, // random speed scale
+	//	100, // rotation speed range
+	//	0.2f // rotation speed scale
+	//},
+	//{
+	//	{-4.0f, 0.0f, 5.0f}, // position
+	//	200, // spawn rate
+	//	0, // spawn radius
+	//	{1,1,1, 1.0}, // particle color
+	//	1.0f, // bounding sphere radius
+	//	0.1f, // initial particle size
+	//	0.0f, // initial rotation angle
+	//	2.0f, // vertical speed
+	//	5, // random speed range
+	//	0.4f, // random speed scale
+	//	100, // rotation speed range
+	//	0.2f // rotation speed scale
+	//}
+	//};
 
 	std::for_each(smokeEmitters.begin(), smokeEmitters.end(), [&particleSystem](const Emitter& smokeEmitter) {
 		particleSystem.addSmokeEmitter(smokeEmitter);
