@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+**/fetchcontent/
+**/dependencies/
+
 # User-specific files
 *.rsuser
 *.suo
@@ -15,6 +18,11 @@
 
 # Mono auto generated files
 mono_crash.*
+
+# Ignore CMake cache files
+CMakeCache.txt
+CMakeFiles/
+.dir
 
 # Build results
 [Dd]ebug/
@@ -32,6 +40,7 @@ bld/
 [Oo]ut/
 [Ll]og/
 [Ll]ogs/
+out/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -97,6 +106,9 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+*.sln
+*.vcxproj
+*.vcxproj.filters
 
 # Chutzpah Test files
 _Chutzpah*

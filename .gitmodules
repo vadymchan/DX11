@@ -1,3 +1,9 @@
-[submodule "engine/Ray Casting/dependencies/glm"]
-	path = engine/Ray Casting/dependencies/glm
+[submodule "engine/general/dependencies/glm"]
+	path = engine/general/dependencies/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "engine/general/dependencies/assimp"]
+	path = engine/general/dependencies/assimp
+	url = https://github.com/assimp/assimp.git
+[submodule "engine/general/dependencies/DirectXTK"]
+	path = engine/general/dependencies/DirectXTK
+	url = https://github.com/microsoft/DirectXTK.git
